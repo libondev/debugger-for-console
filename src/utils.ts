@@ -9,10 +9,10 @@ import { commandPrefix } from './constants'
 import type { InsertStatementParams } from './types'
 
 // Gets the configuration items for the plug-in in the workspace
-export function getConfiguration<T extends Record<string, string>>(
+export function getConfiguration(
   configKey: keyof WorkspaceConfiguration,
 ) {
-  return workspace.getConfiguration(`${commandPrefix}.${configKey}`) as unknown as T
+  return workspace.getConfiguration(`${commandPrefix}.${configKey}`)
 }
 
 // Gets the active text editor tab size
@@ -43,7 +43,7 @@ export function getDocumentTextBySelection(document: TextDocument, selection: Se
 // Reading the configuration returns the corresponding language statement
 export function getStatementByLanguage(language: string, text = '') {
   const wrappers = getConfiguration('wrappers')
-  const statement = wrappers[language] || wrappers.default
+  const statement = (wrappers[language] || wrappers.default) as string
 
   text = text.trim()
   const label = text.replace(/\r\n/g, ',').replace(/(\"|'|`)/g, '\\$1')

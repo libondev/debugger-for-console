@@ -12,7 +12,7 @@
     "url": "https://github.com/banlify/debugger-for-console"
   },
   "main": "./dist/index.js",
-  "publisher": "chestnut",
+  "publisher": "banlify",
   "icon": "res/icon.png",
   "files": [
     "dist"

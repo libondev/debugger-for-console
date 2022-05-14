@@ -1,26 +1,27 @@
 {
   "name": "debugger-for-console",
-  "displayName": "My Extension",
+  "displayName": "Debugger for Console",
   "version": "0.0.0",
+  "main": "./dist/index.js",
   "publisher": "banlify",
-  "packageManager": "pnpm@7.0.1",
+  "packageManager": "pnpm@6.32.11",
   "description": "",
-  "keywords": [],
-  "homepage": "https://github.com/banlify/debugger-for-console#readme",
-  "bugs": {
-    "url": "https://github.com/banlify/debugger-for-console/issues"
-  },
   "license": "MIT",
+  "icon": "res/icon.png",
+  "sideEffects": false,
   "author": "Chestnut <banlify@163.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/banlify/debugger-for-console"
   },
-  "main": "./dist/index.js",
+  "homepage": "https://github.com/banlify/debugger-for-console#readme",
+  "bugs": {
+    "url": "https://github.com/banlify/debugger-for-console/issues"
+  },
   "files": [
     "dist"
   ],
-  "sideEffects": false,
+  "keywords": [],
   "engines": {
     "vscode": "^1.65.0"
   },
@@ -28,9 +29,35 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onCommand:debugger-for-console.logger"
   ],
-  "icon": "res/icon.png",
+  "contributes": {
+    "commands": [
+      {
+        "command": "debugger-for-console.logger",
+        "title": "Create debugger statements"
+      }
+    ],
+    "keybindings": [
+      {
+        "key": "ctrl+shift+r",
+        "command": "debugger-for-console.logger"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Debugger languages wrappers",
+      "properties": {
+        "debugger-for-console.wrappers": {
+          "type": "object",
+          "description": "修改针对于特定语言的调试语句，默认为 console.log($SEL);\n调试语句可以使用 `$SEL` 来代替选中的文本;\n同时可以使用 `\\n` 来换行",
+          "default": {
+            "default": "console.log({ '#label': #value })"
+          }
+        }
+      }
+    }
+  },
   "scripts": {
     "build": "tsup src/index.ts --external vscode",
     "dev": "nr build --watch",
@@ -51,7 +78,7 @@
     "bumpp": "^7.1.1",
     "eslint": "^8.15.0",
     "esno": "^0.14.1",
-    "pnpm": "^7.0.1",
+    "pnpm": "^6.32.11",
     "rimraf": "^3.0.2",
     "tsup": "^5.12.1",
     "typescript": "^4.6.4",

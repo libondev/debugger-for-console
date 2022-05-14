@@ -1,7 +1,26 @@
-import { window } from 'vscode'
+import { commands, window } from 'vscode'
+import type { ExtensionContext } from 'vscode'
+import { commandPrefix } from './constants'
 
-export function activate() {
-  window.showInformationMessage('Hello')
+import logger from './commands/logger'
+
+const directives = [
+  logger,
+]
+
+export function activate(ctx: ExtensionContext) {
+  const editor = window.activeTextEditor
+
+  if (!editor) {
+    return
+  }
+
+  directives.forEach((directive) => {
+    commands.registerCommand(
+      `${commandPrefix}.${directive.name}`,
+      directive.bind(ctx, editor),
+    )
+  })
 }
 
 export function deactivate() {

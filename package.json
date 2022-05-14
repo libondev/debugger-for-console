@@ -2,26 +2,26 @@
   "name": "debugger-for-console",
   "displayName": "Debugger for Console",
   "version": "0.0.0",
-  "main": "./dist/index.js",
-  "publisher": "banlify",
   "packageManager": "pnpm@6.32.11",
   "description": "",
+  "keywords": [],
   "license": "MIT",
-  "icon": "res/icon.png",
-  "sideEffects": false,
   "author": "Chestnut <banlify@163.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/banlify/debugger-for-console"
   },
+  "main": "./dist/index.js",
+  "publisher": "chestnut",
+  "icon": "res/icon.png",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "homepage": "https://github.com/banlify/debugger-for-console#readme",
   "bugs": {
     "url": "https://github.com/banlify/debugger-for-console/issues"
   },
-  "files": [
-    "dist"
-  ],
-  "keywords": [],
   "engines": {
     "vscode": "^1.65.0"
   },
@@ -61,7 +61,7 @@
   "scripts": {
     "build": "tsup src/index.ts --external vscode",
     "dev": "nr build --watch",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "vscode:prepublish": "nr build",
     "publish": "vsce publish --no-dependencies --allow-star-activation",
     "pack": "vsce package --no-dependencies --allow-star-activation",

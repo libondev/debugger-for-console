@@ -62,7 +62,7 @@
     "build": "tsup src/index.ts --external vscode",
     "dev": "nr build --watch",
     "lint": "eslint . --fix",
-    "vscode:prepublish": "nr build && nr pack",
+    "vscode:prepublish": "nr build",
     "publish": "vsce publish --no-dependencies --allow-star-activation",
     "pack": "vsce package --no-dependencies --allow-star-activation",
     "test": "vitest",

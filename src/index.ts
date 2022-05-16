@@ -1,8 +1,7 @@
 import { commands, window } from 'vscode'
 import type { ExtensionContext, TextEditor } from 'vscode'
 
-// import wrapper from './commands/wrapper'
-import logWrapper from './core'
+import logger from './core'
 
 export const current = {} as {
   editor: TextEditor
@@ -19,8 +18,8 @@ export function activate(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerTextEditorCommand(
-      'debugger-for-console.logger',
-      () => logWrapper.call(current.editor, 'down'),
+      'debugger-for-console.wrapper',
+      ctx => logger.call(ctx, 'down'),
     ),
   )
 }

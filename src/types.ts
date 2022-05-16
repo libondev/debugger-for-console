@@ -11,9 +11,16 @@ export interface InsertStatementParams {
   editBuilder: TextEditorEdit
 }
 
-export interface WrapperResolveParams {
+export type InsertPosition = 'before' | 'after'
+
+export interface WrapperContentParams {
   document: TextDocument
-  selection: Selection
+  insertLineNumber: number
+  indents: string
+  text: string
+}
+
+export interface WrapperResolveParams {
   lineNumber: number
   text: string
 }

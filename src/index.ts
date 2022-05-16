@@ -19,7 +19,11 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerTextEditorCommand(
       'debugger-for-console.wrapper',
-      ctx => logger.call(ctx, 'down'),
+      ctx => logger.call(ctx, 'after'),
+    ),
+    commands.registerTextEditorCommand(
+      'debugger-for-console.wrapper.before',
+      ctx => logger.call(ctx, 'before'),
     ),
   )
 }

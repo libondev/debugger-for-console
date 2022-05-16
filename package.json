@@ -34,8 +34,13 @@
   "contributes": {
     "commands": [
       {
-        "title": "Create debugger statements",
+        "title": "Create debugger statements on new line",
         "command": "debugger-for-console.wrapper",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "title": "Create debugger statements on before",
+        "command": "debugger-for-console.wrapper.before",
         "when": "editorTextFocus && !editorReadonly"
       }
     ],
@@ -53,6 +58,11 @@
           "group": "navigation",
           "command": "debugger-for-console.wrapper",
           "when": "editorTextFocus && !editorReadonly"
+        },
+        {
+          "group": "navigation",
+          "command": "debugger-for-console.wrapper.before",
+          "when": "editorTextFocus && !editorReadonly"
         }
       ]
     },
@@ -62,9 +72,9 @@
       "properties": {
         "debugger-for-console.wrappers": {
           "type": "object",
-          "description": "修改针对于特定语言的调试语句，可以使用 `#label` 来设置打印的对象键名;\n使用 `#value` 设置打印的对象键值;\n同时可以使用 `\\n` 来换行",
+          "description": "设置在不同语言的情况下创建的调试语句，可自行设定打印内容;\n使用 %s 来设置填充打印信息，如: console.log({ '%s': %s })",
           "default": {
-            "default": "console.log({ '#label': #value })"
+            "default": "console.log({ '%s': %s })"
           }
         }
       }

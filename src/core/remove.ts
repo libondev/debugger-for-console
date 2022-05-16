@@ -1,23 +1,38 @@
-import { Range, type TextDocument, type TextEditor, WorkspaceEdit, workspace } from 'vscode'
+import {
+  Range,
+  type TextDocument,
+  type TextEditor,
+  WorkspaceEdit,
+  window,
+  workspace,
+} from 'vscode'
 import { getDebuggerStatementByLanguage } from '../utils'
 
-function removeInsertedLogger(this: TextEditor) {
+async function removeInsertedLogger(this: TextEditor) {
   const { document } = this
-  const editWorkspace = new WorkspaceEdit()
   const statements = getAllStatementsByDocument(document)
 
-  statements.forEach((statement) => {
-    editWorkspace.delete(document.uri, statement)
-  })
+  if (statements.length) {
+    const editWorkspace = new WorkspaceEdit()
+    statements.forEach((statement) => {
+      editWorkspace.delete(document.uri, statement)
+    })
 
-  workspace.applyEdit(editWorkspace).then(() => {
-    console.log('1')
-  })
+    await workspace.applyEdit(editWorkspace)
+    window.showInformationMessage('Remove inserted logger success.')
+  } else {
+    window.showInformationMessage('No logger statement found.')
+  }
 }
 
 function getAllStatementsByDocument(document: TextDocument) {
   const content = document.getText()
-  const regexp = new RegExp(getDebuggerStatementByLanguage(document).replace(/(\(.*?\))/, ''), 'gu')
+  const regexp = new RegExp(
+    `${getDebuggerStatementByLanguage(document)
+      .replace(/\./g, '\\.')
+      .replace(/\(.*?\)/, '\\(.*?\\)')}\\s*;?\\s*`,
+    'gm',
+  )
 
   const statements: Range[] = []
 
@@ -29,8 +44,6 @@ function getAllStatementsByDocument(document: TextDocument) {
     if (!match) {
       continue
     }
-
-    console.log(match)
 
     range = new Range(
       document.positionAt(match.index),

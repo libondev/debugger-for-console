@@ -27,11 +27,17 @@ export function getIndentsByLineNumber(document: TextDocument, lineNumber: numbe
 }
 
 // Reading the configuration returns the corresponding language statement
-// 读取用户设置文件中的配置(如果没有则会使用插件预设的配置), 根据语言获取对应的语句并转义引号
-export function getIndentStatementByLanguage({ document, text, indents, insertLineNumber }: WrapperContentParams) {
-  const emptyLine = document.lineAt(insertLineNumber).isEmptyOrWhitespace
+// 读取用户设置文件中的配置(如果没有则会使用插件预设的配置), 获取对应的调试语句
+export function getDebuggerStatementByLanguage(document: TextDocument) {
   const wrappers = getConfiguration('wrappers')
-  const statement = (wrappers[document.languageId] || wrappers.default) as string
+  return (wrappers[document.languageId] || wrappers.default) as string
+}
+
+// Gets a debug statement inserted into the document
+// 获取插入到文档中的调试语句
+export function getInsertTextByLanguage({ document, text, indents, insertLineNumber }: WrapperContentParams) {
+  const emptyLine = document.lineAt(insertLineNumber).isEmptyOrWhitespace
+  const statement = getDebuggerStatementByLanguage(document)
   const content = text.trim().replace(/\r\n/g, ',').replace(/(\"|'|`)/g, '\\$1')
 
   return `${(emptyLine ? indents : '')}${statement.replace(/%s/gu, content)}\r\n${indents}`

@@ -1,14 +1,13 @@
-import { Position, Range, window } from 'vscode'
-import type { TextEditor } from 'vscode'
-import type { InsertPosition, WrapperResolveParams } from './types'
+import { Position, Range, type TextEditor, window } from 'vscode'
+import type { InsertPosition, WrapperResolveParams } from '../types'
 
 import {
-  getIndentStatementByLanguage,
   getIndentsByLineNumber,
+  getInsertTextByLanguage,
   getTargetLineByLineNumber,
-} from './utils'
+} from '../utils'
 
-async function logWrapper(this: TextEditor, arrow: InsertPosition) {
+async function insertVariableLogger(this: TextEditor, arrow: InsertPosition) {
   const { selection, document } = this
 
   new Promise<WrapperResolveParams>((resolve, reject) => {
@@ -30,7 +29,7 @@ async function logWrapper(this: TextEditor, arrow: InsertPosition) {
       const insertLineNumber = getTargetLineByLineNumber(document, lineNumber, arrow)
       editor.insert(
         new Position(insertLineNumber, startAt),
-        getIndentStatementByLanguage({ document, indents, text, insertLineNumber }),
+        getInsertTextByLanguage({ document, indents, text, insertLineNumber }),
       )
     })
   }).catch((error: Error) => {
@@ -38,4 +37,4 @@ async function logWrapper(this: TextEditor, arrow: InsertPosition) {
   })
 }
 
-export default logWrapper
+export default insertVariableLogger

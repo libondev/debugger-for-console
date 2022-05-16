@@ -1,7 +1,8 @@
 import { commands, window } from 'vscode'
 import type { ExtensionContext, TextEditor } from 'vscode'
 
-import logger from './core'
+import insertLogger from './core/insert'
+import removeLogger from './core/remove'
 
 export const current = {} as {
   editor: TextEditor
@@ -19,15 +20,17 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerTextEditorCommand(
       'debugger-for-console.wrapper',
-      ctx => logger.call(ctx, 'after'),
+      ctx => insertLogger.call(ctx, 'after'),
     ),
     commands.registerTextEditorCommand(
       'debugger-for-console.wrapper.before',
-      ctx => logger.call(ctx, 'before'),
+      ctx => insertLogger.call(ctx, 'before'),
+    ),
+    commands.registerTextEditorCommand(
+      'debugger-for-console.wrapper.remove',
+      ctx => removeLogger.call(ctx),
     ),
   )
 }
 
-export function deactivate() {
-
-}
+export function deactivate() { }

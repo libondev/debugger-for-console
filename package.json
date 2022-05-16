@@ -29,18 +29,25 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:debugger-for-console.wrapper"
+    "onCommand:debugger-for-console.wrapper",
+    "onCommand:debugger-for-console.wrapper.before",
+    "onCommand:debugger-for-console.wrapper.remove"
   ],
   "contributes": {
     "commands": [
       {
-        "title": "Create debugger statements on new line",
+        "title": "Insert debugger statements on new line",
         "command": "debugger-for-console.wrapper",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Create debugger statements on before",
+        "title": "Insert debugger statements on before",
         "command": "debugger-for-console.wrapper.before",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "title": "Remove all debugger statements",
+        "command": "debugger-for-console.wrapper.remove",
         "when": "editorTextFocus && !editorReadonly"
       }
     ],
@@ -62,6 +69,11 @@
         {
           "group": "navigation",
           "command": "debugger-for-console.wrapper.before",
+          "when": "editorTextFocus && !editorReadonly"
+        },
+        {
+          "group": "navigation",
+          "command": "debugger-for-console.wrapper.remove",
           "when": "editorTextFocus && !editorReadonly"
         }
       ]

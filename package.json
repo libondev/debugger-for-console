@@ -53,8 +53,13 @@
     ],
     "keybindings": [
       {
-        "key": "ctrl+shift+r",
-        "args": "down",
+        "key": "ctrl+shift+down",
+        "command": "debugger-for-console.wrapper",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "key": "ctrl+alt+backspace",
+        "mac": "control+cmd+backspace",
         "command": "debugger-for-console.wrapper",
         "when": "editorTextFocus && !editorReadonly"
       }

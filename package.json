@@ -29,21 +29,33 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:debugger-for-console.logger"
+    "onCommand:debugger-for-console.wrapper"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "debugger-for-console.logger",
-        "title": "Create debugger statements"
+        "title": "Create debugger statements",
+        "command": "debugger-for-console.wrapper",
+        "when": "editorTextFocus && !editorReadonly"
       }
     ],
     "keybindings": [
       {
         "key": "ctrl+shift+r",
-        "command": "debugger-for-console.logger"
+        "args": "down",
+        "command": "debugger-for-console.wrapper",
+        "when": "editorTextFocus && !editorReadonly"
       }
     ],
+    "menus": {
+      "editor/context": [
+        {
+          "group": "navigation",
+          "command": "debugger-for-console.wrapper",
+          "when": "editorTextFocus && !editorReadonly"
+        }
+      ]
+    },
     "configuration": {
       "type": "object",
       "title": "Debugger languages wrappers",

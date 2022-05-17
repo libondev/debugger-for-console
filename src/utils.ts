@@ -17,13 +17,8 @@ export function getConfiguration(
 // Gets the corresponding indentation size based on the line number
 // 根据行号获取对应的缩进大小
 export function getIndentsByLineNumber(document: TextDocument, lineNumber: number) {
-  const startAt = document.lineAt(lineNumber).firstNonWhitespaceCharacterIndex
-  const indents = document.lineAt(lineNumber).text.substring(0, startAt)
-
-  return {
-    startAt,
-    indents,
-  }
+  const { text, firstNonWhitespaceCharacterIndex } = document.lineAt(lineNumber)
+  return text.substring(0, firstNonWhitespaceCharacterIndex)
 }
 
 // Reading the configuration returns the corresponding language statement
@@ -35,12 +30,11 @@ export function getDebuggerStatementByLanguage(document: TextDocument) {
 
 // Gets a debug statement inserted into the document
 // 获取插入到文档中的调试语句
-export function getInsertTextByLanguage({ document, text, indents, insertLineNumber }: WrapperContentParams) {
-  const emptyLine = document.lineAt(insertLineNumber).isEmptyOrWhitespace
+export function getInsertTextByLanguage({ document, text, indents }: WrapperContentParams) {
   const statement = getDebuggerStatementByLanguage(document)
   const content = text.trim().replace(/\r\n/g, ',').replace(/(\"|'|`)/g, '\\$1')
 
-  return `${(emptyLine ? indents : '')}${statement.replace(/%s/gu, content)}\r\n${indents}`
+  return `${indents}${statement.replace(/%s/gu, content)}\r\n`
 }
 
 // Gets the line number of the target line

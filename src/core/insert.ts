@@ -21,21 +21,19 @@ async function insertVariableLogger(this: TextEditor, arrow: InsertPosition) {
 
     if (!range && insertLine.isEmptyOrWhitespace) {
       return resolve({ lineNumber: insertLine.lineNumber, text: '' })
-    }
-
-    if (!range) {
+    } else if (!range) {
       return reject(new Error('No selection or word found.'))
     }
 
-    resolve({ lineNumber: range.start.line, text: document.getText(range) })
+    resolve({ lineNumber: range.end.line, text: document.getText(range) })
   }).then(({ lineNumber, text }) => {
-    const { startAt, indents } = getIndentsByLineNumber(document, lineNumber)
+    const indents = getIndentsByLineNumber(document, lineNumber)
+    const insertLineNumber = getTargetLineByLineNumber(document, lineNumber, arrow)
 
     this.edit((editor) => {
-      const insertLineNumber = getTargetLineByLineNumber(document, lineNumber, arrow)
       editor.insert(
-        new Position(insertLineNumber, startAt),
-        getInsertTextByLanguage({ document, indents, text, insertLineNumber }),
+        new Position(insertLineNumber, 0),
+        getInsertTextByLanguage({ document, indents, text }),
       )
     })
   }).catch((error: Error) => {

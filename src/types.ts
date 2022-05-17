@@ -15,7 +15,6 @@ export type InsertPosition = 'before' | 'after'
 
 export interface WrapperContentParams {
   document: TextDocument
-  insertLineNumber: number
   indents: string
   text: string
 }

@@ -58,9 +58,14 @@
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "key": "ctrl+alt+backspace",
-        "mac": "control+cmd+backspace",
-        "command": "debugger-for-console.wrapper",
+        "key": "ctrl+shift+up",
+        "command": "debugger-for-console.wrapper.before",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "key": "ctrl+shift+backspace",
+        "mac": "control+shift+backspace",
+        "command": "debugger-for-console.wrapper.remove",
         "when": "editorTextFocus && !editorReadonly"
       }
     ],
@@ -122,8 +127,6 @@
     "rimraf": "^3.0.2",
     "tsup": "^5.12.1",
     "typescript": "^4.6.4",
-    "vite": "^2.9.8",
-    "vitest": "^0.12.4",
     "vsce": "^2.7.0"
   }
 }

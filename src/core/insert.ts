@@ -2,6 +2,7 @@ import { Position, Range, type TextEditor, window } from 'vscode'
 import type { InsertPosition, WrapperResolveParams } from '../types'
 
 import {
+  getConfiguration,
   getIndentsByLineNumber,
   getInsertTextByLanguage,
   getTargetLineByLineNumber,
@@ -30,11 +31,14 @@ async function insertVariableLogger(this: TextEditor, arrow: InsertPosition) {
     const indents = getIndentsByLineNumber(document, lineNumber)
     const insertLineNumber = getTargetLineByLineNumber(document, lineNumber, arrow)
 
-    this.edit((editor) => {
+    this.edit(async (editor) => {
       editor.insert(
         new Position(insertLineNumber, 0),
         getInsertTextByLanguage({ document, indents, text }),
       )
+
+      await Promise.resolve()
+      getConfiguration('autoSave') && document.save()
     })
   }).catch((error: Error) => {
     window.showInformationMessage(error.message)

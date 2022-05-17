@@ -92,6 +92,11 @@
       "type": "object",
       "title": "Debugger languages wrappers",
       "properties": {
+        "debugger-for-console.autoSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Save the file after insert debugger statements."
+        },
         "debugger-for-console.wrappers": {
           "type": "object",
           "description": "设置在不同语言的情况下创建的调试语句，可自行设定打印内容;\n使用 %s 来设置填充打印信息，如: console.log({ '%s': %s })",

@@ -12,17 +12,17 @@ This extension is available for free in the [Visual Studio Code Marketplace](htt
 
 ### keybindings
 #### Create the statement before the line
-<kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>↑(up)</kbd>
+<kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>↑(up)</kbd>
 
 ![](res/create-statement-before.gif)
 
 #### Create the statement after the line
-<kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>↓(down)</kbd>
+<kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>↓(down)</kbd>
 
 ![](res/create-statement-after.gif)
 
 #### Remove all statements on document
-<kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>←(backspace)</kbd>
+<kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>←(backspace)</kbd>
 
 ![](res/remove-all-statements.gif)
 
@@ -40,8 +40,11 @@ This extension is available for free in the [Visual Studio Code Marketplace](htt
 
 You can customize the statements you want to insert in the Settings.(You can also use this plug-in as a simple code snippet)
 ```json
+// preset
 {
-  // preset
+  // Whether to save automatically after inserting/deleting statements
+  "debugger-for-console.autoSave": false,
+  // Customize debugging statements for different languages
   "debugger-for-console.wrappers": {
     // Use `%s` to replace what you want to show
     "go": "fmt.Println(\"%s\", %s)",

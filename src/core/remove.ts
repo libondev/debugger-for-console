@@ -7,7 +7,7 @@ import {
   workspace,
 } from 'vscode'
 
-import { getDebuggerStatementByLanguage } from '../utils'
+import { getConfiguration, getDebuggerStatementByLanguage } from '../utils'
 
 async function removeInsertedLogger(this: TextEditor) {
   const { document } = this
@@ -24,6 +24,7 @@ async function removeInsertedLogger(this: TextEditor) {
   })
 
   await workspace.applyEdit(workspaceEdit)
+  getConfiguration('autoSave') && document.save()
   window.showInformationMessage('Remove all logger success.')
 }
 

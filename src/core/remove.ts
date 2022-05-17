@@ -12,19 +12,22 @@ async function removeInsertedLogger(this: TextEditor) {
   const { document } = this
   const statements = getAllStatementsByDocument(document)
 
-  if (statements.length) {
-    const editWorkspace = new WorkspaceEdit()
-    statements.forEach((statement) => {
-      editWorkspace.delete(document.uri, statement)
-    })
-
-    await workspace.applyEdit(editWorkspace)
-    window.showInformationMessage('Remove inserted logger success.')
-  } else {
+  if (!statements.length) {
     window.showInformationMessage('No logger statement found.')
+    return
   }
+
+  const editWorkspace = new WorkspaceEdit()
+  statements.forEach((statement) => {
+    editWorkspace.delete(document.uri, statement)
+  })
+
+  await workspace.applyEdit(editWorkspace)
+  window.showInformationMessage('Remove all logger success.')
 }
 
+// Get all debugging statements in the document
+// 在文档中获取所有的调试语句
 function getAllStatementsByDocument(document: TextDocument) {
   const content = document.getText()
   const regexp = new RegExp(

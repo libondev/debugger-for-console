@@ -11,14 +11,20 @@ async function insertVariableLogger(this: TextEditor, arrow: InsertPosition) {
   const { selection, document } = this
 
   new Promise<WrapperResolveParams>((resolve, reject) => {
+    const insertLine = document.lineAt(selection.end.line)
+
     // Gets a selection if there is one, otherwise gets a participle.
     // 如果有选中的文本则获取选中的文本的范围, 如果没有选中的文本则获取当前光标所在的分词(某个单词或字符组合)
     const range = selection.end.character - selection.start.character ?
       new Range(selection.start, selection.end) :
       this.document.getWordRangeAtPosition(selection.anchor)
 
+    if (!range && insertLine.isEmptyOrWhitespace) {
+      return resolve({ lineNumber: insertLine.lineNumber, text: '' })
+    }
+
     if (!range) {
-      return reject(new Error('No selection or word found'))
+      return reject(new Error('No selection or word found.'))
     }
 
     resolve({ lineNumber: range.start.line, text: document.getText(range) })

@@ -1,28 +1,29 @@
+import type { Range } from 'vscode'
 import {
-  Range,
   type TextDocument,
   type TextEditor,
   WorkspaceEdit,
   window,
   workspace,
 } from 'vscode'
+
 import { getDebuggerStatementByLanguage } from '../utils'
 
 async function removeInsertedLogger(this: TextEditor) {
   const { document } = this
-  const statements = getAllStatementsByDocument(document)
+  const statementRanges = getAllStatementsByDocument(document)
 
-  if (!statements.length) {
+  if (!statementRanges.length) {
     window.showInformationMessage('No logger statement found.')
     return
   }
 
-  const editWorkspace = new WorkspaceEdit()
-  statements.forEach((statement) => {
-    editWorkspace.delete(document.uri, statement)
+  const workspaceEdit = new WorkspaceEdit()
+  statementRanges.forEach((statement) => {
+    workspaceEdit.delete(document.uri, statement)
   })
 
-  await workspace.applyEdit(editWorkspace)
+  await workspace.applyEdit(workspaceEdit)
   window.showInformationMessage('Remove all logger success.')
 }
 
@@ -48,10 +49,7 @@ function getAllStatementsByDocument(document: TextDocument) {
       continue
     }
 
-    range = new Range(
-      document.positionAt(match.index),
-      document.positionAt(match.index + match[0].length),
-    )
+    range = document.lineAt(document.positionAt(match.index)).range
 
     !range.isEmpty && statements.push(range)
   } while (match)

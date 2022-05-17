@@ -14,17 +14,17 @@ This extension is available for free in the [Visual Studio Code Marketplace](htt
 #### Create the statement before the line
 <kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>↑(up)</kbd>
 
-![](./res/create-statement-before.gif)
+![](res/create-statement-before.gif)
 
 #### Create the statement after the line
 <kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>↓(down)</kbd>
 
-![](./res/create-statement-after.gif)
+![](res/create-statement-after.gif)
 
 #### Remove all statements on document
 <kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>←(backspace)</kbd>
 
-![](./res/remove-all-statements.gif)
+![](res/remove-all-statements.gif)
 
 
 ### command
@@ -60,7 +60,7 @@ You can customize the statements you want to insert in the Settings.(You can als
 }
 ```
 
-![custom-language-statement](./res/custom-language-statement.gif)
+![custom-language-statement](res/custom-language-statement.gif)
 
 ## The last sentence
 

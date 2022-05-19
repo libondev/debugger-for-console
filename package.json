@@ -100,7 +100,13 @@
           "type": "object",
           "description": "设置在不同语言的情况下创建的调试语句，可自行设定打印内容;\n使用 %s 来设置填充打印信息，如: console.log({ '%s': %s })",
           "default": {
+            "php": "var_dump(%s);",
             "go": "fmt.Println(\"%s\", %s)",
+            "javascript": "console.log(\"%s\", %s)",
+            "typescript": "console.log(\"%s\", %s)",
+            "typescriptreact": "console.log(\"%s\", %s)",
+            "javascriptreact": "console.log(\"%s\", %s)",
+            "csharp": "Console.Log(\"%s\", %s);",
             "default": "console.log('%s', %s)"
           }
         }

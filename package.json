@@ -64,7 +64,6 @@
       },
       {
         "key": "ctrl+shift+backspace",
-        "mac": "control+shift+backspace",
         "command": "debugger-for-console.wrapper.remove",
         "when": "editorTextFocus && !editorReadonly"
       }

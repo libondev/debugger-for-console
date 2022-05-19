@@ -11,9 +11,9 @@ export interface InsertStatementParams {
   editBuilder: TextEditorEdit
 }
 
-export type Configurations = 'wrappers' | 'autoSave'
-
 export type InsertPosition = 'before' | 'after'
+
+export type Configurations = 'wrappers' | 'autoSave'
 
 export interface WrapperContentParams {
   document: TextDocument

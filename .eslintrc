@@ -3,7 +3,7 @@
   "rules": {
     "curly": "off",
     "brace-style": "off",
-    "operator-linebreak": ["error", "after"],
+    "operator-linebreak": "off",
     "@typescript-eslint/brace-style": "off"
   }
 }

@@ -1,17 +1,14 @@
 import { workspace } from 'vscode'
-import type {
-  TextDocument,
-  WorkspaceConfiguration,
-} from 'vscode'
+import type { TextDocument } from 'vscode'
 
-import type { InsertPosition, WrapperContentParams } from './types'
+import type { Configurations, InsertPosition, WrapperContentParams } from './types'
 
 // Gets the configuration items for the plug-in in the workspace
 // 获取工作区中的插件配置项
-export function getConfiguration(
-  configKey: keyof WorkspaceConfiguration,
-) {
-  return workspace.getConfiguration(`debugger-for-console.${configKey}`)
+export function getConfiguration(configKey: 'autoSave'): boolean
+export function getConfiguration(configKey: 'wrappers'): Record<string, string>
+export function getConfiguration(configKey: Configurations) {
+  return workspace.getConfiguration('debugger-for-console').get(configKey)
 }
 
 // Gets the corresponding indentation size based on the line number
@@ -25,7 +22,7 @@ export function getIndentsByLineNumber(document: TextDocument, lineNumber: numbe
 // 读取用户设置文件中的配置(如果没有则会使用插件预设的配置), 获取对应的调试语句
 export function getDebuggerStatementByLanguage(document: TextDocument) {
   const wrappers = getConfiguration('wrappers')
-  return (wrappers[document.languageId] || wrappers.default) as string
+  return wrappers[document.languageId] || wrappers.default
 }
 
 // Gets a debug statement inserted into the document

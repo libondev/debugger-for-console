@@ -17,6 +17,7 @@ export type Configurations = 'wrappers' | 'autoSave'
 
 export interface WrapperContentParams {
   document: TextDocument
+  lineNumber: number
   indents: string
   text: string
 }

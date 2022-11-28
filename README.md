@@ -38,7 +38,7 @@ This extension is available for free in the [Visual Studio Code Marketplace](htt
 
 ## Configuration
 
-You can customize the statements you want to insert in the Settings.(You can also use this plug-in as a simple code snippet)
+You can customize the statements you want to insert in the Settings.(You can also use this plugin as a simple code snippet)
 ```json
 // preset
 {

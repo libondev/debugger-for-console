@@ -31,7 +31,7 @@ export function getInsertTextByLanguage({ document, text, indents, lineNumber }:
   const content = text.trim().replace(/\r\n/g, ',')
 
   return `${indents}${statement
-    .replace(/%s/gu, content.replace(/(\"|'|`)/gu, '\\$1'))
+    .replace(/%s/gu, content.replace(/("|'|`)/gu, '\\$1'))
     .replace(/\$line/gu, `${lineNumber + 1}`)
     .replace(/\$text/gu, content)
   }\r\n`

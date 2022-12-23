@@ -101,13 +101,13 @@
           "description": "设置在不同语言的情况下创建的调试语句，可自行设定打印内容;\n使用 %s 来设置填充打印信息，如: console.log({ '%s': $text })\n可使用 `$line` 获取变量原始行号, `$text` 获取打印内容",
           "default": {
             "php": "var_dump($text);",
-            "go": "fmt.Println(\"line number: $line, %s\", $text)",
-            "csharp": "Console.Log(\"line number: $line, %s\", $text);",
-            "javascript": "console.log(\"line number: $line, %s\", $text)",
-            "typescript": "console.log(\"line number: $line, %s\", $text)",
-            "typescriptreact": "console.log(\"line number: $line, %s\", $text)",
-            "javascriptreact": "console.log(\"line number: $line, %s\", $text)",
-            "default": "console.log('line number: $line, %s', $text)"
+            "go": "fmt.Println(\"$line: %s\", $text)",
+            "csharp": "Console.Log(\"$line: %s\", $text);",
+            "javascript": "console.log(\"$line: %s\", $text)",
+            "typescript": "console.log(\"$line: %s\", $text)",
+            "typescriptreact": "console.log(\"$line: %s\", $text)",
+            "javascriptreact": "console.log(\"$line: %s\", $text)",
+            "default": "console.log('$line: %s', $text)"
           }
         }
       }

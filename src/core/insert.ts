@@ -34,7 +34,13 @@ async function insertVariableLogger(this: TextEditor, arrow: InsertPosition) {
     this.edit(async (editor) => {
       editor.insert(
         new Position(insertLineNumber, 0),
-        getInsertTextByLanguage({ document, indents, lineNumber, text }),
+        getInsertTextByLanguage({
+          text,
+          indents,
+          document,
+          lineNumber,
+          offset: arrow === 'before' ? +2 : +1,
+        }),
       )
 
       await Promise.resolve()

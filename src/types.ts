@@ -19,6 +19,7 @@ export interface WrapperContentParams {
   document: TextDocument
   lineNumber: number
   indents: string
+  offset: number
   text: string
 }
 

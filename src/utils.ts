@@ -2,6 +2,8 @@ import { workspace } from 'vscode'
 import type { TextDocument } from 'vscode'
 import type { Configurations, InsertPosition, WrapperContentParams } from './types'
 
+const EMOJIS = ['🎈', '🎆', '🎇', '✨', '🎉', '🎊', '🎃', '🎄', '🎍', '🎏', '🎑', '🎐', '🧶', '🎡', '👑', '⚽', '⚾', '🥎', '🏀', '🏐', '🎮', '📦']
+
 // Gets the configuration items for the plug-in in the workspace
 // 获取工作区中的插件配置项
 export function getConfiguration(configKey: 'autoSave'): boolean
@@ -26,13 +28,13 @@ export function getDebuggerStatementByLanguage(document: TextDocument) {
 
 // Gets a debug statement inserted into the document
 // 获取插入到文档中的调试语句
-export function getInsertTextByLanguage({ document, text, indents, lineNumber }: WrapperContentParams) {
+export function getInsertTextByLanguage({ document, text, indents, lineNumber, offset }: WrapperContentParams) {
   const statement = getDebuggerStatementByLanguage(document)
   const content = text.trim().replace(/\r\n/g, ',')
 
   return `${indents}${statement
     .replace(/%s/gu, content.replace(/("|'|`)/gu, '\\$1'))
-    .replace(/\$line/gu, `${lineNumber + 1}`)
+    .replace(/\$line/gu, `${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]} ${lineNumber + offset}`)
     .replace(/\$text/gu, content)
   }\r\n`
 }

@@ -12,7 +12,7 @@
     "url": "https://github.com/libondev/debugger-for-console"
   },
   "main": "./dist/index.js",
-  "publisher": "libon",
+  "publisher": "banlify",
   "icon": "res/icon.png",
   "files": [
     "dist"

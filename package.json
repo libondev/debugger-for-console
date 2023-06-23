@@ -1,15 +1,15 @@
 {
   "name": "debugger-for-console",
   "displayName": "Debugger for Console",
-  "version": "0.3.7",
+  "version": "1.0.0",
   "packageManager": "pnpm@6.32.11",
   "description": "Quickly create console debugging information for multiple languages.",
   "keywords": [],
   "license": "MIT",
-  "author": "Chestnut <banlify@163.com>",
+  "author": "Libon <bon.li@outlook.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/banlify/debugger-for-console"
+    "url": "https://github.com/libondev/debugger-for-console"
   },
   "main": "./dist/index.js",
   "publisher": "banlify",
@@ -18,9 +18,9 @@
     "dist"
   ],
   "sideEffects": false,
-  "homepage": "https://github.com/banlify/debugger-for-console#readme",
+  "homepage": "https://github.com/libondev/debugger-for-console#readme",
   "bugs": {
-    "url": "https://github.com/banlify/debugger-for-console/issues"
+    "url": "https://github.com/libondev/debugger-for-console/issues"
   },
   "engines": {
     "vscode": "^1.65.0"

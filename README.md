@@ -1,12 +1,14 @@
 # Debugger for Console
 
+## CHANGE
+> [Libon](https://github.com/libondev) is now the owner of this extension.
+
 Quickly create console debugging information for multiple languages. \
 This plugin uses [antfu/starter-vscode](https://github.com/antfu/starter-vscode) as the initial template, thank you [antfu](https://github.com/antfu).
 
 ## Installing
 
 This extension is available for free in the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=banlify.debugger-for-console).
-
 
 ## Usage
 

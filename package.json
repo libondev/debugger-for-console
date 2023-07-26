@@ -2,7 +2,7 @@
   "name": "debugger-for-console",
   "displayName": "Debugger for Console",
   "version": "0.4.0",
-  "packageManager": "pnpm@6.32.11",
+  "packageManager": "pnpm@6.35.1",
   "description": "Quickly create console debugging information for multiple languages.",
   "keywords": [],
   "license": "MIT",
@@ -22,16 +22,39 @@
   "bugs": {
     "url": "https://github.com/libondev/debugger-for-console/issues"
   },
+  "scripts": {
+    "build": "npm run typecheck && tsup src/index.ts --external vscode",
+    "dev": "nr build --watch",
+    "lint": "eslint . --fix",
+    "vscode:prepublish": "nr build",
+    "pack": "vsce package --no-dependencies",
+    "release": "bumpp --commit --push --tag && nr publish",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.39.8",
+    "@antfu/ni": "^0.21.5",
+    "@babel/types": "^7.22.5",
+    "@types/node": "^18.17.1",
+    "@types/vscode": "1.80.0",
+    "bumpp": "^9.1.1",
+    "eslint": "^8.45.0",
+    "pnpm": "^6.35.1",
+    "rimraf": "^3.0.2",
+    "tsup": "^7.1.0",
+    "typescript": "^4.9.5",
+    "@vscode/vsce": "^2.19.0"
+  },
   "engines": {
-    "vscode": "^1.65.0"
+    "vscode": "^1.50.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
     "onCommand:debugger-for-console.wrapper",
-    "onCommand:debugger-for-console.wrapper.before",
-    "onCommand:debugger-for-console.wrapper.remove"
+    "onCommand:debugger-for-console.wrapper.remove",
+    "onCommand:debugger-for-console.wrapper.cancel"
   ],
   "contributes": {
     "commands": [
@@ -41,8 +64,8 @@
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Insert debugger statements on before",
-        "command": "debugger-for-console.wrapper.before",
+        "title": "Cancel insert debugger statements",
+        "command": "debugger-for-console.wrapper.cancel",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
@@ -58,8 +81,8 @@
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "key": "ctrl+shift+up",
-        "command": "debugger-for-console.wrapper.before",
+        "key": "ctrl+shift+/",
+        "command": "debugger-for-console.wrapper.cancel",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
@@ -68,25 +91,6 @@
         "when": "editorTextFocus && !editorReadonly"
       }
     ],
-    "menus": {
-      "editor/context": [
-        {
-          "group": "navigation",
-          "command": "debugger-for-console.wrapper",
-          "when": "editorTextFocus && !editorReadonly"
-        },
-        {
-          "group": "navigation",
-          "command": "debugger-for-console.wrapper.before",
-          "when": "editorTextFocus && !editorReadonly"
-        },
-        {
-          "group": "navigation",
-          "command": "debugger-for-console.wrapper.remove",
-          "when": "editorTextFocus && !editorReadonly"
-        }
-      ]
-    },
     "configuration": {
       "type": "object",
       "title": "Debugger languages wrappers",
@@ -98,7 +102,7 @@
         },
         "debugger-for-console.wrappers": {
           "type": "object",
-          "description": "设置在不同语言的情况下创建的调试语句，可自行设定打印内容;\n使用 %s 来设置填充打印信息，如: console.log({ '%s': $text })\n可使用 `$line` 获取变量原始行号, `$text` 获取打印内容",
+          "description": "Wrappers for different languages.",
           "default": {
             "php": "var_dump($text);",
             "go": "fmt.Println(\"$line: %s\", $text)",
@@ -112,30 +116,5 @@
         }
       }
     }
-  },
-  "scripts": {
-    "build": "tsup src/index.ts --external vscode",
-    "dev": "nr build --watch",
-    "lint": "eslint . --fix",
-    "vscode:prepublish": "nr build",
-    "pack": "vsce package --no-dependencies --allow-star-activation",
-    "test": "vitest",
-    "typecheck": "tsc --noEmit",
-    "release": "bumpp --commit --push --tag && nr publish"
-  },
-  "devDependencies": {
-    "@antfu/eslint-config": "^0.23.0",
-    "@antfu/ni": "^0.16.2",
-    "@babel/types": "^7.17.10",
-    "@types/node": "^17.0.32",
-    "@types/vscode": "1.65.0",
-    "bumpp": "^7.1.1",
-    "eslint": "^8.15.0",
-    "esno": "^0.14.1",
-    "pnpm": "^6.32.11",
-    "rimraf": "^3.0.2",
-    "tsup": "^5.12.1",
-    "typescript": "^4.6.4",
-    "vsce": "^2.7.0"
   }
 }

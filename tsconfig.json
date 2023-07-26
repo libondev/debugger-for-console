@@ -10,5 +10,11 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    ".vscode-test",
+    "src/test/files",
+    "dist/test/files"
+  ],
 }

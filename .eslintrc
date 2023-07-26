@@ -5,14 +5,5 @@
     "brace-style": "off",
     "operator-linebreak": "off",
     "@typescript-eslint/brace-style": "off"
-  },
-  "exclude": [
-    "node_modules",
-    ".vscode-test",
-    "src/test/files",
-    "out/test/files"
-  ],
-  "linterOptions": {
-    "exclude": ["src/test/files/js/**"]
   }
 }

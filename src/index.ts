@@ -8,7 +8,7 @@ import type {
 import {
   cancelDebuggers,
   createDebuggers,
-  removeDebuggers,
+  removeDebuggers
 } from './commands/index'
 
 function resolveWorkbenchConfigWithCommands(workspaceConfig: WorkspaceConfiguration) {

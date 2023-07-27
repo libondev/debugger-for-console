@@ -55,27 +55,27 @@
     "onCommand:debugger-for-console.wrapper",
     "onCommand:debugger-for-console.before",
     "onCommand:debugger-for-console.remove",
-    "onCommand:debugger-for-console.cancel"
+    "onCommand:debugger-for-console.toggle"
   ],
   "contributes": {
     "commands": [
       {
-        "title": "Insert debugger statements on after",
+        "title": "DebuggerForConsole: Insert a debug statement after it",
         "command": "debugger-for-console.wrapper",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Insert debugger statements on before",
+        "title": "DebuggerForConsole: Insert a debug statement before it",
         "command": "debugger-for-console.before",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Cancel insert debugger statements",
-        "command": "debugger-for-console.cancel",
+        "title": "DebuggerForConsole: Toggle all debugger statements",
+        "command": "debugger-for-console.toggle",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Remove all debugger statements",
+        "title": "DebuggerForConsole: Remove all debugger statements",
         "command": "debugger-for-console.remove",
         "when": "editorTextFocus && !editorReadonly"
       }
@@ -93,7 +93,7 @@
       },
       {
         "key": "ctrl+shift+/",
-        "command": "debugger-for-console.cancel",
+        "command": "debugger-for-console.toggle",
         "when": "editorTextFocus && !editorReadonly"
       },
       {

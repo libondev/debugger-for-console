@@ -1,19 +1,16 @@
 import { window } from 'vscode'
-import type { WorkspaceConfiguration } from 'vscode'
+import { getDebuggerStatement } from '../utils/index'
 
-export function createDebuggers(config: WorkspaceConfiguration) {
-  return {
-    command: 'debugger-for-console.wrapper',
-    handler: () => {
-      const editor = window.activeTextEditor
-    },
-  }
+export async function createDebuggers() {
+  const editor = window.activeTextEditor!
+
+  // const logger = await getDebuggerStatement(editor, 'this is a debugger statement.')
+
+  // console.log(await getDebuggerStatement(editor, 'this is a debugger statement.'))
+
+  console.log(await getDebuggerStatement(editor))
 }
 
-export function createDebuggersBefore(config: WorkspaceConfiguration) {
-  return {
-    command: 'debugger-for-console.before',
-    handler: () => {
-    },
-  }
+export async function createDebuggersBefore() {
+
 }

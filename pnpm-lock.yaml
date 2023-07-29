@@ -19,6 +19,9 @@ devDependencies:
   '@vscode/vsce':
     specifier: ^2.19.0
     version: 2.19.0
+  acorn:
+    specifier: ^8.10.0
+    version: 8.10.0
   bumpp:
     specifier: ^9.1.1
     version: 9.1.1
@@ -745,7 +748,7 @@ packages:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
     dependencies:
-      debug: 4.3.3
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -2023,7 +2026,7 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.3
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
     dev: true

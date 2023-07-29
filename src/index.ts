@@ -1,36 +1,19 @@
-import { commands, window, workspace } from 'vscode'
+import { type WorkspaceConfiguration, commands, window } from 'vscode'
 
-import type {
-  WorkspaceConfiguration,
-} from 'vscode'
+import { commandsMapping } from './commands/index'
+import { updateUserConfig } from './commands/update'
 
-import {
-  createDebuggers,
-  createDebuggersBefore,
-  removeDebuggers,
-  toggleDebuggers,
-} from './commands/index'
-
-function resolveWorkbenchConfigWithCommands(workspaceConfig: WorkspaceConfiguration) {
-  const config = workspaceConfig
-
-  return [
-    createDebuggers(config),
-    toggleDebuggers(config),
-    removeDebuggers(config),
-    createDebuggersBefore(config),
-  ]
-}
+export const resolvedConfig = {} as WorkspaceConfiguration
 
 export function activate(): void {
   if (!window.activeTextEditor) {
     return
   }
 
-  const config = workspace.getConfiguration('debugger-for-console')
-  const resolveCommand = resolveWorkbenchConfigWithCommands(config)
+  for (const command of Object.entries(commandsMapping)) {
+    commands.registerCommand(...command)
+  }
 
-  resolveCommand.forEach((command) => {
-    commands.registerCommand(command.command, command.handler)
-  })
+  // only update user config when extension is activated
+  updateUserConfig()
 }

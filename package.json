@@ -37,22 +37,24 @@
     "@babel/types": "^7.22.5",
     "@types/node": "^18.17.1",
     "@types/vscode": "1.80.0",
+    "@vscode/vsce": "^2.19.0",
+    "acorn": "^8.10.0",
     "bumpp": "^9.1.1",
     "eslint": "^8.45.0",
     "pnpm": "^6.35.1",
     "rimraf": "^3.0.2",
     "tsup": "^7.1.0",
-    "typescript": "^4.9.5",
-    "@vscode/vsce": "^2.19.0"
+    "typescript": "^4.9.5"
   },
   "engines": {
-    "vscode": "^1.50.0"
+    "vscode": "^1.55.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Debuggers"
   ],
   "activationEvents": [
-    "onCommand:debugger-for-console.wrapper",
+    "onCommand:debugger-for-console.create",
     "onCommand:debugger-for-console.before",
     "onCommand:debugger-for-console.remove",
     "onCommand:debugger-for-console.toggle"
@@ -61,7 +63,7 @@
     "commands": [
       {
         "title": "DebuggerForConsole: Insert a debug statement after it",
-        "command": "debugger-for-console.wrapper",
+        "command": "debugger-for-console.create",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
@@ -78,12 +80,17 @@
         "title": "DebuggerForConsole: Remove all debugger statements",
         "command": "debugger-for-console.remove",
         "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "title": "DebuggerForConsole: Update latest workbench configuration",
+        "command": "debugger-for-console.update",
+        "when": "editorTextFocus && !editorReadonly"
       }
     ],
     "keybindings": [
       {
         "key": "ctrl+shift+down",
-        "command": "debugger-for-console.wrapper",
+        "command": "debugger-for-console.create",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
@@ -104,25 +111,53 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "Debugger languages wrappers",
+      "title": "debugger-for-console",
       "properties": {
+        "debugger-for-console.semi": {
+          "type": "boolean",
+          "default": false,
+          "description": "Insert the semicolon in the debug statement."
+        },
+        "debugger-for-console.emoji": {
+          "type": "boolean",
+          "default": true,
+          "description": "Insert the random emoji in the debug statement."
+        },
+        "debugger-for-console.quote": {
+          "type": "string",
+          "enum": ["'", "\"", "`"],
+          "default": "'",
+          "description": "Insert the quoted text in the debug statement."
+        },
+        "debugger-for-console.fileName": {
+          "type": "boolean",
+          "default": true,
+          "description": "Insert the filename in the debug statement."
+        },
         "debugger-for-console.autoSave": {
           "type": "boolean",
           "default": false,
           "description": "Save the file after insert debugger statements."
         },
+        "debugger-for-console.lineNumber": {
+          "type": "boolean",
+          "default": true,
+          "description": "Insert the line number in the debug statement."
+        },
+        "debugger-for-console.symbols": {
+          "type": "boolean",
+          "default": false,
+          "description": "Insert the scope symbols in the debug statement. \nTips: Enabling this option can make your debug statements very very very loooooong,\nbecause it represents your code call level."
+        },
         "debugger-for-console.wrappers": {
           "type": "object",
-          "description": "Wrappers for different languages.",
+          "description": "Wrapper method for debug statements, or set to debugger.",
           "default": {
-            "php": "var_dump($text);",
-            "go": "fmt.Println(\"$line: %s\", $text)",
-            "csharp": "Console.Log(\"$line: %s\", $text);",
-            "javascript": "console.log(\"$line: %s\", $text)",
-            "typescript": "console.log(\"$line: %s\", $text)",
-            "typescriptreact": "console.log(\"$line: %s\", $text)",
-            "javascriptreact": "console.log(\"$line: %s\", $text)",
-            "default": "console.log('$line: %s', $text)"
+            "php": "var_dump",
+            "go": "fmt.Println",
+            "csharp": "Console.Log",
+            "javascript": "console.log",
+            "default": "console.log"
           }
         }
       }

@@ -4,7 +4,6 @@
 > [Libon](https://github.com/libondev) is now the owner of this extension.
 
 Quickly create console debugging information for multiple languages. \
-This plugin uses [antfu/starter-vscode](https://github.com/antfu/starter-vscode) as the initial template, thank you [antfu](https://github.com/antfu).
 
 ## Installing
 
@@ -66,7 +65,3 @@ You can customize the statements you want to insert in the Settings.(You can als
 ```
 
 ![custom-language-statement](res/custom-language-statement.gif)
-
-## The last sentence
-
-AnthonyFu you are my god!!!

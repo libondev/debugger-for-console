@@ -1,16 +1,34 @@
-import { window } from 'vscode'
-import { getDebuggerStatement } from '../utils/index'
+import { Position, WorkspaceEdit, window, workspace } from 'vscode'
+import { getDebuggerStatement, getInsertLineIndents } from '../utils/index'
+import { documentAutoSaver, getScopeSymbols } from '../features'
 
-export async function createDebuggers() {
+async function create(direction: 'before' | 'after' = 'after') {
   const editor = window.activeTextEditor!
 
-  // const logger = await getDebuggerStatement(editor, 'this is a debugger statement.')
+  const fileUri = editor.document.uri
+  const workspaceEdit = new WorkspaceEdit()
+  const selectionsLength = editor.selections.length
 
-  // console.log(await getDebuggerStatement(editor, 'this is a debugger statement.'))
+  const scopeSymbols = await getScopeSymbols(editor)
 
-  console.log(await getDebuggerStatement(editor))
+  for (let i = 0; i < selectionsLength; i++) {
+    const selection = editor.selections[i]
+    const line = selection.end.line + (direction === 'before' ? 0 : 1)
+    const indents = getInsertLineIndents(editor, line)
+    const debuggerStatement = getDebuggerStatement(editor, selection, scopeSymbols)
+
+    workspaceEdit.insert(
+      fileUri,
+      new Position(line, 0),
+      `${indents}${debuggerStatement}`,
+    )
+  }
+
+  await workspace.applyEdit(workspaceEdit)
+
+  documentAutoSaver(editor)
 }
 
-export async function createDebuggersBefore() {
+export const createDebuggers = create.bind(null, 'after')
 
-}
+export const createDebuggersBefore = create.bind(null, 'before')

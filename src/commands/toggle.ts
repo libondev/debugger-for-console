@@ -1,3 +1,7 @@
-export function toggleDebuggers() {
+export function commentDebuggers() {
+
+}
+
+export function uncommentDebuggers() {
 
 }

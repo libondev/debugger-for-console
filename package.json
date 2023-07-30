@@ -11,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/libondev/debugger-for-console"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/extension.js",
   "publisher": "banlify",
   "icon": "res/icon.png",
   "files": [
@@ -23,7 +23,7 @@
     "url": "https://github.com/libondev/debugger-for-console/issues"
   },
   "scripts": {
-    "build": "npm run typecheck && tsup src/index.ts --external vscode",
+    "build": "npm run typecheck && tsup src/extension.ts --external vscode",
     "dev": "nr build --watch",
     "lint": "eslint . --fix",
     "vscode:prepublish": "nr build",
@@ -38,7 +38,6 @@
     "@types/node": "^18.17.1",
     "@types/vscode": "1.80.0",
     "@vscode/vsce": "^2.19.0",
-    "acorn": "^8.10.0",
     "bumpp": "^9.1.1",
     "eslint": "^8.45.0",
     "pnpm": "^6.35.1",
@@ -129,10 +128,10 @@
           "default": "'",
           "description": "Insert the quoted text in the debug statement."
         },
-        "debugger-for-console.fileName": {
-          "type": "boolean",
-          "default": true,
-          "description": "Insert the filename in the debug statement."
+        "debugger-for-console.fileDepth": {
+          "type": "number",
+          "default": 2,
+          "description": "The path depth of the current file. (Set to 0 to disable the path)."
         },
         "debugger-for-console.autoSave": {
           "type": "boolean",

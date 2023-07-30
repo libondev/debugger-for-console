@@ -1,12 +1,15 @@
 import type { DocumentSymbol, Position } from 'vscode'
 import { commands } from 'vscode'
-import type { ActiveTextEditor } from '../types/global'
+import { resolvedConfig } from '../extension'
 
-export async function getCurrentScopeSymbol({ document: { uri }, selection: { active } }: ActiveTextEditor) {
+export async function getCurrentScopeSymbol({
+  document: { uri },
+  selection: { active },
+}: ActiveTextEditor) {
   const symbols = await commands.executeCommand<DocumentSymbol[]>('vscode.executeDocumentSymbolProvider', uri)
 
   if (!symbols) {
-    return ''
+    return []
   }
 
   let scopeSymbols: DocumentSymbol[] = []
@@ -18,7 +21,8 @@ export async function getCurrentScopeSymbol({ document: { uri }, selection: { ac
     }
   }
 
-  return scopeSymbols.map(({ name }) => name).join(' > ')
+  return scopeSymbols.reduce((acc, { name }) => `${acc} > ${name}`, '').slice(3)
+  // return scopeSymbols
 }
 
 function findNestedSymbols(symbol: DocumentSymbol, position: Position): DocumentSymbol[] {
@@ -32,4 +36,12 @@ function findNestedSymbols(symbol: DocumentSymbol, position: Position): Document
   }
 
   return nestedSymbols
+}
+
+export async function getScopeSymbols(editor: ActiveTextEditor) {
+  if (!resolvedConfig.get('symbols')) {
+    return ''
+  }
+
+  return `@${await getCurrentScopeSymbol(editor)}`
 }

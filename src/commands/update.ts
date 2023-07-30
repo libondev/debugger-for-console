@@ -1,9 +1,13 @@
 import { workspace } from 'vscode'
-import { resolvedConfig } from '../index'
+import { resolvedConfig } from '../extension'
+import { quote, semi } from '../features/optional'
 
 export function updateUserConfig() {
-  Object.assign(
+  const config = Object.assign(
     resolvedConfig,
     workspace.getConfiguration('debugger-for-console'),
   )
+
+  quote.update(config.get('quote')!)
+  semi.update(config.get('semi') ? ';' : '')
 }

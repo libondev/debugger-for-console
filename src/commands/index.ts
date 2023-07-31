@@ -1,6 +1,6 @@
+import { commentDebuggers, uncommentDebuggers } from './comments'
 import { createDebuggers, createDebuggersBefore } from './create'
 import { removeDebuggers } from './remove'
-import { commentDebuggers, uncommentDebuggers } from './toggle'
 import { updateUserConfig } from './update'
 
 export const commandsMapping = {

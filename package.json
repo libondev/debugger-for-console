@@ -56,7 +56,8 @@
     "onCommand:debugger-for-console.create",
     "onCommand:debugger-for-console.before",
     "onCommand:debugger-for-console.remove",
-    "onCommand:debugger-for-console.toggle"
+    "onCommand:debugger-for-console.comment",
+    "onCommand:debugger-for-console.uncomment"
   ],
   "contributes": {
     "commands": [
@@ -99,7 +100,12 @@
       },
       {
         "key": "ctrl+shift+/",
-        "command": "debugger-for-console.toggle",
+        "command": "debugger-for-console.comment",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "key": "ctrl+shift+left",
+        "command": "debugger-for-console.uncomment",
         "when": "editorTextFocus && !editorReadonly"
       },
       {

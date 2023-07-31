@@ -20,7 +20,7 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
   return lineContent.slice(start, word.end.character)
 }
 
-export function getVariables({ document }: ActiveTextEditor, selection: Selection): string {
+export function getVariables(document: TextDocument, selection: Selection): string {
   if (selection.isEmpty) {
     return getWordAtPosition(document, selection.anchor)
   }

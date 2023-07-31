@@ -1,4 +1,4 @@
-import type { Selection } from 'vscode'
+import type { Selection, TextEditor } from 'vscode'
 import { lazyValue } from '../utils/index'
 import { resolvedConfig } from '../extension'
 
@@ -18,7 +18,7 @@ export function getLineNumber(selection: Selection) {
   return resolvedConfig.get('lineNumber') ? `:${selection.active.line + 1}` : ''
 }
 
-export function documentAutoSaver(editor: ActiveTextEditor) {
+export function documentAutoSaver(editor: TextEditor) {
   if (!resolvedConfig.get('autoSave')) {
     return
   }

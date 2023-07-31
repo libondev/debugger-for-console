@@ -5,7 +5,7 @@ import { documentAutoSaver, getScopeSymbols } from '../features'
 async function create(direction: 'before' | 'after' = 'after') {
   const editor = window.activeTextEditor!
 
-  const fileUri = editor.document.uri
+  const { document, document: { uri } } = editor
   const workspaceEdit = new WorkspaceEdit()
   const selectionsLength = editor.selections.length
 
@@ -14,11 +14,11 @@ async function create(direction: 'before' | 'after' = 'after') {
   for (let i = 0; i < selectionsLength; i++) {
     const selection = editor.selections[i]
     const line = selection.end.line + (direction === 'before' ? 0 : 1)
-    const indents = getInsertLineIndents(editor, line)
-    const debuggerStatement = getDebuggerStatement(editor, selection, scopeSymbols)
+    const indents = getInsertLineIndents(document, line)
+    const debuggerStatement = getDebuggerStatement(document, selection, scopeSymbols)
 
     workspaceEdit.insert(
-      fileUri,
+      uri,
       new Position(line, 0),
       `${indents}${debuggerStatement}`,
     )

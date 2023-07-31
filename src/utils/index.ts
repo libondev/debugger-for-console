@@ -1,4 +1,4 @@
-import type { Selection } from 'vscode'
+import type { Range, Selection, TextDocument } from 'vscode'
 import { resolvedConfig } from '../extension'
 import {
   getFileDepth,
@@ -23,7 +23,7 @@ export function lazyValue<Value>() {
 }
 
 export function getInsertLineIndents(
-  { document }: ActiveTextEditor,
+  document: TextDocument,
   cursorLineNumber: number,
 ) {
   const spaceNumber = document.lineAt(cursorLineNumber).firstNonWhitespaceCharacterIndex
@@ -33,8 +33,8 @@ export function getInsertLineIndents(
 
 // This damn JavaScript language types
 const JAVASCRIPT_ALIAS = ['javascript', 'typescript', 'javascriptreact', 'typescript', 'vue', 'svelte']
-export function getLanguageStatement(editor: ActiveTextEditor): string {
-  const languageId = editor.document.languageId
+export function getLanguageStatement(document: TextDocument): string {
+  const languageId = document.languageId
 
   if (JAVASCRIPT_ALIAS.includes(languageId)) {
     return resolvedConfig.get('wrappers.javascript')!
@@ -43,8 +43,8 @@ export function getLanguageStatement(editor: ActiveTextEditor): string {
   }
 }
 
-export function getDebuggerStatement(editor: ActiveTextEditor, selection: Selection, symbols: string) {
-  const statement = getLanguageStatement(editor)
+export function getDebuggerStatement(document: TextDocument, selection: Selection, symbols: string) {
+  const statement = getLanguageStatement(document)
 
   if (!statement) {
     throw new Error('No language statement found.')
@@ -52,8 +52,27 @@ export function getDebuggerStatement(editor: ActiveTextEditor, selection: Select
     return `${statement}${semi}`
   }
 
-  const text = getVariables(editor, selection)
+  const text = getVariables(document, selection)
 
-  return `${statement}(${quote.$}${getRandomEmoji()}${getFileDepth(editor)}${
+  return `${statement}(${quote.$}${getRandomEmoji()}${getFileDepth(document)}${
     getLineNumber(selection)}${symbols}「${text.replace(/['"`]/g, '')}」${quote.$}, ${text})${semi.$}\n`
+}
+
+export function getAllStatementRanges(document: TextDocument) {
+  const text = document.getText()
+  const regexp = new RegExp(getLanguageStatement(document), 'gm')
+
+  let range: Range
+  const statements = [...text.matchAll(regexp)].reduce((acc, match) => {
+    // TODO: multiple line statements
+    range = document.lineAt(document.positionAt(match.index!).line).range
+
+    if (!range.isEmpty) {
+      acc.push(range)
+    }
+
+    return acc
+  }, [] as Range[])
+
+  return statements
 }

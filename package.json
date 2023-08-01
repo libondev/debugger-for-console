@@ -2,7 +2,7 @@
   "name": "debugger-for-console",
   "displayName": "Debugger for Console",
   "version": "0.4.0",
-  "packageManager": "pnpm@6.32.11",
+  "packageManager": "pnpm@6.35.1",
   "description": "Quickly create console debugging information for multiple languages.",
   "keywords": [],
   "license": "MIT",
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/libondev/debugger-for-console"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/extension.js",
   "publisher": "banlify",
   "icon": "res/icon.png",
   "files": [
@@ -22,120 +22,152 @@
   "bugs": {
     "url": "https://github.com/libondev/debugger-for-console/issues"
   },
+  "scripts": {
+    "build": "npm run typecheck && tsup src/extension.ts --external vscode",
+    "dev": "nr build --watch",
+    "lint": "eslint src/**/* --fix",
+    "vscode:prepublish": "nr build",
+    "pack": "vsce package --no-dependencies",
+    "release": "bumpp --commit --push --tag && nr publish",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.39.8",
+    "@antfu/ni": "^0.21.5",
+    "@babel/types": "^7.22.5",
+    "@types/node": "^18.17.1",
+    "@types/vscode": "1.80.0",
+    "@vscode/vsce": "^2.19.0",
+    "bumpp": "^9.1.1",
+    "eslint": "^8.45.0",
+    "pnpm": "^6.35.1",
+    "rimraf": "^3.0.2",
+    "tsup": "^7.1.0",
+    "typescript": "^4.9.5"
+  },
   "engines": {
-    "vscode": "^1.65.0"
+    "vscode": "^1.55.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Debuggers"
   ],
   "activationEvents": [
-    "onCommand:debugger-for-console.wrapper",
-    "onCommand:debugger-for-console.wrapper.before",
-    "onCommand:debugger-for-console.wrapper.remove"
+    "onCommand:debugger-for-console.create",
+    "onCommand:debugger-for-console.before",
+    "onCommand:debugger-for-console.remove",
+    "onCommand:debugger-for-console.comment",
+    "onCommand:debugger-for-console.uncomment"
   ],
   "contributes": {
     "commands": [
       {
-        "title": "Insert debugger statements on after",
-        "command": "debugger-for-console.wrapper",
+        "title": "DebuggerForConsole: Insert a debug statement after it",
+        "command": "debugger-for-console.create",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Insert debugger statements on before",
-        "command": "debugger-for-console.wrapper.before",
+        "title": "DebuggerForConsole: Insert a debug statement before it",
+        "command": "debugger-for-console.before",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Remove all debugger statements",
-        "command": "debugger-for-console.wrapper.remove",
+        "title": "DebuggerForConsole: Comment all debugger statements",
+        "command": "debugger-for-console.comment",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "title": "DebuggerForConsole: Uncomment all debugger statements",
+        "command": "debugger-for-console.uncomment",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "title": "DebuggerForConsole: Remove all debugger statements",
+        "command": "debugger-for-console.remove",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "title": "DebuggerForConsole: Update latest workbench configuration",
+        "command": "debugger-for-console.update",
         "when": "editorTextFocus && !editorReadonly"
       }
     ],
     "keybindings": [
       {
         "key": "ctrl+shift+down",
-        "command": "debugger-for-console.wrapper",
+        "command": "debugger-for-console.create",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
         "key": "ctrl+shift+up",
-        "command": "debugger-for-console.wrapper.before",
+        "command": "debugger-for-console.before",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "key": "ctrl+shift+/",
+        "command": "debugger-for-console.comment",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "key": "ctrl+shift+left",
+        "command": "debugger-for-console.uncomment",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
         "key": "ctrl+shift+backspace",
-        "command": "debugger-for-console.wrapper.remove",
+        "command": "debugger-for-console.remove",
         "when": "editorTextFocus && !editorReadonly"
       }
     ],
-    "menus": {
-      "editor/context": [
-        {
-          "group": "navigation",
-          "command": "debugger-for-console.wrapper",
-          "when": "editorTextFocus && !editorReadonly"
-        },
-        {
-          "group": "navigation",
-          "command": "debugger-for-console.wrapper.before",
-          "when": "editorTextFocus && !editorReadonly"
-        },
-        {
-          "group": "navigation",
-          "command": "debugger-for-console.wrapper.remove",
-          "when": "editorTextFocus && !editorReadonly"
-        }
-      ]
-    },
     "configuration": {
       "type": "object",
-      "title": "Debugger languages wrappers",
+      "title": "debugger-for-console",
       "properties": {
+        "debugger-for-console.emoji": {
+          "type": "boolean",
+          "default": true,
+          "description": "Insert the random emoji in the debug statement."
+        },
+        "debugger-for-console.quote": {
+          "type": "string",
+          "enum": ["'", "\"", "`"],
+          "default": "'",
+          "description": "Insert the quoted text in the debug statement."
+        },
+        "debugger-for-console.fileDepth": {
+          "type": "number",
+          "default": 2,
+          "description": "The path depth of the current file. (Set to 0 to disable the path)."
+        },
         "debugger-for-console.autoSave": {
           "type": "boolean",
           "default": false,
           "description": "Save the file after insert debugger statements."
         },
+        "debugger-for-console.lineNumber": {
+          "type": "boolean",
+          "default": true,
+          "description": "Insert the line number in the debug statement."
+        },
+        "debugger-for-console.symbols": {
+          "type": "boolean",
+          "default": false,
+          "description": "Insert the scope symbols in the debug statement. \nTips: Enabling this option can make your debug statements very very very loooooong,\nbecause it represents your code call level."
+        },
         "debugger-for-console.wrappers": {
           "type": "object",
-          "description": "设置在不同语言的情况下创建的调试语句，可自行设定打印内容;\n使用 %s 来设置填充打印信息，如: console.log({ '%s': $text })\n可使用 `$line` 获取变量原始行号, `$text` 获取打印内容",
+          "description": "Wrapper method for debug statements, or set to debugger. \n(We will replace $ with the logger, it is optional, so you can also modify it to 'debugger')",
           "default": {
-            "php": "var_dump($text);",
-            "go": "fmt.Println(\"$line: %s\", $text)",
-            "csharp": "Console.Log(\"$line: %s\", $text);",
-            "javascript": "console.log(\"$line: %s\", $text)",
-            "typescript": "console.log(\"$line: %s\", $text)",
-            "typescriptreact": "console.log(\"$line: %s\", $text)",
-            "javascriptreact": "console.log(\"$line: %s\", $text)",
-            "default": "console.log('$line: %s', $text)"
+            "php": "var_dump($)",
+            "python": "print($)",
+            "rust": "println!($)",
+            "go": "fmt.Println($)",
+            "csharp": "Console.Log($)",
+            "javascript": "console.log($)",
+            "default": "console.log($)"
           }
         }
       }
     }
-  },
-  "scripts": {
-    "build": "tsup src/index.ts --external vscode",
-    "dev": "nr build --watch",
-    "lint": "eslint . --fix",
-    "vscode:prepublish": "nr build",
-    "pack": "vsce package --no-dependencies --allow-star-activation",
-    "test": "vitest",
-    "typecheck": "tsc --noEmit",
-    "release": "bumpp --commit --push --tag && nr publish"
-  },
-  "devDependencies": {
-    "@antfu/eslint-config": "^0.23.0",
-    "@antfu/ni": "^0.16.2",
-    "@babel/types": "^7.17.10",
-    "@types/node": "^17.0.32",
-    "@types/vscode": "1.65.0",
-    "bumpp": "^7.1.1",
-    "eslint": "^8.15.0",
-    "esno": "^0.14.1",
-    "pnpm": "^6.32.11",
-    "rimraf": "^3.0.2",
-    "tsup": "^5.12.1",
-    "typescript": "^4.6.4",
-    "vsce": "^2.7.0"
   }
 }

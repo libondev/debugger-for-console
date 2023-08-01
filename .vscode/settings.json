@@ -1,13 +1,15 @@
 {
   "cSpell.words": [
-    "libondev",
+    "antfu",
     "bumpp",
     "esno",
+    "libondev",
     "Println",
     "tsup",
     "typecheck",
     "vite",
     "Vitesse",
     "vitest"
-  ]
+  ],
+  "commentTranslate.source": "DarkCWK.youdao-youdao"
 }

@@ -37,6 +37,9 @@ This extension is available for free in the [Visual Studio Code Marketplace](htt
 
 ![](res/uncomment-all-statements.gif)
 
+#### Multi cursor
+![](res/multi-cursor-insert.gif)
+
 ### command
 
 > \> `debugger-for-console.create`: Insert a debug statement after it

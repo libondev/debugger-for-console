@@ -13,8 +13,10 @@ async function create(direction: 'before' | 'after' = 'after') {
 
   for (let i = 0; i < selectionsLength; i++) {
     const selection = editor.selections[i]
+
     const line = selection.end.line + (direction === 'before' ? 0 : 1)
     const indents = getInsertLineIndents(document, line)
+
     const debuggerStatement = getDebuggerStatement(document, selection, scopeSymbols)
 
     workspaceEdit.insert(

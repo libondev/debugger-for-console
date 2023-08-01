@@ -1,6 +1,6 @@
 import { workspace } from 'vscode'
 import { resolvedConfig } from '../extension'
-import { quote, semi } from '../features/optional'
+import { quote } from '../features/optional'
 
 export function updateUserConfig() {
   const config = Object.assign(
@@ -9,5 +9,5 @@ export function updateUserConfig() {
   )
 
   quote.update(config.get('quote')!)
-  semi.update(config.get('semi') ? ';' : '')
+  // semi.update(config.get('semi') ? ';' : '')
 }

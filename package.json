@@ -25,7 +25,7 @@
   "scripts": {
     "build": "npm run typecheck && tsup src/extension.ts --external vscode",
     "dev": "nr build --watch",
-    "lint": "eslint . --fix",
+    "lint": "eslint src/**/* --fix",
     "vscode:prepublish": "nr build",
     "pack": "vsce package --no-dependencies",
     "release": "bumpp --commit --push --tag && nr publish",
@@ -118,11 +118,6 @@
       "type": "object",
       "title": "debugger-for-console",
       "properties": {
-        "debugger-for-console.semi": {
-          "type": "boolean",
-          "default": false,
-          "description": "Insert the semicolon in the debug statement."
-        },
         "debugger-for-console.emoji": {
           "type": "boolean",
           "default": true,
@@ -156,13 +151,15 @@
         },
         "debugger-for-console.wrappers": {
           "type": "object",
-          "description": "Wrapper method for debug statements, or set to debugger.",
+          "description": "Wrapper method for debug statements, or set to debugger. \n(We will replace $ with the logger, it is optional, so you can also modify it to 'debugger')",
           "default": {
-            "php": "var_dump",
-            "go": "fmt.Println",
-            "csharp": "Console.Log",
-            "javascript": "console.log",
-            "default": "console.log"
+            "php": "var_dump($)",
+            "python": "print($)",
+            "rust": "println!($)",
+            "go": "fmt.Println($)",
+            "csharp": "Console.Log($)",
+            "javascript": "console.log($)",
+            "default": "console.log($)"
           }
         }
       }

@@ -6,7 +6,6 @@ import {
   getRandomEmoji,
   getVariables,
   quote,
-  semi,
 } from '../features'
 
 export function lazyValue<Value>() {
@@ -23,19 +22,26 @@ export function lazyValue<Value>() {
 }
 
 export function getInsertLineIndents(
-  document: TextDocument,
+  { lineAt }: TextDocument,
   cursorLineNumber: number,
 ) {
-  const spaceNumber = document.lineAt(cursorLineNumber).firstNonWhitespaceCharacterIndex
+  let { firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber)
 
-  return ' '.repeat(spaceNumber)
+  // If the line is empty, get the indent of the previous line
+  if (firstNonWhitespaceCharacterIndex === 0) {
+    ({ firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber - 1))
+  }
+
+  return ' '.repeat(firstNonWhitespaceCharacterIndex)
 }
 
 // This damn JavaScript language types
-const JAVASCRIPT_ALIAS = ['javascript', 'typescript', 'javascriptreact', 'typescript', 'vue', 'svelte']
-export function getLanguageStatement(document: TextDocument): string {
-  const languageId = document.languageId
+export const JAVASCRIPT_ALIAS = [
+  'javascript', 'javascriptreact', 'typescript',
+  'typescriptreact', 'vue', 'svelte',
+]
 
+export function getLanguageStatement({ languageId }: TextDocument): string {
   if (JAVASCRIPT_ALIAS.includes(languageId)) {
     return resolvedConfig.get('wrappers.javascript')!
   } else {
@@ -43,28 +49,32 @@ export function getLanguageStatement(document: TextDocument): string {
   }
 }
 
-export function getDebuggerStatement(document: TextDocument, selection: Selection, symbols: string) {
+export function getDebuggerStatement(
+  document: TextDocument,
+  selection: Selection,
+  scopeSymbols: string,
+) {
   const statement = getLanguageStatement(document)
 
   if (!statement) {
     throw new Error('No language statement found.')
-  } else if (statement === 'debugger') {
-    return `${statement}${semi}`
+  } else if (statement.includes('$')) {
+    const text = getVariables(document, selection)
+
+    const content = `${quote.$}${getRandomEmoji()}${getFileDepth(document)}${
+      getLineNumber(selection)}${scopeSymbols}「${text.replace(/['"`]/g, '')}」${quote.$}, ${text}`
+
+    return `${statement.replace(/\$/g, content)}\n`
   }
 
-  const text = getVariables(document, selection)
-
-  return `${statement}(${quote.$}${getRandomEmoji()}${getFileDepth(document)}${
-    getLineNumber(selection)}${symbols}「${text.replace(/['"`]/g, '')}」${quote.$}, ${text})${semi.$}\n`
+  return `${statement}\n`
 }
 
-export function getAllStatementRanges(document: TextDocument) {
+export function getAllStatementRanges(document: TextDocument, regexp: RegExp) {
   const text = document.getText()
-  const regexp = new RegExp(getLanguageStatement(document), 'gm')
 
   let range: Range
   const statements = [...text.matchAll(regexp)].reduce((acc, match) => {
-    // TODO: multiple line statements
     range = document.lineAt(document.positionAt(match.index!).line).range
 
     if (!range.isEmpty) {

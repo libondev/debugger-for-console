@@ -7,7 +7,7 @@ const EMOJIS = [
   '🎐', '🎑', '🎡', '👑', '🧶', '⚽', '🥎', '🏀', '🏐', '🎮', '📦',
 ]
 
-export const semi = lazyValue<string>()
+// export const semi = lazyValue<string>()
 export const quote = lazyValue<string>()
 
 export function getRandomEmoji() {

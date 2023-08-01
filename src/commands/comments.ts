@@ -1,13 +1,24 @@
 import { WorkspaceEdit, window, workspace } from 'vscode'
-import { getAllStatementRanges } from '../utils'
+import { getAllStatementRanges, getLanguageStatement } from '../utils'
 import { documentAutoSaver } from '../features'
+import { COMMENT_TYPE } from '../syntax/comments'
 
 async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   const editor = window.activeTextEditor!
 
-  const { document, document: { uri } } = editor
+  const { document, document: { uri, languageId } } = editor
+  // ignore statement indents
+  const languageComment = COMMENT_TYPE[languageId as keyof typeof COMMENT_TYPE] || COMMENT_TYPE.default
+  const regexp = new RegExp(`^\\s*[${languageComment}\\s*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`, 'gm')
+
+  const statements = getAllStatementRanges(document, regexp)
+
+  if (!statements.length) {
+    window.showInformationMessage('No statements found.')
+    return
+  }
+
   const workspaceEdit = new WorkspaceEdit()
-  const statements = getAllStatementRanges(editor.document)
 
   for (let i = 0; i < statements.length; i++) {
     const range = statements[i]
@@ -18,12 +29,11 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
     const indents = text.slice(0, firstNonWhitespaceCharacterIndex)
     const content = text.slice(firstNonWhitespaceCharacterIndex)
 
-    // TODO: 可能需要处理多行注释的情况
-    // TODO: 可能有不是已 // 开头的注释，比如 python 的 # 开头的注释
-    if (type === 'comment' && !content.startsWith('//')) {
-      workspaceEdit.replace(uri, range, `${indents}// ${content}`)
-    } else if (type === 'uncomment' && content.startsWith('//')) {
-      workspaceEdit.replace(uri, range, `${indents}${content.replace(/\/\/\s*/, '')}`)
+    // TODO: multiline comment?
+    if (type === 'comment' && !content.startsWith(languageComment)) {
+      workspaceEdit.replace(uri, range, `${indents}${languageComment} ${content}`)
+    } else if (type === 'uncomment' && content.startsWith(languageComment)) {
+      workspaceEdit.replace(uri, range, `${indents}${content.replace(new RegExp(`${languageComment}\\s*`), '')}`)
     }
   }
 

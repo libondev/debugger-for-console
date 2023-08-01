@@ -9,7 +9,7 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   const { document, document: { uri, languageId } } = editor
   // ignore statement indents
   const languageComment = COMMENT_TYPE[languageId as keyof typeof COMMENT_TYPE] || COMMENT_TYPE.default
-  const regexp = new RegExp(`^\\s*[${languageComment}\\s*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`, 'gm')
+  const regexp = new RegExp(`^[ ]*[${languageComment}[ ]*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`, 'gm')
 
   const statements = getAllStatementRanges(document, regexp)
 
@@ -33,7 +33,7 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
     if (type === 'comment' && !content.startsWith(languageComment)) {
       workspaceEdit.replace(uri, range, `${indents}${languageComment} ${content}`)
     } else if (type === 'uncomment' && content.startsWith(languageComment)) {
-      workspaceEdit.replace(uri, range, `${indents}${content.replace(new RegExp(`${languageComment}\\s*`), '')}`)
+      workspaceEdit.replace(uri, range, `${indents}${content.replace(new RegExp(`${languageComment}[ ]*`), '')}`)
     }
   }
 

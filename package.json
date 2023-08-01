@@ -72,8 +72,13 @@
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "DebuggerForConsole: Toggle all debugger statements",
-        "command": "debugger-for-console.toggle",
+        "title": "DebuggerForConsole: Comment all debugger statements",
+        "command": "debugger-for-console.comment",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "title": "DebuggerForConsole: Uncomment all debugger statements",
+        "command": "debugger-for-console.uncomment",
         "when": "editorTextFocus && !editorReadonly"
       },
       {

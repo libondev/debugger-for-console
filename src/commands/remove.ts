@@ -9,7 +9,7 @@ export async function removeDebuggers() {
   const { document, document: { uri, languageId } } = editor
 
   const languageComment = COMMENT_TYPE[languageId as keyof typeof COMMENT_TYPE] || COMMENT_TYPE.default
-  const regexp = new RegExp(`^\\s*[${languageComment}\\s*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`, 'gm')
+  const regexp = new RegExp(`^[ ]*[${languageComment}[ ]*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`, 'gm')
 
   const matchStatements = getAllStatementRanges(document, regexp)
 

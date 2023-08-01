@@ -1,7 +1,7 @@
 {
   "name": "debugger-for-console",
   "displayName": "Debugger for Console",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "packageManager": "pnpm@6.35.1",
   "description": "Quickly create console debugging information for multiple languages.",
   "keywords": [],
@@ -130,7 +130,11 @@
         },
         "debugger-for-console.quote": {
           "type": "string",
-          "enum": ["'", "\"", "`"],
+          "enum": [
+            "'",
+            "\"",
+            "`"
+          ],
           "default": "'",
           "description": "Insert the quoted text in the debug statement."
         },

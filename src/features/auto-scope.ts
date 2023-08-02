@@ -1,8 +1,8 @@
 import type { Position, Selection, TextDocument } from 'vscode'
 
 const BREAK_CHARACTER = [
-  ' ', '\n', '\'', '"', '`', '=', '\\', '(', ',',
-  ')', '+', '-', '*', '/', '%', '{', '<', '>',
+  ' ', '\n', '\'', '"', '`', '\\', ',', '=', '+', '-',
+  '*', '/', '%', '(', ')', '{', '}', '<', '>', '[', ']',
 ]
 
 function getWordAtPosition(document: TextDocument, position: Position): string {

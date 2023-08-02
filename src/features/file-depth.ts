@@ -1,4 +1,3 @@
-import { sep } from 'node:path'
 import { type TextDocument, workspace } from 'vscode'
 import { resolvedConfig } from '../extension'
 
@@ -7,7 +6,7 @@ export function getFileDepth(document: TextDocument) {
 
   if (depths) {
     const relationFilePath = workspace.asRelativePath(document.fileName)
-    const splitFilePaths = relationFilePath.split(new RegExp(`\\${sep}`))
+    const splitFilePaths = relationFilePath.split('/')
 
     return ` ${splitFilePaths.slice(-depths).join('/')}`
   }

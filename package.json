@@ -28,7 +28,7 @@
     "lint": "eslint src/**/* --fix",
     "vscode:prepublish": "nr build",
     "pack": "vsce package --no-dependencies",
-    "release": "bumpp --commit --push --tag && nr publish",
+    "release": "bumpp --commit --push --tag",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

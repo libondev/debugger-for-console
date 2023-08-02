@@ -1,41 +1,38 @@
 import { WorkspaceEdit, window, workspace } from 'vscode'
 import { getAllStatementRanges, getLanguageStatement } from '../utils'
 import { documentAutoSaver } from '../features'
-import { COMMENT_TYPE } from '../syntax/comments'
+import { COMMENT_SYMBOLS } from '../syntax/comments'
 
 async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   const editor = window.activeTextEditor!
 
   const { document, document: { uri, languageId } } = editor
-  const languageComment = COMMENT_TYPE[languageId as keyof typeof COMMENT_TYPE] || COMMENT_TYPE.default
-
-  // ignore statement indents
-  const regexp = new RegExp(
-    `^[ ]*[${languageComment}[ ]*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`,
+  const commentSymbols = COMMENT_SYMBOLS[languageId as keyof typeof COMMENT_SYMBOLS] || COMMENT_SYMBOLS.default
+  const languageRegexp = new RegExp(
+    `^[ ]*[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`,
     'gm',
   )
 
-  const ranges = getAllStatementRanges(document, regexp)
+  const statements = getAllStatementRanges(document, languageRegexp)
 
-  if (!ranges.length) {
-    window.showInformationMessage('No statements found.')
+  if (!statements.length) {
+    window.showInformationMessage('No statements matching the rule were found.')
     return
   }
 
   const workspaceEdit = new WorkspaceEdit()
+  const commentRegexp = new RegExp(`${commentSymbols}[ ]*`)
 
-  ranges.forEach((range) => {
-    const line = document.lineAt(range.start.line)
-
-    const { firstNonWhitespaceCharacterIndex, text } = line
+  statements.forEach((range) => {
+    const { firstNonWhitespaceCharacterIndex, text } = document.lineAt(range.start.line)
 
     const indents = text.slice(0, firstNonWhitespaceCharacterIndex)
     const content = text.slice(firstNonWhitespaceCharacterIndex)
 
-    if (type === 'comment' && !content.startsWith(languageComment)) {
-      workspaceEdit.replace(uri, range, `${indents}${languageComment} ${content}`)
-    } else if (type === 'uncomment' && content.startsWith(languageComment)) {
-      workspaceEdit.replace(uri, range, `${indents}${content.replace(new RegExp(`${languageComment}[ ]*`), '')}`)
+    if (type === 'comment' && !content.startsWith(commentSymbols)) {
+      workspaceEdit.replace(uri, range, `${indents}${commentSymbols} ${content}`)
+    } else if (type === 'uncomment' && content.startsWith(commentSymbols)) {
+      workspaceEdit.replace(uri, range, `${indents}${content.replace(commentRegexp, '')}`)
     }
   })
 

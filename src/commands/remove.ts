@@ -1,27 +1,28 @@
 import { WorkspaceEdit, window, workspace } from 'vscode'
 import { getAllStatementRanges, getLanguageStatement } from '../utils'
 import { documentAutoSaver } from '../features'
-import { COMMENT_TYPE } from '../syntax/comments'
+import { COMMENT_SYMBOLS } from '../syntax/comments'
 
 export async function removeDebuggers() {
   const editor = window.activeTextEditor!
 
   const { document, document: { uri, languageId } } = editor
 
-  const languageComment = COMMENT_TYPE[languageId as keyof typeof COMMENT_TYPE] || COMMENT_TYPE.default
+  const languageComment = COMMENT_SYMBOLS[languageId as keyof typeof COMMENT_SYMBOLS] || COMMENT_SYMBOLS.default
   const regexp = new RegExp(`^[ ]*[${languageComment}[ ]*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`, 'gm')
 
-  const ranges = getAllStatementRanges(document, regexp)
+  const statements = getAllStatementRanges(document, regexp)
 
-  if (!ranges.length) {
-    window.showInformationMessage('No debugger statements found.')
+  if (!statements.length) {
+    window.showInformationMessage('No statements matching the rule were found.')
     return
   }
 
   const workspaceEdit = new WorkspaceEdit()
-  ranges.forEach((range) => {
-    workspaceEdit.delete(uri, range)
-    workspaceEdit.delete(uri, range.with(range.start.with(range.start.line + 1, 0)))
+
+  statements.forEach((range) => {
+    const deleteRange = range.with(undefined, range.start.with(range.start.line + 1, 0))
+    workspaceEdit.delete(uri, deleteRange)
   })
 
   await workspace.applyEdit(workspaceEdit)

@@ -20,4 +20,12 @@ function printHello() {
   console.log('🎏 js.js:13【console.log】', console.log)
 }
 
-printHello()
+if (true) {
+  printHello()
+  printHello()
+  printHello()
+  printHello()
+  printHello()
+  printHello()
+  printHello()
+}

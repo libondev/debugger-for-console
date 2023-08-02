@@ -1,12 +1,5 @@
-import type { Range, Selection, TextDocument, TextLine } from 'vscode'
+import type { Range, TextDocument, TextLine } from 'vscode'
 import { resolvedConfig } from '../extension'
-import {
-  getFileDepth,
-  getLineNumber,
-  getRandomEmoji,
-  getVariables,
-  quote,
-} from '../features'
 
 export function lazyValue<Value>() {
   let _value: Value
@@ -21,24 +14,10 @@ export function lazyValue<Value>() {
   }
 }
 
-export function getInsertLineIndents(
-  { lineAt }: TextDocument,
-  cursorLineNumber: number,
-) {
-  let { firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber)
-
-  // If the line is empty, get the indent of the previous line
-  if (firstNonWhitespaceCharacterIndex === 0) {
-    ({ firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber - 1))
-  }
-
-  return ' '.repeat(firstNonWhitespaceCharacterIndex)
-}
-
 // This damn JavaScript language types
 export const JAVASCRIPT_ALIAS = [
-  'javascript', 'javascriptreact', 'typescript',
-  'typescriptreact', 'vue', 'svelte',
+  'javascript', 'javascriptreact', 'svelte',
+  'typescript', 'typescriptreact', 'vue',
 ]
 
 export function getLanguageStatement({ languageId }: TextDocument): string {
@@ -47,27 +26,6 @@ export function getLanguageStatement({ languageId }: TextDocument): string {
   } else {
     return resolvedConfig.get(`wrappers.${languageId}`) || resolvedConfig.get('wrappers.default')!
   }
-}
-
-export function getDebuggerStatement(
-  document: TextDocument,
-  selection: Selection,
-  scopeSymbols: string,
-) {
-  const statement = getLanguageStatement(document)
-
-  if (!statement) {
-    throw new Error('No language statement found.')
-  } else if (statement.includes('$')) {
-    const text = getVariables(document, selection)
-
-    const content = `${quote.$}${getRandomEmoji()}${getFileDepth(document)}${
-      getLineNumber(selection)}${scopeSymbols}【${text.replace(/['"`]/g, '')}】${quote.$}, ${text}`
-
-    return `${statement.replace(/\$/g, content)}\n`
-  }
-
-  return `${statement}\n`
 }
 
 function getMultiLineStatement(document: TextDocument, line: TextLine) {

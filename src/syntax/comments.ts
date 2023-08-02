@@ -1,4 +1,4 @@
-export const COMMENT_TYPE = {
+export const COMMENT_SYMBOLS = {
   python: '#',
   default: '//',
 }

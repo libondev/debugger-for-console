@@ -11,17 +11,17 @@ export async function removeDebuggers() {
   const languageComment = COMMENT_TYPE[languageId as keyof typeof COMMENT_TYPE] || COMMENT_TYPE.default
   const regexp = new RegExp(`^[ ]*[${languageComment}[ ]*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`, 'gm')
 
-  const matchStatements = getAllStatementRanges(document, regexp)
+  const ranges = getAllStatementRanges(document, regexp)
 
-  if (!matchStatements.length) {
+  if (!ranges.length) {
     window.showInformationMessage('No debugger statements found.')
     return
   }
 
   const workspaceEdit = new WorkspaceEdit()
-  matchStatements.forEach((statementRange) => {
-    workspaceEdit.delete(uri, statementRange)
-    workspaceEdit.delete(uri, statementRange.with(statementRange.start.with(statementRange.start.line + 1, 0)))
+  ranges.forEach((range) => {
+    workspaceEdit.delete(uri, range)
+    workspaceEdit.delete(uri, range.with(range.start.with(range.start.line + 1, 0)))
   })
 
   await workspace.applyEdit(workspaceEdit)

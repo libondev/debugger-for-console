@@ -10,7 +10,14 @@ const obj = {
 }
 
 function printHello() {
-  console.log('hello world')
+  console.log(
+    'hello world',
+    'lorem asda asdaa',
+    '()',
+    '()(())'
+  )
+
+  console.log('🎏 js.js:13【console.log】', console.log)
 }
 
 printHello()

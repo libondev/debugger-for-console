@@ -1,5 +1,5 @@
 {
   "debugger-for-console.wrappers": {
-    "javascript": "console.warn($)"
+    "javascript": "console.log($)"
   }
 }

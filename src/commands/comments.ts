@@ -1,3 +1,4 @@
+import type { Range } from 'vscode'
 import { WorkspaceEdit, window, workspace } from 'vscode'
 import { getAllStatementRanges, getLanguageStatement } from '../utils'
 import { documentAutoSaver } from '../features'
@@ -23,17 +24,21 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   const workspaceEdit = new WorkspaceEdit()
   const commentRegexp = new RegExp(`${commentSymbols}[ ]*`)
 
+  const replacer = type === 'comment'
+    ? (range: Range, indents: string, content: string) => {
+        !content.startsWith(commentSymbols) && workspaceEdit.replace(uri, range, `${indents}${commentSymbols} ${content}`)
+      }
+    : (range: Range, indents: string, content: string) => {
+        content.startsWith(commentSymbols) && workspaceEdit.replace(uri, range, `${indents}${content.replace(commentRegexp, '')}`)
+      }
+
   statements.forEach((range) => {
     const { firstNonWhitespaceCharacterIndex, text } = document.lineAt(range.start.line)
 
     const indents = text.slice(0, firstNonWhitespaceCharacterIndex)
     const content = text.slice(firstNonWhitespaceCharacterIndex)
 
-    if (type === 'comment' && !content.startsWith(commentSymbols)) {
-      workspaceEdit.replace(uri, range, `${indents}${commentSymbols} ${content}`)
-    } else if (type === 'uncomment' && content.startsWith(commentSymbols)) {
-      workspaceEdit.replace(uri, range, `${indents}${content.replace(commentRegexp, '')}`)
-    }
+    replacer(range, indents, content)
   })
 
   await workspace.applyEdit(workspaceEdit)

@@ -11,6 +11,21 @@ import {
   quote,
 } from '../features/index'
 
+function getInsertLineIndents(
+  { lineAt }: TextDocument,
+  cursorLineNumber: number,
+) {
+  let { firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber)
+
+  // If the line is empty, get the indent of the previous line
+  if (firstNonWhitespaceCharacterIndex === 0) {
+    ({ firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber - 1))
+  }
+  // else if () { }
+
+  return ' '.repeat(firstNonWhitespaceCharacterIndex)
+}
+
 function getStatementGetter(document: TextDocument, symbols: string) {
   const statement = getLanguageStatement(document)
 
@@ -31,21 +46,7 @@ function getStatementGetter(document: TextDocument, symbols: string) {
   return () => `${statement}\n`
 }
 
-function getInsertLineIndents(
-  { lineAt }: TextDocument,
-  cursorLineNumber: number,
-) {
-  let { firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber)
-
-  // If the line is empty, get the indent of the previous line
-  if (firstNonWhitespaceCharacterIndex === 0) {
-    ({ firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber - 1))
-  }
-
-  return ' '.repeat(firstNonWhitespaceCharacterIndex)
-}
-
-async function create(direction: 'before' | 'after' = 'after') {
+async function create(directionOffset: number) {
   const editor = window.activeTextEditor!
 
   const { document, document: { uri } } = editor
@@ -57,7 +58,9 @@ async function create(direction: 'before' | 'after' = 'after') {
   let position = new Position(0, 0)
 
   editor.selections.forEach((selection) => {
-    const line = selection.end.line + (direction === 'before' ? 0 : 1)
+    const line = Math.min(selection.end.line + directionOffset, document.lineCount)
+
+    // TODO: fix "Illegal value for `line`
     const indents = getInsertLineIndents(document, line)
     const variables = getVariables(document, selection)
 
@@ -75,6 +78,6 @@ async function create(direction: 'before' | 'after' = 'after') {
   documentAutoSaver(editor)
 }
 
-export const createDebuggers = create.bind(null, 'after')
+export const createDebuggers = create.bind(null, 1)
 
-export const createDebuggersBefore = create.bind(null, 'before')
+export const createDebuggersBefore = create.bind(null, 0)

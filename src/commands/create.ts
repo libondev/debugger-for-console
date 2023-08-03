@@ -60,22 +60,23 @@ async function create(directionOffset: number) {
 
   const workspaceEdit = new WorkspaceEdit()
   const scopeSymbols = await getScopeSymbols(editor)
-  const statementGetter = getStatementGetter(document, scopeSymbols)
+  const statementGenerator = getStatementGetter(document, scopeSymbols)
 
   let position = new Position(0, 0)
 
   editor.selections.forEach((selection) => {
-    const line = Math.min(selection.end.line + directionOffset, document.lineCount)
+    // TODO(optimize feature): find Object/Array/Function Params scope range
+    const lineNumber: number = selection.end.line + directionOffset
 
-    const indents = getInsertLineIndents(document, line)
+    const indents = getInsertLineIndents(document, lineNumber)
     const variables = getVariables(document, selection)
 
-    position = position.translate(line - position.line)
+    position = position.translate(lineNumber - position.line)
 
     workspaceEdit.insert(
       uri,
       position,
-      `${indents}${statementGetter(selection, variables)}`,
+      `${indents}${statementGenerator(selection, variables)}`,
     )
   })
 

@@ -121,7 +121,7 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "debugger-for-console",
+      "title": "Debugger for Console",
       "properties": {
         "debugger-for-console.emoji": {
           "type": "boolean",

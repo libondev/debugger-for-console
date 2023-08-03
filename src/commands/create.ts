@@ -12,16 +12,23 @@ import {
 } from '../features/index'
 
 function getInsertLineIndents(
-  { lineAt }: TextDocument,
+  { lineAt, lineCount }: TextDocument,
   cursorLineNumber: number,
 ) {
+  // If the cursor is at the end of the document, return a new line
+  if (cursorLineNumber >= lineCount) {
+    return '\n'
+  } else if (cursorLineNumber <= 0) {
+    // If the cursor is at the start of the document, return an empty string
+    return ''
+  }
+
   let { firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber)
 
   // If the line is empty, get the indent of the previous line
   if (firstNonWhitespaceCharacterIndex === 0) {
     ({ firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber - 1))
   }
-  // else if () { }
 
   return ' '.repeat(firstNonWhitespaceCharacterIndex)
 }
@@ -60,7 +67,6 @@ async function create(directionOffset: number) {
   editor.selections.forEach((selection) => {
     const line = Math.min(selection.end.line + directionOffset, document.lineCount)
 
-    // TODO: fix "Illegal value for `line`
     const indents = getInsertLineIndents(document, line)
     const variables = getVariables(document, selection)
 

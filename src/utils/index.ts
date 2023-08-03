@@ -52,10 +52,11 @@ export function getAllStatementRanges(document: TextDocument, regexp: RegExp) {
   const statements = [...text.matchAll(regexp)].reduce((acc, match) => {
     line = document.lineAt(document.positionAt(match.index!).line)
 
-    if (singleLineRegexp.test(line.text)) {
+    // not have a '(' or is a single line statement
+    if (singleLineRegexp.test(line.text) || !line.text.includes('(')) {
       acc.push(line.range)
     } else {
-      // multi-line statement
+    // multi-line statement
       const [start, end] = getMultiLineStatement(document, line)
 
       // Push the range of the statement

@@ -42,7 +42,7 @@ function getStatementGetter(document: TextDocument, symbols: string) {
     const [start, ...end] = statement.split('$')
 
     const template = `${start}${quote.$}${getRandomEmoji()}${
-      getFileDepth(document)}$0$${symbols}「$1$」${quote.$}, $2$${end.join('')}\n`
+      getFileDepth(document)}$0$${symbols}{$1$}${quote.$}, $2$${end.join('')}\n`
 
     return (selection: Selection, text: string) => template
       .replace('$0$', getLineNumber(selection))

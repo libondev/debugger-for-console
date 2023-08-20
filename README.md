@@ -33,7 +33,7 @@ This extension is available for free in the [Visual Studio Code Marketplace](htt
 ![](res/comment-all-statements.gif)
 
 #### Uncomment all statements on document
-<kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>←(ArrowLeft)</kbd>
+<kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>u</kbd>
 
 ![](res/uncomment-all-statements.gif)
 

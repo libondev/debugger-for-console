@@ -1,7 +1,7 @@
 {
   "name": "debugger-for-console",
   "displayName": "Debugger for Console",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "packageManager": "pnpm@6.35.1",
   "description": "Quickly create console debugging information for multiple languages.",
   "keywords": [],

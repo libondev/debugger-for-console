@@ -5,6 +5,18 @@
 
 Quickly create console debugging information for multiple languages. \
 
+## Features
+1. Quickly create console debugging information for multiple languages.
+2. Support for custom debugging statements for different languages.
+3. Support for inserting debugging statements before and after the current line.
+4. Support for removing all debugging statements in the document.
+5. Support for commenting and uncommenting all debugging statements in the document.
+6. Support for inserting debugging statements in multiple cursors.
+7. Supports merging multiple cursors in the same row.
+8. Support for updating the latest workbench configuration.
+
+
+
 ## Installing
 
 This extension is available for free in the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=banlify.debugger-for-console).
@@ -38,6 +50,10 @@ This extension is available for free in the [Visual Studio Code Marketplace](htt
 ![](res/uncomment-all-statements.gif)
 
 #### Multi cursor
+merge multi cursor in the same row:
+![](res/merged-multi-cursor-insert.gif)
+
+multi line cursors:
 ![](res/multi-cursor-insert.gif)
 
 ### command

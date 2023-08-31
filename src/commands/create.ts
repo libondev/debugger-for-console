@@ -11,11 +11,6 @@ import {
   quote,
 } from '../features/index'
 
-interface MergedSelection {
-  lineNumber: number
-  selections: string[]
-}
-
 function getInsertLineIndents(
   { lineAt, lineCount }: TextDocument,
   cursorLineNumber: number,
@@ -38,7 +33,7 @@ function getInsertLineIndents(
   return ' '.repeat(firstNonWhitespaceCharacterIndex)
 }
 
-function getStatementGetter(document: TextDocument, symbols: string) {
+function getStatementGenerator(document: TextDocument, symbols: string) {
   const statement = getLanguageStatement(document)
 
   if (!statement) {
@@ -47,7 +42,7 @@ function getStatementGetter(document: TextDocument, symbols: string) {
     const [start, ...end] = statement.split('$')
 
     const template = `${start}${quote.$}${getRandomEmoji()}${
-      getFileDepth(document)}$0$${symbols}@$1$: ${quote.$}, $2$${end.join('')}\n`
+      getFileDepth(document)}$0$${symbols}{$1$}: ${quote.$}, $2$${end.join('')}\n`
 
     return (lineNumber: number, text: string) => template
       .replace('$0$', getLineNumber(lineNumber))
@@ -65,26 +60,23 @@ async function create(directionOffset: number) {
 
   const workspaceEdit = new WorkspaceEdit()
   const scopeSymbols = await getScopeSymbols(editor)
-  const statementGenerator = getStatementGetter(document, scopeSymbols)
+  const statementGetter = getStatementGenerator(document, scopeSymbols)
 
   let position = new Position(0, 0)
 
   const mergedSelections = editor.selections.reduce((lines, selection) => {
-    if (selection.isSingleLine) {
-      const targetLine = selection.end.line + directionOffset
+    const targetLine = selection.start.line + directionOffset
 
-      lines[targetLine] ??= {
-        lineNumber: targetLine,
-        selections: [],
-      }
+    lines[targetLine] ??= []
 
-      lines[targetLine].selections.push(getVariables(document, selection))
-    }
+    lines[targetLine].push(getVariables(document, selection))
 
     return lines
-  }, {} as Record<number, MergedSelection>)
+  }, Object.create(null) as Record<number, string[]>)
 
-  Object.values(mergedSelections).forEach(({ lineNumber, selections }) => {
+  for (const line in mergedSelections) {
+    const lineNumber = Number(line)
+
     // TODO(optimize feature): find Object/Array/Function Params scope range
     const indents = getInsertLineIndents(document, lineNumber)
 
@@ -93,9 +85,9 @@ async function create(directionOffset: number) {
     workspaceEdit.insert(
       uri,
       position,
-      `${indents}${statementGenerator(lineNumber, selections.join(', '))}`,
+      `${indents}${statementGetter(lineNumber, mergedSelections[line].join(', '))}`,
     )
-  })
+  }
 
   await workspace.applyEdit(workspaceEdit)
 

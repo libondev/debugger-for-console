@@ -17,7 +17,7 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
     start--
   }
 
-  return lineContent.slice(start, word.end.character)
+  return lineContent.slice(start, word.end.character).replace(/\?$/, '')
 }
 
 export function getVariables(document: TextDocument, selection: Selection): string {

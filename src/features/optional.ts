@@ -1,4 +1,4 @@
-import type { Selection, TextEditor } from 'vscode'
+import type { TextEditor } from 'vscode'
 import { lazyValue } from '../utils/index'
 import { resolvedConfig } from '../extension'
 
@@ -14,8 +14,8 @@ export function getRandomEmoji() {
   return resolvedConfig.get('emoji') ? EMOJIS[Math.floor(Math.random() * EMOJIS.length)] : ''
 }
 
-export function getLineNumber(selection: Selection) {
-  return resolvedConfig.get('lineNumber') ? `:${selection.active.line + 1}` : ''
+export function getLineNumber(lineNumber: number) {
+  return resolvedConfig.get('lineNumber') ? `:${lineNumber}` : ''
 }
 
 export function documentAutoSaver(editor: TextEditor) {

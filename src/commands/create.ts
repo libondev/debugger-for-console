@@ -1,5 +1,5 @@
 import { Position, WorkspaceEdit, window, workspace } from 'vscode'
-import type { Selection, TextDocument } from 'vscode'
+import type { TextDocument } from 'vscode'
 import { getLanguageStatement } from '../utils/index'
 import {
   documentAutoSaver,
@@ -10,6 +10,11 @@ import {
   getVariables,
   quote,
 } from '../features/index'
+
+interface MergedSelection {
+  lineNumber: number
+  selections: string[]
+}
 
 function getInsertLineIndents(
   { lineAt, lineCount }: TextDocument,
@@ -42,10 +47,10 @@ function getStatementGetter(document: TextDocument, symbols: string) {
     const [start, ...end] = statement.split('$')
 
     const template = `${start}${quote.$}${getRandomEmoji()}${
-      getFileDepth(document)}$0$${symbols}{$1$}${quote.$}, $2$${end.join('')}\n`
+      getFileDepth(document)}$0$${symbols}@$1$: ${quote.$}, $2$${end.join('')}\n`
 
-    return (selection: Selection, text: string) => template
-      .replace('$0$', getLineNumber(selection))
+    return (lineNumber: number, text: string) => template
+      .replace('$0$', getLineNumber(lineNumber))
       .replace('$1$', text.replace(/['"`\\]/g, ''))
       .replace('$2$', text)
   }
@@ -64,19 +69,31 @@ async function create(directionOffset: number) {
 
   let position = new Position(0, 0)
 
-  editor.selections.forEach((selection) => {
-    // TODO(optimize feature): find Object/Array/Function Params scope range
-    const lineNumber: number = selection.end.line + directionOffset
+  const mergedSelections = editor.selections.reduce((lines, selection) => {
+    if (selection.isSingleLine) {
+      const targetLine = selection.end.line + directionOffset
 
+      lines[targetLine] ??= {
+        lineNumber: targetLine,
+        selections: [],
+      }
+
+      lines[targetLine].selections.push(getVariables(document, selection))
+    }
+
+    return lines
+  }, {} as Record<number, MergedSelection>)
+
+  Object.values(mergedSelections).forEach(({ lineNumber, selections }) => {
+    // TODO(optimize feature): find Object/Array/Function Params scope range
     const indents = getInsertLineIndents(document, lineNumber)
-    const variables = getVariables(document, selection)
 
     position = position.translate(lineNumber - position.line)
 
     workspaceEdit.insert(
       uri,
       position,
-      `${indents}${statementGenerator(selection, variables)}`,
+      `${indents}${statementGenerator(lineNumber, selections.join(', '))}`,
     )
   })
 

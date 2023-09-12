@@ -12,6 +12,12 @@ import {
 } from '../features/index'
 import { QUOTE_SYMBOLS, type QuoteSymbolsKeys } from '../syntax/quote'
 
+/**
+ * get the indent of the current line(获取插入行的缩进内容)
+ * @param document current editor document(当前编辑器的文档对象)
+ * @param cursorLineNumber insert line number(插入行的行号)
+ * @returns spaces(缩进内容)
+ */
 function getInsertLineIndents(
   { lineAt, lineCount }: TextDocument,
   cursorLineNumber: number,
@@ -26,15 +32,26 @@ function getInsertLineIndents(
     return ''
   }
 
-  let { firstNonWhitespaceCharacterIndex, text } = lineAt(cursorLineNumber)
+  let { firstNonWhitespaceCharacterIndex: targetLineSpaces } = lineAt(cursorLineNumber)
 
-  // If the line is empty, get the indent of the previous line
-  // 如果下一行的缩进是 0 则获取上一行的缩进
-  if (firstNonWhitespaceCharacterIndex === 0) {
-    ({ firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber - 1))
+  if (targetLineSpaces === 0) {
+    const {
+      firstNonWhitespaceCharacterIndex: previousLineSpaces,
+      text: previousLineText,
+    } = lineAt(cursorLineNumber - 1)
+
+    // block start and scope start need to add 2 spaces
+    // 块开始和作用域开始需要加 2 个空格
+    targetLineSpaces = ['{', ':'].includes(previousLineText.at(-1)!)
+      ? targetLineSpaces + 2
+      // if the next line is empty, get the indent of the previous line
+      // 如果下一行是空行则获取上一行的缩进大小
+      : previousLineSpaces
   }
 
-  return ' '.repeat(firstNonWhitespaceCharacterIndex)
+  // TODO: 如果缩进的方式是 tab, 那么这种计算方式就不正确, 也许需要换一种计算方式
+  // 比如需要先获取到文档的缩进类型以及默认的缩进大小, 然后再进行计算
+  return ' '.repeat(targetLineSpaces)
 }
 
 function getStatementGenerator(document: TextDocument, symbols: string) {

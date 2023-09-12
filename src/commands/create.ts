@@ -10,22 +10,26 @@ import {
   getVariables,
   quote,
 } from '../features/index'
+import { QUOTE_SYMBOLS, type QuoteSymbolsKeys } from '../syntax/quote'
 
 function getInsertLineIndents(
   { lineAt, lineCount }: TextDocument,
   cursorLineNumber: number,
 ) {
   // If the cursor is at the end of the document, return a new line
+  // 如果当前光标所在的行是最后一行则用换行来代替首位的缩进内容
   if (cursorLineNumber >= lineCount) {
     return '\n'
   } else if (cursorLineNumber <= 0) {
     // If the cursor is at the start of the document, return an empty string
+    // 如果当前光标所在的行是第一行则输出空字符
     return ''
   }
 
-  let { firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber)
+  let { firstNonWhitespaceCharacterIndex, text } = lineAt(cursorLineNumber)
 
   // If the line is empty, get the indent of the previous line
+  // 如果下一行的缩进是 0 则获取上一行的缩进
   if (firstNonWhitespaceCharacterIndex === 0) {
     ({ firstNonWhitespaceCharacterIndex } = lineAt(cursorLineNumber - 1))
   }
@@ -40,9 +44,10 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
     throw new Error('No language statement found.')
   } else if (statement.includes('$')) {
     const [start, ...end] = statement.split('$')
+    const _quote = QUOTE_SYMBOLS[document.languageId as QuoteSymbolsKeys] ?? quote.$
 
-    const template = `${start}${quote.$}${getRandomEmoji()}${
-      getFileDepth(document)}$0$${symbols}{$1$}: ${quote.$}, $2$${end.join('')}\n`
+    const template = `${start}${_quote}${getRandomEmoji()}${
+      getFileDepth(document)}$0$${symbols} - [$1$]: ${_quote}, $2$${end.join('')}\n`
 
     return (lineNumber: number, text: string) => template
       .replace('$0$', getLineNumber(lineNumber))

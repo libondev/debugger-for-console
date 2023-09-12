@@ -165,7 +165,7 @@
             "php": "var_dump($)",
             "python": "print($)",
             "rust": "println!($)",
-            "go": "fmt.Println($)",
+            "go": "println($)",
             "csharp": "Console.Log($)",
             "javascript": "console.log($)",
             "default": "console.log($)"

@@ -2,13 +2,13 @@ import type { Range } from 'vscode'
 import { WorkspaceEdit, window, workspace } from 'vscode'
 import { getAllStatementRanges, getLanguageStatement } from '../utils'
 import { documentAutoSaver } from '../features'
-import { COMMENT_SYMBOLS } from '../syntax/comments'
+import { COMMENT_SYMBOLS, type CommentSymbolsKeys } from '../syntax/comments'
 
 async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   const editor = window.activeTextEditor!
 
   const { document, document: { uri, languageId } } = editor
-  const commentSymbols = COMMENT_SYMBOLS[languageId as keyof typeof COMMENT_SYMBOLS] || COMMENT_SYMBOLS.default
+  const commentSymbols = COMMENT_SYMBOLS[languageId as CommentSymbolsKeys] || COMMENT_SYMBOLS.default
   const languageRegexp = new RegExp(
     `^[ ]*[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`,
     'gm',

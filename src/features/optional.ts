@@ -3,11 +3,10 @@ import { lazyValue } from '../utils/index'
 import { resolvedConfig } from '../extension'
 
 const EMOJIS = [
-  '🚀', '🛸', '🛰️', '👑', '🔭', '✨', '📦', '🔦', '🔌', '☘️',
-  '🔧', '🥑', '🎡', '🗝️', '📦', '📫', '📮', '📜', '📃', '📦',
+  '🚀', '🛸', '🛰️', '👑', '🔭', '✨', '🍀', '🫧', '🍿', '🍉',
+  '🔥', '🥑', '🎡', '🗝️', '📦', '📫', '🍟', '📜', '📃', '🌿',
 ]
 
-// export const semi = lazyValue<string>()
 export const quote = lazyValue<string>()
 
 export function getRandomEmoji() {

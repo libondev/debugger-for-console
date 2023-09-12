@@ -7,17 +7,22 @@ const BREAK_CHARACTER = [
 
 function getWordAtPosition(document: TextDocument, position: Position): string {
   const word = document.getWordRangeAtPosition(position)
-  if (!word)
-    return ''
-
   const lineContent = document.lineAt(position.line).text
-  let start = word.start.character
+
+  let start, end
+
+  if (word) {
+    start = word.start.character
+    end = word.end.character
+  } else {
+    end = start = position.character - 1
+  }
 
   while (start > 0 && !BREAK_CHARACTER.includes(lineContent[start - 1])) {
     start--
   }
 
-  return lineContent.slice(start, word.end.character).replace(/\?$/, '')
+  return lineContent.slice(start, end)
 }
 
 export function getVariables(document: TextDocument, selection: Selection): string {

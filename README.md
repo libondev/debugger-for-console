@@ -3,7 +3,7 @@
 ## CHANGE
 > [Libon](https://github.com/libondev) is now the owner of this extension.
 
-Quickly create console debugging information for multiple languages. \
+Quickly create console debugging information for multiple languages.
 
 ## Features
 1. Quickly create console debugging information for multiple languages.
@@ -14,7 +14,6 @@ Quickly create console debugging information for multiple languages. \
 6. Support for inserting debugging statements in multiple cursors.
 7. Supports merging multiple cursors in the same row.
 8. Support for updating the latest workbench configuration.
-
 
 
 ## Installing
@@ -68,14 +67,14 @@ multi line cursors:
 
 > \> `debugger-for-console.uncomment`: Uncomment all debugger statements
 
-> \> `debugger-for-console.update`: Update latest workbench configuration
+> \> `debugger-for-console.update`: Update latest workbench configuration. (This way, your modifications can take effect immediately without restarting your editor.)
 
 
 ## Configuration
 
 You can customize the statements you want to insert in the Settings.(You can also use this plugin as a simple code snippet)
 
-TIPS: The key of `javascript` | `typescript` | `javascriptreact` | 'typescriptreact' | `vue` | `svelte`  is JavaScript.
+TIPS: The key of `javascript` | `typescript` | `javascriptreact` | `typescriptreact` | `vue` | `svelte`  is JavaScript.
 
 ```json
 // preset
@@ -84,6 +83,7 @@ TIPS: The key of `javascript` | `typescript` | `javascriptreact` | 'typescriptre
   "debugger-for-console.autoSave": false,
 
   // What kind of quotation marks to use when inserting statements
+  // Some languages that enforce the use of double quotes may not be valid, e.g. go
   "debugger-for-console.quote": "'",
 
   // Whether to insert emoji
@@ -103,7 +103,7 @@ TIPS: The key of `javascript` | `typescript` | `javascriptreact` | 'typescriptre
     "php": "var_dump($)",
     "python": "print($)",
     "rust": "println!($)",
-    "go": "fmt.Println($)",
+    "go": "println($)",
     "csharp": "Console.Log($)",
     "javascript": "console.log($)",
     "default": "console.log($)"

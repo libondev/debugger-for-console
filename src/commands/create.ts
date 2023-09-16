@@ -49,9 +49,19 @@ function getInsertLineIndents(
       : previousLineSpaces
   }
 
-  // TODO: 如果缩进的方式是 tab, 那么这种计算方式就不正确, 也许需要换一种计算方式
-  // 比如需要先获取到文档的缩进类型以及默认的缩进大小, 然后再进行计算
   return ' '.repeat(targetLineSpaces)
+
+  // Uncertain whether this function is needed, currently no feedback on using tab as indent
+  // 不确定是否需要这个功能, 目前还没有得到使用 tab 作为缩进的反馈
+  // const [indentType, indentSize] = workspace
+  //   .getConfiguration('editor', null)
+  //   .get('insertSpaces', true)
+  //   ? ['space', workspace.getConfiguration('editor', null).get('tabSize', 2)]
+  //   : ['tab', 1]
+
+  // return indentType === 'space'
+  //   ? ' '.repeat(targetLineSpaces)
+  //   : '\t'.repeat(targetLineSpaces / indentSize)
 }
 
 function getStatementGenerator(document: TextDocument, symbols: string) {
@@ -64,7 +74,7 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
     const _quote = QUOTE_SYMBOLS[document.languageId as QuoteSymbolsKeys] ?? quote.$
 
     const template = `${start}${_quote}${getRandomEmoji()}${
-      getFileDepth(document)}$0$${symbols} - [$1$]: ${_quote}, $2$${end.join('')}\n`
+      getFileDepth(document)}$0$${symbols} ~ [$1$]: ${_quote}, $2$${end.join('')}\n`
 
     return (lineNumber: number, text: string) => template
       .replace('$0$', getLineNumber(lineNumber))

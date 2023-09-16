@@ -1,7 +1,7 @@
 import type { Position, Selection, TextDocument } from 'vscode'
 
 const BREAK_CHARACTER = [
-  ' ', '\n', '\'', '"', '`', '\\', ',', '=', '+', '-',
+  ' ', '\n', '\t', '\'', '"', '`', '\\', ',', '=', '+', '-',
   '*', '/', '%', '(', ')', '{', '}', '<', '>', '[', ']',
 ]
 

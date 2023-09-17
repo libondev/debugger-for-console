@@ -74,7 +74,7 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
     const _quote = QUOTE_SYMBOLS[document.languageId as QuoteSymbolsKeys] ?? quote.$
 
     const template = `${start}${_quote}${getRandomEmoji()}${
-      getFileDepth(document)}$0$${symbols} ~ [$1$]: ${_quote}, $2$${end.join('')}\n`
+      getFileDepth(document)}$0$${symbols} ~ [$1$]:${_quote}, $2$${end.join('')}\n`
 
     return (lineNumber: number, text: string) => template
       .replace('$0$', getLineNumber(lineNumber))

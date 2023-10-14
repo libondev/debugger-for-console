@@ -1,8 +1,5 @@
 # Debugger for Console
 
-## CHANGE
-> [Libon](https://github.com/libondev) is now the owner of this extension.
-
 Quickly create console debugging information for multiple languages.
 
 ## Features

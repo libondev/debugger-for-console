@@ -85,7 +85,7 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
   return () => `${statement}\n`
 }
 
-async function create(directionOffset: number) {
+async function create(insertLineOffset: number, displayLineOffset: number) {
   const editor = window.activeTextEditor!
 
   const { document, document: { uri } } = editor
@@ -97,7 +97,7 @@ async function create(directionOffset: number) {
   let position = new Position(0, 0)
 
   const mergedSelections = editor.selections.reduce((lines, selection) => {
-    const targetLine = selection.start.line + directionOffset
+    const targetLine = selection.start.line + insertLineOffset
 
     lines[targetLine] ??= []
 
@@ -117,7 +117,7 @@ async function create(directionOffset: number) {
     workspaceEdit.insert(
       uri,
       position,
-      `${indents}${statementGetter(lineNumber, mergedSelections[line].join(', '))}`,
+      `${indents}${statementGetter(lineNumber + displayLineOffset, mergedSelections[line].join(', '))}`,
     )
   }
 
@@ -126,6 +126,6 @@ async function create(directionOffset: number) {
   documentAutoSaver(editor)
 }
 
-export const createDebuggers = create.bind(null, 1)
+export const createDebuggers = create.bind(null, 1, 0)
 
-export const createDebuggersBefore = create.bind(null, 0)
+export const createDebuggersBefore = create.bind(null, 0, 2)

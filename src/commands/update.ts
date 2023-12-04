@@ -20,5 +20,5 @@ export function updateUserConfig() {
     getLevel,
   ]
 
-  deps.forEach(dep => dep.update)
+  deps.forEach(dep => dep.update())
 }

@@ -1,17 +1,19 @@
 import type { Range, TextDocument, TextLine } from 'vscode'
 import { resolvedConfig } from '../extension'
 
-export function lazyValue<Value>() {
-  let _value: Value
+export function lazyValue<Params>(
+  configKey: string,
+  generator: (config: string | boolean, params?: Params) => string | void,
+) {
+  let _generator = generator
 
-  return {
-    get $() {
-      return _value
-    },
-    update(newValue: Value) {
-      _value = newValue
-    },
+  const getter = (params?: Params) => _generator(resolvedConfig.get(configKey)!, params)
+
+  getter.update = () => {
+    _generator = resolvedConfig.get(configKey) ? generator : () => ''
   }
+
+  return getter
 }
 
 // This damn JavaScript language types

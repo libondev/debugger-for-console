@@ -11,7 +11,7 @@ function findSymbols(symbols: DocumentSymbol[], position: Position): DocumentSym
   }, [])
 }
 
-export async function getEditorScopeSymbol({
+async function getEditorSymbol({
   document: { uri },
   selection: { active },
 }: TextEditor) {
@@ -25,12 +25,13 @@ export async function getEditorScopeSymbol({
 }
 
 const SEPARATORS = ' > '
-export async function getScopeSymbols(editor: TextEditor) {
+
+export async function getSymbols(editor: TextEditor) {
   if (!resolvedConfig.get('symbols')) {
     return ''
   }
 
-  const symbols = await getEditorScopeSymbol(editor)
+  const symbols = await getEditorSymbol(editor)
 
   if (!symbols.length) {
     return ''

@@ -1,16 +1,15 @@
 import { Position, WorkspaceEdit, window, workspace } from 'vscode'
 import type { TextDocument } from 'vscode'
+
+import { autoSave } from '../features/saver'
+import { getQuote } from '../features/quote'
+import { getEmoji } from '../features/emoji'
+import { getLines } from '../features/lines'
+import { getLevel } from '../features/level'
+import { getScope } from '../features/scope'
+import { getSymbols } from '../features/symbols'
+
 import { getLanguageStatement } from '../utils/index'
-import {
-  documentAutoSaver,
-  getFileDepth,
-  getLineNumber,
-  getRandomEmoji,
-  getScopeSymbols,
-  getVariables,
-  quote,
-} from '../features/index'
-import { QUOTE_SYMBOLS, type QuoteSymbolsKeys } from '../syntax/quote'
 
 /**
  * get the indent of the current line(获取插入行的缩进内容)
@@ -71,13 +70,14 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
     throw new Error('No language statement found.')
   } else if (statement.includes('$')) {
     const [start, ...end] = statement.split('$')
-    const _quote = QUOTE_SYMBOLS[document.languageId as QuoteSymbolsKeys] ?? quote.$
 
-    const template = `${start}${_quote}${getRandomEmoji()}${
-      getFileDepth(document)}$0$${symbols} ~ [$1$]:${_quote}, $2$${end.join('')}\n`
+    const quote = getQuote(document.languageId)
+
+    const template = `${start}${quote}${getEmoji()}${
+      getLevel(document)}$0$${symbols} ~ [$1$]:${quote}, $2$${end.join('')}\n`
 
     return (lineNumber: number, text: string) => template
-      .replace('$0$', getLineNumber(lineNumber))
+      .replace('$0$', getLines(lineNumber)!)
       .replace('$1$', text.replace(/['"`\\]/g, ''))
       .replace('$2$', text)
   }
@@ -91,7 +91,7 @@ async function create(insertLineOffset: number, displayLineOffset: number) {
   const { document, document: { uri } } = editor
 
   const workspaceEdit = new WorkspaceEdit()
-  const scopeSymbols = await getScopeSymbols(editor)
+  const scopeSymbols = await getSymbols(editor)
   const statementGetter = getStatementGenerator(document, scopeSymbols)
 
   let position = new Position(0, 0)
@@ -101,7 +101,7 @@ async function create(insertLineOffset: number, displayLineOffset: number) {
 
     lines[targetLine] ??= []
 
-    lines[targetLine].push(getVariables(document, selection))
+    lines[targetLine].push(getScope(document, selection))
 
     return lines
   }, Object.create(null) as Record<number, string[]>)
@@ -123,7 +123,7 @@ async function create(insertLineOffset: number, displayLineOffset: number) {
 
   await workspace.applyEdit(workspaceEdit)
 
-  documentAutoSaver(editor)
+  autoSave(editor)
 }
 
 export const createDebuggers = create.bind(null, 1, 0)

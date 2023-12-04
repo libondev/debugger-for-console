@@ -1,14 +1,15 @@
 import type { Range } from 'vscode'
 import { WorkspaceEdit, window, workspace } from 'vscode'
 import { getAllStatementRanges, getLanguageStatement } from '../utils'
-import { documentAutoSaver } from '../features'
-import { COMMENT_SYMBOLS, type CommentSymbolsKeys } from '../syntax/comments'
+import { autoSave } from '../features/saver'
+import { getComment } from '../features/comment'
 
 async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   const editor = window.activeTextEditor!
 
   const { document, document: { uri, languageId } } = editor
-  const commentSymbols = COMMENT_SYMBOLS[languageId as CommentSymbolsKeys] || COMMENT_SYMBOLS.default
+  const commentSymbols = getComment(languageId)
+
   const languageRegexp = new RegExp(
     `^[ ]*[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`,
     'gm',
@@ -17,7 +18,7 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   const statements = getAllStatementRanges(document, languageRegexp)
 
   if (!statements.length) {
-    window.showInformationMessage('No statements matching the rule were found.')
+    // window.showInformationMessage('No statements matching the rule were found.')
     return
   }
 
@@ -43,7 +44,7 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
 
   await workspace.applyEdit(workspaceEdit)
 
-  documentAutoSaver(editor)
+  autoSave(editor)
 }
 
 export const commentDebuggers = toggle.bind(null, 'comment')

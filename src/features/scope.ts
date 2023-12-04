@@ -25,7 +25,7 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
   return lineContent.slice(start, end).replace(/\?$/, '')
 }
 
-export function getVariables(document: TextDocument, selection: Selection): string {
+export function getScope(document: TextDocument, selection: Selection): string {
   if (selection.isEmpty) {
     return getWordAtPosition(document, selection.anchor)
   }

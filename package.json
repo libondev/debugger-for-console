@@ -1,9 +1,9 @@
 {
   "name": "debugger-for-console",
   "displayName": "Debugger for Console",
-  "version": "0.10.0",
-  "packageManager": "pnpm@6.35.1",
   "description": "Quickly create console debugging information for multiple languages.",
+  "packageManager": "pnpm@6.35.1",
+  "version": "0.10.0",
   "keywords": [],
   "license": "MIT",
   "author": "Libon <bon.li@outlook.com>",
@@ -23,13 +23,14 @@
     "url": "https://github.com/libondev/debugger-for-console/issues"
   },
   "scripts": {
+    "dev": "tsup src/extension.ts --watch --external vscode",
     "build": "npm run typecheck && tsup src/extension.ts --external vscode",
-    "dev": "nr build --watch",
-    "lint": "eslint src/**/* --fix",
     "vscode:prepublish": "nr build",
     "pack": "vsce package --no-dependencies",
     "release": "bumpp --commit --push --tag",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/* --fix",
+    "lint:fix": "eslint src --ext ts --fix"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",

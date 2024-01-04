@@ -158,6 +158,16 @@
           "default": false,
           "description": "Insert the scope symbols in the debug statement. \nTips: Enabling this option can make your debug statements very very very loooooong,\nbecause it represents your code call level."
         },
+        "debugger-for-console.insertEmptyLineBeforeLogMessage": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to insert an empty line before the log message or not."
+        },
+        "debugger-for-console.insertEmptyLineAfterLogMessage": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to insert an empty line after the log message or not."
+        },
         "debugger-for-console.wrappers": {
           "type": "object",
           "description": "Wrapper method for debug statements, or set to debugger. \nTips: We will replace $ with the logger, it is optional, so you can also modify it to 'debugger'",

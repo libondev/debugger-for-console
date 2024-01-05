@@ -37,21 +37,11 @@ function getInsertLineIndents(
   } = lineAt(insertLine - offsetLine)
 
   // If the target line is the start line of a scope block,
-  // you need to indent one more time on the basis of the current line indent
-  // 如果目标行是一个作用域块的开始行则需要在当前行的缩进基础上再缩进一次
-  if (isScopeStartLine(insertLineText)) {
+  // you need to indent one more time on the basis of the current line indent.
+  // But if created upwards, this operation is not required
+  // 如果目标行是一个作用域块的开始行则需要在当前行的缩进基础上再缩进一次, 但如果向上创建则不需要这个操作
+  if (offsetLine && isScopeStartLine(insertLineText)) {
     insertLineIndents += 2
-  } else if (!insertLineIndents) {
-    // If the indent of the current line is 0, you need to get the indent of the previous line
-    // 如果当前行的缩进为0，则需要获取上一行的缩进
-    const {
-      firstNonWhitespaceCharacterIndex: previousLineSpaces,
-      text: previousLineText,
-    } = lineAt(insertLine - 1)
-
-    insertLineIndents = isScopeStartLine(previousLineText)
-      ? insertLineIndents + 2
-      : previousLineSpaces
   }
 
   return ' '.repeat(insertLineIndents)
@@ -74,18 +64,18 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
 
   if (!statement) {
     throw new Error('No language statement found.')
-  } else if (statement.includes('$')) {
-    const [start, ...end] = statement.split('$')
+  } else if (statement.includes('{VALUE}')) {
+    const [start, ...end] = statement.split('{VALUE}')
 
     const quote = getQuote(document.languageId)
 
     const template = `${start}${quote}${getEmoji()}${
-      getLevel(document)}$0$${symbols} ~ [$1$]:${quote}, $2$${end.join('')}\n`
+      getLevel(document)}$1${symbols} ~ [$2]:${quote}, $3${end.join('')}\n`
 
     return (lineNumber: number, text: string) => template
-      .replace('$0$', getLines(lineNumber)!)
-      .replace('$1$', text.replace(/['"`\\]/g, ''))
-      .replace('$2$', text)
+      .replace('$1', getLines(lineNumber) as string)
+      .replace('$2', text.replace(/['"`\\]/g, ''))
+      .replace('$3', text)
   }
 
   return () => `${statement}\n`

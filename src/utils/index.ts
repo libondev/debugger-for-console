@@ -3,7 +3,7 @@ import { resolvedConfig } from '../extension'
 
 export function lazyValue<Params>(
   configKey: string,
-  generator: (config: string | boolean, params?: Params) => string | void,
+  generator: (configValue: string | boolean, params?: Params) => void | string | boolean,
 ) {
   let _generator = generator
 
@@ -25,9 +25,9 @@ export const JAVASCRIPT_ALIAS = [
 export function getLanguageStatement({ languageId }: TextDocument): string {
   if (JAVASCRIPT_ALIAS.includes(languageId)) {
     return resolvedConfig.get('wrappers.javascript')!
-  } else {
-    return resolvedConfig.get(`wrappers.${languageId}`) || resolvedConfig.get('wrappers.default')!
   }
+
+  return resolvedConfig.get(`wrappers.${languageId}`) || resolvedConfig.get('wrappers.default')!
 }
 
 function getMultiLineStatement(document: TextDocument, line: TextLine) {
@@ -58,7 +58,7 @@ export function getAllStatementRanges(document: TextDocument, regexp: RegExp) {
     if (singleLineRegexp.test(line.text) || !line.text.includes('(')) {
       acc.push(line.range)
     } else {
-    // multi-line statement
+      // multi-line statement
       const [start, end] = getMultiLineStatement(document, line)
 
       // Push the range of the statement

@@ -2,6 +2,9 @@
 
 Quickly create console debugging information for multiple languages.
 
+## BREAKING CHANGE
+Starting from 0.11.0, replace the placeholder variable with {VALUE} instead of $.
+
 ## Features
 1. Quickly create console debugging information for multiple languages.
 2. Support for custom debugging statements for different languages.

@@ -29,7 +29,7 @@
     "pack": "vsce package --no-dependencies",
     "release": "bumpp --commit --push --tag",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src/**/* --fix",
+    "lint": "eslint src --ext ts ",
     "lint:fix": "eslint src --ext ts --fix"
   },
   "devDependencies": {
@@ -171,15 +171,15 @@
         },
         "debugger-for-console.wrappers": {
           "type": "object",
-          "description": "Wrapper method for debug statements, or set to debugger. \nTips: We will replace $ with the logger, it is optional, so you can also modify it to 'debugger'",
+          "description": "Wrapper method for debug statements, or set to debugger. \nTips: We will replace {VALUE} with the logger, it is optional, so you can also modify it to 'debugger'",
           "default": {
-            "php": "var_dump($)",
-            "python": "print($)",
-            "rust": "println!($)",
-            "go": "println($)",
-            "csharp": "Console.Log($)",
-            "javascript": "console.log($)",
-            "default": "console.log($)"
+            "php": "var_dump({VALUE})",
+            "python": "print({VALUE})",
+            "rust": "println!({VALUE})",
+            "go": "println({VALUE})",
+            "csharp": "Console.Log({VALUE})",
+            "javascript": "console.log({VALUE})",
+            "default": "console.log({VALUE})"
           }
         }
       }

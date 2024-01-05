@@ -9,3 +9,8 @@ export const getAfterEmptyLine = lazyValue(
   'insertEmptyLineAfterLogMessage',
   insertAfter => insertAfter ? '\n' : '',
 )
+
+export const getReplaceEmptyLine = lazyValue(
+  'replaceEmptyLine',
+  replaceEmpty => replaceEmpty,
+)

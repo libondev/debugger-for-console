@@ -8,7 +8,11 @@ import { getLines } from '../features/lines'
 import { getLevel } from '../features/level'
 import { getScope } from '../features/scope'
 import { getSymbols } from '../features/symbols'
-import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
+import {
+  getAfterEmptyLine,
+  getBeforeEmptyLine,
+  getReplaceEmptyLine,
+} from '../features/empty-line'
 
 import { getLanguageStatement, isScopeStartLine } from '../utils/index'
 
@@ -70,12 +74,20 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
     const quote = getQuote(document.languageId)
 
     const template = `${start}${quote}${getEmoji()}${
-      getLevel(document)}$1${symbols} ~ [$2]:${quote}, $3${end.join('')}\n`
+      getLevel(document)}$1${symbols} ~ [$2]:${quote}, $3${end.join('')}$4`
 
     return (lineNumber: number, text: string) => template
       .replace('$1', getLines(lineNumber) as string)
       .replace('$2', text.replace(/['"`\\]/g, ''))
       .replace('$3', text)
+      .replace('$4', (() => {
+        // 如果开启了替换空行, 并且当前行为空行, 则返回空字符串
+        if (getReplaceEmptyLine() && document.lineAt(lineNumber).isEmptyOrWhitespace) {
+          return ''
+        }
+
+        return '\n'
+      })())
   }
 
   return () => `${statement}\n`

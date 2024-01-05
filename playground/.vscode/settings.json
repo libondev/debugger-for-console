@@ -1,4 +1,5 @@
 {
+  "debugger-for-console.replaceEmptyLine": true,
   "debugger-for-console.wrappers": {
     "javascript": "console.log({VALUE})"
   }

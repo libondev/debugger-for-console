@@ -10,7 +10,7 @@ import { getScope } from '../features/scope'
 import { getSymbols } from '../features/symbols'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
-import { getLanguageStatement } from '../utils/index'
+import { getLanguageStatement, isScopeStartLine } from '../utils/index'
 
 /**
  * get the indent of the current line(获取插入行的缩进内容)
@@ -23,34 +23,34 @@ function getInsertLineIndents(
   insertLine: number,
   offsetLine: number,
 ) {
-  // If the cursor is at the end of the document, return a new line
-  // 如果当前光标所在的行是最后一行则用换行来代替首位的缩进内容
-  if (insertLine >= lineCount) {
-    return '\n'
-  } else if (insertLine <= 0) {
-    // If the cursor is at the start of the document, return an empty string
-    // 如果当前光标所在的行是第一行则输出空字符
+  if (insertLine <= 0) { // if first line(文档的第一行)
     return ''
+  } else if (insertLine >= lineCount) { // if last line(最后一行)
+    return '\n'
   }
 
-  // Get the indent of the current line
-  // 获取光标所行的原始缩进大小
-  let { firstNonWhitespaceCharacterIndex: insertLineIndents } = lineAt(insertLine - offsetLine)
+  // Get information about the line where the cursor is located
+  // 获取光标所行的信息
+  let {
+    firstNonWhitespaceCharacterIndex: insertLineIndents,
+    text: insertLineText,
+  } = lineAt(insertLine - offsetLine)
 
-  // If the indent of the current line is 0, you need to get the indent of the previous line
-  // 如果当前行的缩进为0，则需要获取上一行的缩进
-  if (insertLineIndents === 0) {
+  // If the target line is the start line of a scope block,
+  // you need to indent one more time on the basis of the current line indent
+  // 如果目标行是一个作用域块的开始行则需要在当前行的缩进基础上再缩进一次
+  if (isScopeStartLine(insertLineText)) {
+    insertLineIndents += 2
+  } else if (!insertLineIndents) {
+    // If the indent of the current line is 0, you need to get the indent of the previous line
+    // 如果当前行的缩进为0，则需要获取上一行的缩进
     const {
       firstNonWhitespaceCharacterIndex: previousLineSpaces,
       text: previousLineText,
     } = lineAt(insertLine - 1)
 
-    // block start and scope start need to add 2 spaces, e.g. [if (true) {] or [case '1':]
-    // 块开始和作用域开始需要加 2 个空格, 比如 if (true) { 或者 case '1': 这种情况
-    insertLineIndents = ['{', ':', '('].includes(previousLineText.at(-1)!)
+    insertLineIndents = isScopeStartLine(previousLineText)
       ? insertLineIndents + 2
-      // if the next line is empty, get the indent of the previous line
-      // 如果下一行是空行则获取上一行的缩进大小
       : previousLineSpaces
   }
 

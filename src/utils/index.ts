@@ -72,3 +72,7 @@ export function getAllStatementRanges(document: TextDocument, regexp: RegExp) {
 
   return statements
 }
+
+export function isScopeStartLine(text: string) {
+  return ['(', '{', ':'].includes(text.trim().slice(-1))
+}

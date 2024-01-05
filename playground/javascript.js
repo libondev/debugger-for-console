@@ -11,6 +11,15 @@ const obj = {
 
 function printHello() {
 
+  const test = 'TEST'
+
+  Promise.resolve()
+    .then((res) => {
+
+    })
+    .catch((err) => {
+
+    })
 }
 
 if (true) {

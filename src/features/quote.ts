@@ -1,6 +1,6 @@
 import { lazyValue } from '../utils/index'
 
-const DOUBLE_QUOTE_LANGUAGES = ['go', 'csharp', 'rust', 'shellscript']
+const DOUBLE_QUOTE_LANGUAGES = ['go', 'csharp', 'rust', 'shellscript', 'java']
 
 export const getQuote = lazyValue<string>(
   'quote',

@@ -173,12 +173,13 @@
           "type": "object",
           "description": "Wrapper method for debug statements, or set to debugger. \nTips: We will replace {VALUE} with the logger, it is optional, so you can also modify it to 'debugger'",
           "default": {
+            "csharp": "Console.Log({VALUE})",
+            "go": "println({VALUE})",
+            "java": "System.out.println({VALUE});",
+            "javascript": "console.log({VALUE})",
             "php": "var_dump({VALUE})",
             "python": "print({VALUE})",
             "rust": "println!({VALUE})",
-            "go": "println({VALUE})",
-            "csharp": "Console.Log({VALUE})",
-            "javascript": "console.log({VALUE})",
             "default": "console.log({VALUE})"
           }
         }

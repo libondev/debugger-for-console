@@ -76,3 +76,7 @@ export function getAllStatementRanges(document: TextDocument, regexp: RegExp) {
 export function isScopeStartLine(text: string) {
   return ['(', '{', ':'].includes(text.trim().slice(-1))
 }
+
+export function isOnlyAcceptOneParameter(languageId: string) {
+  return ['java'].includes(languageId)
+}

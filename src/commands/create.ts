@@ -10,7 +10,11 @@ import { getScope } from '../features/scope'
 import { getSymbols } from '../features/symbols'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
-import { getLanguageStatement, isScopeStartLine } from '../utils/index'
+import {
+  getLanguageStatement,
+  isOnlyAcceptOneParameter,
+  isScopeStartLine,
+} from '../utils/index'
 
 /**
  * get the indent of the current line(获取插入行的缩进内容)
@@ -68,9 +72,10 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
     const [start, ...end] = statement.split('{VALUE}')
 
     const quote = getQuote(document.languageId)
+    const separator = isOnlyAcceptOneParameter(document.languageId) ? ' + ' : ', '
 
     const template = `${start}${quote}${getEmoji()}${
-      getLevel(document)}$1${symbols} ~ [$2]:${quote}, $3${end.join('')}\n`
+      getLevel(document)}$1${symbols} ~ [$2]: ${quote}${separator}$3${end.join('')}\n`
 
     return (lineNumber: number, text: string) => template
       .replace('$1', getLines(lineNumber) as string)

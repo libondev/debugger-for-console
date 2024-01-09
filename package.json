@@ -159,6 +159,15 @@
           "default": false,
           "description": "Insert the scope symbols in the debug statement. \nTips: Enabling this option can make your debug statements very very very loooooong,\nbecause it represents your code call level."
         },
+        "debugger-for-console.onlyOutputVariable": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "enable"
+          ],
+          "default": "auto",
+          "description": "Is it possible to output only one parameter.\nTips: When set to \"auto\", it depends on the language, such as Java. If it is a custom function, it should be set to \"enable\"."
+        },
         "debugger-for-console.insertEmptyLineBeforeLogMessage": {
           "type": "boolean",
           "default": false,
@@ -171,7 +180,7 @@
         },
         "debugger-for-console.wrappers": {
           "type": "object",
-          "description": "Wrapper method for debug statements, or set to debugger. \nTips: We will replace {VALUE} with the logger, it is optional, so you can also modify it to 'debugger'",
+          "description": "Wrapper method for debug statements, or set to debugger.\nTips: We will replace {VALUE} with the logger, it is optional, so you can also modify it to 'debugger'",
           "default": {
             "csharp": "Console.Log({VALUE})",
             "go": "println({VALUE})",

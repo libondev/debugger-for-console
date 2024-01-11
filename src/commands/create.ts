@@ -8,7 +8,7 @@ import { getLines } from '../features/lines'
 import { getLevel } from '../features/level'
 import { getScope } from '../features/scope'
 import { getSymbols } from '../features/symbols'
-import { getSeparator } from '../features/separator'
+import { getOneVariable } from '../features/variable'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
 import {
@@ -71,20 +71,14 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
   } else if (statement.includes('{VALUE}')) {
     const [start, ...end] = statement.split('{VALUE}')
 
-    const separator = getSeparator(document.languageId)
-
-    // If the delimiter is " + ", it means that only one parameter is output,
-    // otherwise it will become a string addition,
-    // and the printed thing will have no meaning
-    // 如果分割符是 " + " 则表示只输出一个参数, 否则会变成字符串相加, 打印出来的东西没有意义
-    if (separator === ' + ') {
+    if (getOneVariable(document.languageId)) {
       return (_: number, text: string) => `${start}$3${end.join('')}\n`.replace('$3', text)
     }
 
     const quote = getQuote(document.languageId)
 
     const template = `${start}${quote}${getEmoji()}${
-      getLevel(document)}$1${symbols} ~ [$2]:${quote}${separator}$3${end.join('')}\n`
+      getLevel(document)}$1${symbols} ~ [$2]:${quote}, $3${end.join('')}\n`
 
     return (lineNumber: number, text: string) => template
       .replace('$1', getLines(lineNumber) as string)

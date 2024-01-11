@@ -5,7 +5,7 @@ import { getQuote } from '../features/quote'
 import { getEmoji } from '../features/emoji'
 import { getLines } from '../features/lines'
 import { getLevel } from '../features/level'
-import { getSeparator } from '../features/separator'
+import { getOneVariable } from '../features/variable'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
 export function updateUserConfig() {
@@ -20,7 +20,7 @@ export function updateUserConfig() {
     getEmoji,
     getLines,
     getLevel,
-    getSeparator,
+    getOneVariable,
     getBeforeEmptyLine,
     getAfterEmptyLine,
   ]

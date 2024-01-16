@@ -100,13 +100,13 @@ TIPS: The key of `javascript` | `typescript` | `javascriptreact` | `typescriptre
 
   // Customize debugging statements for different languages
   "debugger-for-console.wrappers": {
-    "php": "var_dump($)",
-    "python": "print($)",
-    "rust": "println!($)",
-    "go": "println($)",
-    "csharp": "Console.Log($)",
-    "javascript": "console.log($)",
-    "default": "console.log($)"
+    "php": "var_dump({VALUE})",
+    "python": "print({VALUE})",
+    "rust": "println!({VALUE})",
+    "go": "println({VALUE})",
+    "csharp": "Console.Log({VALUE})",
+    "javascript": "console.log({VALUE})",
+    "default": "console.log({VALUE})"
   }
 }
 ```
@@ -116,9 +116,10 @@ TIPS: The key of `javascript` | `typescript` | `javascriptreact` | `typescriptre
 ```json
 {
   "debugger-for-console.wrappers": {
-    "javascript": "console.warn($)",
+    "javascript": "console.warn({VALUE})"
     // OR
-    "javascript": "debugger"
+    // "javascript": "debugger"
+    // "javascript": "print({VALUE})"
   }
 }
 ```

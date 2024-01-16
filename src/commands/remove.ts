@@ -11,7 +11,7 @@ export async function removeDebuggers() {
 
   const commentSymbols = getComment(languageId)
 
-  const regexp = new RegExp(`^[ ]*[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`, 'gm')
+  const regexp = new RegExp(`^[ ]*[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/{VALUE}/, '.*?')}`, 'gm')
 
   const statements = getAllStatementRanges(document, regexp)
 

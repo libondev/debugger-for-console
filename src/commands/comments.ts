@@ -11,7 +11,7 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   const commentSymbols = getComment(languageId)
 
   const languageRegexp = new RegExp(
-    `^[ ]*[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/\$/, '.*?')}`,
+    `^[ ]*[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/{VALUE}/, '.*?')}`,
     'gm',
   )
 

@@ -9,6 +9,8 @@ const obj = {
   age: 20,
 }
 
+const list = [...arr]
+
 function printHello() {
 
   const test = 'TEST'

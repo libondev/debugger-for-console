@@ -3,7 +3,7 @@
   "displayName": "Debugger for Console",
   "description": "Quickly create console debugging information for multiple languages.",
   "packageManager": "pnpm@6.35.1",
-  "version": "0.12.3",
+  "version": "0.12.4",
   "keywords": [],
   "license": "MIT",
   "author": "Libon <bon.li@outlook.com>",

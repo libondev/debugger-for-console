@@ -5,9 +5,8 @@ const BREAK_CHARACTER = [
   '*', '/', '%', '(', ')', '{', '}', '<', '>', '[', ']',
 ]
 
-const IS_DOT_ENDS = /\.$/
-const IS_QUESTION_MARK = /\?$/
 const IS_SPREAD_STARTS = /^\.+/
+const IS_SYMBOL_STARTS = /^[?.]*(.*?)[?.]*$/g
 
 function getWordAtPosition(document: TextDocument, position: Position): string {
   const word = document.getWordRangeAtPosition(position)
@@ -28,9 +27,8 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
 
   return lineContent
     .slice(start, end)
-    .replace(IS_DOT_ENDS, '')
-    .replace(IS_QUESTION_MARK, '')
     .replace(IS_SPREAD_STARTS, '')
+    .replace(IS_SYMBOL_STARTS, '$1')
 }
 
 export function getScope(document: TextDocument, selection: Selection): string {

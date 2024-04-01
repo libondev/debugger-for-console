@@ -15,6 +15,8 @@ function printHello() {
 
   const test = 'TEST'
 
+  obj.value?.[0]?.test()
+
   Promise.resolve()
     .then((res) => {
 

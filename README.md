@@ -1,20 +1,34 @@
 # Debugger for Console
-
 Effortlessly generate console debugging information for various languages.
+
+这个文档还有 [简体中文](./README-CN.md) 版本。
 
 ## BREAKING CHANGE
 From version 0.11.0 onwards, replace the placeholder variable with {VALUE} instead of $.
 
+## Why not [Turbo Console Log](https://marketplace.visualstudio.com/items?itemName=ChakrounAnas.turbo-console-log)?
+First of all, I have to admit that it is really great, and even the motivation of my plug-in is because of it, but I did find some problems in use (maybe I was wrong😜).
+
+1. Even if a single emoji can be replaced, Byt all statements can only appear in the console as the same emoji.
+2. When multiple cursors are inserted, they are inserted in sequence, which may leave many modification records locally.
+3. Cannot output different log messages from different file types in the current workspace.
+4. Can't customize what you create. For example, sometimes I want to use `debugger` instead of `console.log`.
+5. Creating multiple lines of cursor in the same line will create multiple statements, and the order is not guaranteed.
+6. Occasionally I want a clean log output, but I don't want to create it manually.
+7. ...
+
+>! Let me reiterate that there is nothing wrong with it, but it can't meet my needs in some ways. If you have these problems, you might as well try this plugin, which is free anyway. 😇
+
+If you think it works, you might as well give me a ⭐, which is my greatest encouragement. Thank you for your use~
+
 ## Features
 1. Swiftly generate console debugging information across multiple languages.
-2. Customize debugging statements for different languages.
-3. Insert debugging statements before or after the current line.
-4. Remove all debugging statements within the document.
-5. Comment and uncomment all debugging statements in the document.
-6. Insert debugging statements at multiple cursor locations.
-7. Merge multiple cursors on the same line.
-8. Update the latest workbench configuration.
-
+2. Insert debugging statements before or after the current line.
+3. Remove all debugging statements within the document.
+4. Comment and uncomment all debugging statements in the document.
+5. Insert debugging statements at multiple cursor locations.
+6. Merge multiple cursors on the same line.
+7. Hot update the latest workbench configuration.(without restarting your editor.)
 
 ## Installing
 
@@ -22,7 +36,7 @@ This extension is freely available in the [Visual Studio Code Marketplace](https
 
 ## Usage
 
-### keybindings
+### Keybindings
 #### Create the statement before the line
 <kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>↑(ArrowUp)</kbd>
 
@@ -49,11 +63,11 @@ This extension is freely available in the [Visual Studio Code Marketplace](https
 ![](res/uncomment-all-statements.gif)
 
 #### Multi cursor
-Merge multiple cursors on the same line: :
-![](res/merged-multi-cursor-insert.gif)
-
 Insert at multiple line cursors:
 ![](res/multi-cursor-insert.gif)
+
+Merge multiple cursors on the same line:
+![](res/merged-multi-cursor-insert.gif)
 
 ### command
 
@@ -74,28 +88,37 @@ Insert at multiple line cursors:
 
 You can personalize the statements you wish to insert via the Settings. (This plugin can also serve as a straightforward code snippet tool.)
 
-TIPS: The keys `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `vue`, and `svelte` all correspond to JavaScript.
-
+```json
 // Default Settings
 {
   // Automatically save the current file after executing an operation
   "debugger-for-console.autoSave": false,
 
   // Specify the type of quotation marks to use when inserting statements
-  // Note: Some languages that require the use of double quotes may not support this feature, e.g., Go
+  // Note: Some languages that require the use of double quotes may not support this feature, e.g., Go, C#, rust
   "debugger-for-console.quote": "'",
 
-  // Determine whether to insert an emoji
+  // Whether or not whether to insert an emoji
   "debugger-for-console.emoji": true,
 
   // Set the relative path depth of files
   "debugger-for-console.fileDepth": 2,
 
-  // Determine whether to insert the line number
+  // Whether or not whether to insert the line number
   "debugger-for-console.lineNumber": true,
 
   // Insert scope symbols in the debug statement
   "debugger-for-console.symbols": false,
+
+  // Is it possible to output only one parameter.
+  // The log output method in some languages does not support multiple functions, such as `Java`
+  "debugger-for-console.onlyOutputVariable": "auto",
+
+  // Whether to insert an empty line before the log message or not.
+  "debugger-for-console.insertEmptyLineBeforeLogMessage": false,
+
+  // Whether to insert an empty line after the log message or not.
+  "debugger-for-console.insertEmptyLineAfterLogMessage": false,
 
   // Customize debugging statements for different languages
   "debugger-for-console.wrappers": {
@@ -104,11 +127,12 @@ TIPS: The keys `javascript`, `typescript`, `javascriptreact`, `typescriptreact`,
     "rust": "println!({VALUE})",
     "go": "println({VALUE})",
     "csharp": "Console.Log({VALUE})",
+    // TIPS: The keys `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `vue`, and `svelte` all correspond to JavaScript.
     "javascript": "console.log({VALUE})",
     "default": "console.log({VALUE})"
   }
 }
-
+```
 
 ### examples
 

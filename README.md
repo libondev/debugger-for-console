@@ -1,24 +1,24 @@
 # Debugger for Console
 
-Quickly create console debugging information for multiple languages.
+Effortlessly generate console debugging information for various languages.
 
 ## BREAKING CHANGE
-Starting from 0.11.0, replace the placeholder variable with {VALUE} instead of $.
+From version 0.11.0 onwards, replace the placeholder variable with {VALUE} instead of $.
 
 ## Features
-1. Quickly create console debugging information for multiple languages.
-2. Support for custom debugging statements for different languages.
-3. Support for inserting debugging statements before and after the current line.
-4. Support for removing all debugging statements in the document.
-5. Support for commenting and uncommenting all debugging statements in the document.
-6. Support for inserting debugging statements in multiple cursors.
-7. Supports merging multiple cursors in the same row.
-8. Support for updating the latest workbench configuration.
+1. Swiftly generate console debugging information across multiple languages.
+2. Customize debugging statements for different languages.
+3. Insert debugging statements before or after the current line.
+4. Remove all debugging statements within the document.
+5. Comment and uncomment all debugging statements in the document.
+6. Insert debugging statements at multiple cursor locations.
+7. Merge multiple cursors on the same line.
+8. Update the latest workbench configuration.
 
 
 ## Installing
 
-This extension is available for free in the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=banlify.debugger-for-console).
+This extension is freely available in the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=banlify.debugger-for-console).
 
 ## Usage
 
@@ -49,17 +49,17 @@ This extension is available for free in the [Visual Studio Code Marketplace](htt
 ![](res/uncomment-all-statements.gif)
 
 #### Multi cursor
-merge multi cursor in the same row:
+Merge multiple cursors on the same line: :
 ![](res/merged-multi-cursor-insert.gif)
 
-multi line cursors:
+Insert at multiple line cursors:
 ![](res/multi-cursor-insert.gif)
 
 ### command
 
-> \> `debugger-for-console.create`: Insert a debug statement after it
+> \> `debugger-for-console.create`: Insert a debug statement after the current line
 
-> \> `debugger-for-console.before`: Insert a debug statement before it
+> \> `debugger-for-console.before`: Insert a debug statement before the current line
 
 > \> `debugger-for-console.remove`: Remove all debugger statements
 
@@ -67,35 +67,34 @@ multi line cursors:
 
 > \> `debugger-for-console.uncomment`: Uncomment all debugger statements
 
-> \> `debugger-for-console.update`: Update latest workbench configuration. (This way, your modifications can take effect immediately without restarting your editor.)
+> \> `debugger-for-console.update`: Update the latest workbench configuration. (This allows your modifications to take effect immediately without restarting your editor.)
 
 
 ## Configuration
 
-You can customize the statements you want to insert in the Settings.(You can also use this plugin as a simple code snippet)
+You can personalize the statements you wish to insert via the Settings. (This plugin can also serve as a straightforward code snippet tool.)
 
-TIPS: The key of `javascript` | `typescript` | `javascriptreact` | `typescriptreact` | `vue` | `svelte`  is JavaScript.
+TIPS: The keys `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `vue`, and `svelte` all correspond to JavaScript.
 
-```json
-// preset
+// Default Settings
 {
-  // Save the current file after performing the operation
+  // Automatically save the current file after executing an operation
   "debugger-for-console.autoSave": false,
 
-  // What kind of quotation marks to use when inserting statements
-  // Some languages that enforce the use of double quotes may not be valid, e.g. go
+  // Specify the type of quotation marks to use when inserting statements
+  // Note: Some languages that require the use of double quotes may not support this feature, e.g., Go
   "debugger-for-console.quote": "'",
 
-  // Whether to insert emoji
+  // Determine whether to insert an emoji
   "debugger-for-console.emoji": true,
 
-  // Relative path depth of files
+  // Set the relative path depth of files
   "debugger-for-console.fileDepth": 2,
 
-  // Whether to insert the line number
+  // Determine whether to insert the line number
   "debugger-for-console.lineNumber": true,
 
-  // Insert the scope symbols in the debug statement.
+  // Insert scope symbols in the debug statement
   "debugger-for-console.symbols": false,
 
   // Customize debugging statements for different languages
@@ -109,7 +108,7 @@ TIPS: The key of `javascript` | `typescript` | `javascriptreact` | `typescriptre
     "default": "console.log({VALUE})"
   }
 }
-```
+
 
 ### examples
 

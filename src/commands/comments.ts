@@ -1,6 +1,6 @@
 import type { Range } from 'vscode'
 import { WorkspaceEdit, window, workspace } from 'vscode'
-import { getAllStatementRanges, getLanguageStatement } from '../utils'
+import { getAllStatementRanges } from '../utils'
 import { autoSave } from '../features/saver'
 import { getComment } from '../features/comment'
 
@@ -10,15 +10,9 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   const { document, document: { uri, languageId } } = editor
   const commentSymbols = getComment(languageId)
 
-  const languageRegexp = new RegExp(
-    `^[ ]*[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/{VALUE}/, '.*?')}`,
-    'gm',
-  )
-
-  const statements = getAllStatementRanges(document, languageRegexp)
+  const statements = getAllStatementRanges(document, commentSymbols)
 
   if (!statements.length) {
-    // window.showInformationMessage('No statements matching the rule were found.')
     return
   }
 

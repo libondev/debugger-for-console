@@ -1,5 +1,5 @@
 import { WorkspaceEdit, window, workspace } from 'vscode'
-import { getAllStatementRanges, getLanguageStatement } from '../utils'
+import { getAllStatementRanges } from '../utils'
 
 import { autoSave } from '../features/saver'
 import { getComment } from '../features/comment'
@@ -11,12 +11,9 @@ export async function removeDebuggers() {
 
   const commentSymbols = getComment(languageId)
 
-  const regexp = new RegExp(`^[ ]*[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/{VALUE}/, '.*?')}`, 'gm')
-
-  const statements = getAllStatementRanges(document, regexp)
+  const statements = getAllStatementRanges(document, commentSymbols)
 
   if (!statements.length) {
-    // window.showInformationMessage('No statements matching the rule were found.')
     return
   }
 

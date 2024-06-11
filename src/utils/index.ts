@@ -22,6 +22,7 @@ export const JAVASCRIPT_ALIAS = [
   'typescript', 'typescriptreact', 'vue',
 ]
 
+// Get the statement corresponding to the language of the current document.
 export function getLanguageStatement({ languageId }: TextDocument): string {
   if (JAVASCRIPT_ALIAS.includes(languageId)) {
     return resolvedConfig.get('wrappers.javascript')!
@@ -30,6 +31,7 @@ export function getLanguageStatement({ languageId }: TextDocument): string {
   return resolvedConfig.get(`wrappers.${languageId}`) || resolvedConfig.get('wrappers.default')!
 }
 
+// Gets the start/end line of a multi-line statement.
 function getMultiLineStatement(document: TextDocument, line: TextLine) {
   let nextLine = document.lineAt(line.lineNumber + 1)
   let count = 1
@@ -41,25 +43,38 @@ function getMultiLineStatement(document: TextDocument, line: TextLine) {
     count && (nextLine = document.lineAt(nextLine.lineNumber + 1))
   }
 
-  return [line.range.start.line, nextLine.range.end.line]
+  return { start: line.range.start.line, end: nextLine.range.end.line }
 }
 
-export function getAllStatementRanges(document: TextDocument, regexp: RegExp) {
+// Get the start/end line of a single-line statement.
+export function getAllStatementRanges(document: TextDocument, commentSymbols: string) {
   const text = document.getText()
 
+  if (!text.trim()) {
+    return []
+  }
+
+  const matchRegexp = new RegExp(`^[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/{VALUE}/, '.*?')}`, 'gm')
+
+  const matchedResults = [...text.matchAll(matchRegexp)]
+
+  if (!matchedResults.length) {
+    return []
+  }
+
   // Matches the first statement in a line
-  const singleLineRegexp = /\(.*?\)/
+  const singleLineRegexp = /\(.*?\)($)?/
 
   let line: TextLine
-  const statements = [...text.matchAll(regexp)].reduce((acc, match) => {
+  const statements = matchedResults.reduce((acc, match) => {
     line = document.lineAt(document.positionAt(match.index!).line)
 
-    // not have a '(' or is a single line statement
+    // not have a '(' or is a single line statement. e.g. debugger
     if (singleLineRegexp.test(line.text) || !line.text.includes('(')) {
       acc.push(line.range)
     } else {
       // multi-line statement
-      const [start, end] = getMultiLineStatement(document, line)
+      const { start, end } = getMultiLineStatement(document, line)
 
       // Push the range of the statement
       for (let i = start; i <= end; i++) {

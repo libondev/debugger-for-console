@@ -8,6 +8,7 @@ const BREAK_CHARACTER = [
 
 const IS_SPREAD_STARTS = /^\.+/
 const IS_SYMBOL_STARTS = /^[?.]*(.*?)[?.]*$/g
+const IS_BRACKETS_ENDS = { '(': ')', '{': '}', '[': ']' }
 
 function getWordAtPosition(document: TextDocument, position: Position): string {
   const { isEmptyOrWhitespace, text: lineContent } = document.lineAt(position.line)
@@ -25,15 +26,23 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
     start = word.start.character
     end = word.end.character
   } else {
-    end = start = position.character - 1
+    end = position.character
+    start = end - 1
   }
 
   while (start > 0 && !BREAK_CHARACTER.includes(lineContent[start - 1])) {
     start--
   }
 
-  return lineContent
-    .slice(start, end)
+  let statementContent = lineContent.slice(start, end)
+  const lastChar = statementContent.slice(-1)!
+
+  // Add brackets if the last character is a bracket. e.g. 'foo' => 'foo()'
+  if (lastChar in IS_BRACKETS_ENDS) {
+    statementContent += IS_BRACKETS_ENDS[lastChar as keyof typeof IS_BRACKETS_ENDS]
+  }
+
+  return statementContent
     .replace(IS_SPREAD_STARTS, '')
     .replace(IS_SYMBOL_STARTS, '$1')
 }

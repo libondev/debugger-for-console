@@ -10,8 +10,14 @@ const IS_SPREAD_STARTS = /^\.+/
 const IS_SYMBOL_STARTS = /^[?.]*(.*?)[?.]*$/g
 
 function getWordAtPosition(document: TextDocument, position: Position): string {
+  const { isEmptyOrWhitespace, text: lineContent } = document.lineAt(position.line)
+
+  // empty line or no word
+  if (isEmptyOrWhitespace) {
+    return ''
+  }
+
   const word = document.getWordRangeAtPosition(position)
-  const lineContent = document.lineAt(position.line).text
 
   let start, end
 
@@ -37,9 +43,11 @@ export function getScope(document: TextDocument, selection: Selection): string {
     return getWordAtPosition(document, selection.anchor)
   }
 
-  const start = selection.start.character
-  const end = selection.end.character
-  const lineContent = document.lineAt(selection.start.line).text
+  const { isEmptyOrWhitespace, text: lineContent } = document.lineAt(selection.start.line)
 
-  return lineContent.slice(start, end)
+  if (isEmptyOrWhitespace) {
+    return ''
+  }
+
+  return lineContent.slice(selection.start.character, selection.end.character)
 }

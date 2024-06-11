@@ -5,8 +5,7 @@ import { getQuote } from '../features/quote'
 import { getEmoji } from '../features/emoji'
 import { getLines } from '../features/lines'
 import { getLevel } from '../features/level'
-import { getOneVariable } from '../features/variable'
-import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
+import { getOnlyVariable } from '../features/variable'
 
 export function updateUserConfig() {
   Object.assign(
@@ -20,9 +19,7 @@ export function updateUserConfig() {
     getEmoji,
     getLines,
     getLevel,
-    getOneVariable,
-    getBeforeEmptyLine,
-    getAfterEmptyLine,
+    getOnlyVariable,
   ]
 
   deps.forEach(dep => dep.update())

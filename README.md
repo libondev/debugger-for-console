@@ -88,7 +88,7 @@ Merge multiple cursors on the same line:
 
 You can personalize the statements you wish to insert via the Settings. (This plugin can also serve as a straightforward code snippet tool.)
 
-```json
+```json5
 // Default Settings
 {
   // Automatically save the current file after executing an operation
@@ -114,11 +114,8 @@ You can personalize the statements you wish to insert via the Settings. (This pl
   // The log output method in some languages does not support multiple functions, such as `Java`
   "debugger-for-console.onlyOutputVariable": "auto",
 
-  // Whether to insert an empty line before the log message or not.
-  "debugger-for-console.insertEmptyLineBeforeLogMessage": false,
-
-  // Whether to insert an empty line after the log message or not.
-  "debugger-for-console.insertEmptyLineAfterLogMessage": false,
+  // Whether to insert an empty line before or after the log message or not.
+  "debugger-for-console.insertEmptyLine": "none",
 
   // Customize debugging statements for different languages
   "debugger-for-console.wrappers": {
@@ -136,7 +133,7 @@ You can personalize the statements you wish to insert via the Settings. (This pl
 
 ### examples
 
-```json
+```json5
 {
   "debugger-for-console.wrappers": {
     "javascript": "console.warn({VALUE})"

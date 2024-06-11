@@ -166,17 +166,32 @@
             "enable"
           ],
           "default": "auto",
+          "enumDescriptions": [
+            "Automatically detect the programming language of the current document.",
+            "Remove all redundant prompts and only output variables."
+          ],
           "description": "Set to `enable` to cancel all redundant information and output only variables instead..\nTips: When the log output method of some languages does not support multiple parameters, it will be temporarily switched to `enable` internally, such as `Java`.. If it is a custom function, it should be set to \"enable\"."
         },
-        "debugger-for-console.insertEmptyLineBeforeLogMessage": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether to insert an empty line before the log message or not."
-        },
-        "debugger-for-console.insertEmptyLineAfterLogMessage": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether to insert an empty line after the log message or not."
+        "debugger-for-console.insertEmptyLine": {
+          "type": "string",
+          "default": "none",
+          "enum": [
+            "none",
+            "before",
+            "after",
+            "both",
+            "direction",
+            "directionReverse"
+          ],
+          "enumDescriptions": [
+            "Do not insert an empty line.",
+            "Insert an empty line before the debug statement.",
+            "Insert an empty line after the debug statement.",
+            "Insert an empty line before and after the debug statement.",
+            "Insert an empty line according to the direction of the debug statement.",
+            "Insert an empty line according to the reverse direction of the debug statement."
+          ],
+          "description": "Insert an empty line before or after the debug statement."
         },
         "debugger-for-console.wrappers": {
           "type": "object",

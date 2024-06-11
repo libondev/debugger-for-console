@@ -1,11 +1,23 @@
-import { lazyValue } from '../utils/index'
+export function getBeforeEmptyLine(configValue: string, direction: string) {
+  if (
+    ['before', 'both'].includes(configValue)
+    || (configValue === 'direction' && direction === 'before')
+    || (configValue === 'directionReverse' && direction === 'after')
+  ) {
+    return '\n'
+  }
 
-export const getBeforeEmptyLine = lazyValue(
-  'insertEmptyLineBeforeLogMessage',
-  insertBefore => insertBefore ? '\n' : '',
-)
+  return ''
+}
 
-export const getAfterEmptyLine = lazyValue(
-  'insertEmptyLineAfterLogMessage',
-  insertAfter => insertAfter ? '\n' : '',
-)
+export function getAfterEmptyLine(configValue: string, direction: string) {
+  if (
+    ['after', 'both'].includes(configValue)
+    || (configValue === 'direction' && direction === 'after')
+    || (configValue === 'directionReverse' && direction === 'before')
+  ) {
+    return '\n'
+  }
+
+  return ''
+}

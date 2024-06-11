@@ -1,6 +1,7 @@
 import { Position, WorkspaceEdit, window, workspace } from 'vscode'
 import type { TextDocument } from 'vscode'
 
+import { resolvedConfig } from '../extension'
 import { autoSave } from '../features/saver'
 import { getQuote } from '../features/quote'
 import { getEmoji } from '../features/emoji'
@@ -8,7 +9,7 @@ import { getLines } from '../features/lines'
 import { getLevel } from '../features/level'
 import { getScope } from '../features/scope'
 import { getSymbols } from '../features/symbols'
-import { getOneVariable } from '../features/variable'
+import { getOnlyVariable } from '../features/variable'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
 import {
@@ -71,7 +72,7 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
   } else if (statement.includes('{VALUE}')) {
     const [start, ...end] = statement.split('{VALUE}')
 
-    if (getOneVariable(document.languageId)) {
+    if (getOnlyVariable(document.languageId)) {
       return (_: number, text: string) => `${start}$3${end.join('')}\n`.replace('$3', text)
     }
 
@@ -109,6 +110,9 @@ async function create(insertLineOffset: number, displayLineOffset: number) {
   const statementGetter = getStatementGenerator(document, scopeSymbols)
   let position = new Position(0, 0)
 
+  const insertPosition = insertLineOffset > 0 ? 'after' : 'before'
+  const insertEmptyLineConfigValue = resolvedConfig.get('insertEmptyLine') as string
+
   for (const line in mergedSelections) {
     const lineNumber = Number(line)
 
@@ -120,11 +124,11 @@ async function create(insertLineOffset: number, displayLineOffset: number) {
     workspaceEdit.insert(
       uri,
       position,
-      `${getBeforeEmptyLine()}${indents
-      }${statementGetter(
+      `${getBeforeEmptyLine(insertEmptyLineConfigValue, insertPosition)
+      }${indents}${statementGetter(
         lineNumber + displayLineOffset,
         mergedSelections[line].join(', '),
-      )}${getAfterEmptyLine()}`,
+      )}${getAfterEmptyLine(insertEmptyLineConfigValue, insertPosition)}`,
     )
   }
 

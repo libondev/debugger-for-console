@@ -88,7 +88,7 @@ This document is also available in [English](./README-CN.md).
 
 您可以通过设置个性化您希望插入的语句。(这个插件也可以作为一个简单的代码片段工具。)
 
-```json
+```json5
 // 默认配置
 {
   // 执行操作后自动保存当前文件
@@ -114,11 +114,8 @@ This document is also available in [English](./README-CN.md).
   // 某些语言的日志输出方法不支持多个参数，比如：Java
   "debugger-for-console.onlyOutputVariable": "auto",
 
-  // 是否在日志消息前插入空行
-  "debugger-for-console.insertEmptyLineBeforeLogMessage": false,
-
-  // 是否在日志消息后插入空行
-  "debugger-for-console.insertEmptyLineAfterLogMessage": false,
+  // 是否在日志消息前/后插入空行
+  "debugger-for-console.insertEmptyLine": "none",
 
   // 自定义不同语言的输出语句
   "debugger-for-console.wrappers": {
@@ -136,7 +133,7 @@ This document is also available in [English](./README-CN.md).
 
 ### examples
 
-```json
+```json5
 {
   "debugger-for-console.wrappers": {
     "javascript": "console.warn({VALUE})"

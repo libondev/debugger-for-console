@@ -70,7 +70,11 @@ export function getAllStatementRanges(document: TextDocument, commentSymbols: st
     line = document.lineAt(document.positionAt(match.index!).line)
 
     // not have a '(' or is a single line statement. e.g. debugger
-    if (singleLineRegexp.test(line.text) || !line.text.includes('(')) {
+    if (
+      line.range.isSingleLine ||
+      singleLineRegexp.test(line.text) ||
+      !line.text.includes('(')
+    ) {
       acc.push(line.range)
     } else {
       // multi-line statement

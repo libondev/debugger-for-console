@@ -19,8 +19,24 @@ export async function removeDebuggers() {
 
   const workspaceEdit = new WorkspaceEdit()
 
-  statements.forEach((range) => {
-    const deleteRange = range.with(undefined, range.start.with(range.start.line + 1, 0))
+  statements.forEach((lineRange) => {
+    let startRange = lineRange.start
+    let endRange = lineRange.end
+
+    const [beforeLine, afterLine] = [document.lineAt(startRange.line - 1), document.lineAt(endRange.line + 1)]
+
+    // before empty line
+    if (beforeLine.range.isEmpty) {
+      startRange = beforeLine.range.start
+    }
+
+    // after empty line
+    if (afterLine.range.isEmpty) {
+      endRange = afterLine.range.end
+    }
+
+    const deleteRange = lineRange.with(startRange, endRange)
+
     workspaceEdit.delete(uri, deleteRange)
   })
 

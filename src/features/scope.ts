@@ -1,9 +1,8 @@
 import type { Position, Selection, TextDocument } from 'vscode'
 
 const BREAK_CHARACTER = [
-  ' ', '\n', '\t', '\'', '"', '`', '\\', ',', '=', '+', '-',
-  '*', '/', '%', '(', ')', '{', '}', '<', '>', '[', ']',
-  // '*', '/', '%', '{', '}', '<', '>',
+  ' ', '\t', '\n', ',', '=', '{', '}', '(', ')',
+  // '+', '-', '*', '/', '%', '<', '>', '[', ']',
 ]
 
 const IS_SPREAD_STARTS = /^\.+/
@@ -35,9 +34,20 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
   }
 
   let statementContent = lineContent.slice(start, end)
+
+  if (statementContent.length <= 1) {
+    if (statementContent === ')') {
+      const whitespaceIndex = Math.max(lineContent.lastIndexOf(' ', start - 1), 0)
+
+      return lineContent.slice(whitespaceIndex, end)
+    }
+
+    return ''
+  }
+
   const lastChar = statementContent.slice(-1)!
 
-  // Add brackets if the last character is a bracket. e.g. 'foo' => 'foo()'
+  // Add brackets if the last character is a bracket. e.g. 'foo(' => 'foo()'
   if (lastChar in IS_BRACKETS_ENDS) {
     statementContent += IS_BRACKETS_ENDS[lastChar as keyof typeof IS_BRACKETS_ENDS]
   }

@@ -12,5 +12,5 @@ export const getOnlyVariable = lazyValue<string>(
 
 export const getOutputNewline = lazyValue<string>(
   'outputNewline',
-  () => '\\n\\n ',
+  () => '\\n ',
 )

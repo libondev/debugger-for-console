@@ -36,13 +36,20 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
   let statementContent = lineContent.slice(start, end)
 
   if (statementContent.length <= 1) {
-    if (statementContent === ')') {
-      const whitespaceIndex = Math.max(lineContent.lastIndexOf(' ', start - 1), 0)
-
-      return lineContent.slice(whitespaceIndex, end)
+    if (statementContent !== ')') {
+      return ''
     }
 
-    return ''
+    let whitespaceIndex = lineContent.lastIndexOf(' ', start - 1)
+
+    if (whitespaceIndex === -1) {
+      whitespaceIndex = 0
+    } else {
+      // Skip the whitespace
+      whitespaceIndex += 1
+    }
+
+    return lineContent.slice(whitespaceIndex, end)
   }
 
   const lastChar = statementContent.slice(-1)!

@@ -31,3 +31,28 @@ if (true) {
 }
 
 printHello()
+
+const initApp = () => { }
+
+(() => {
+  initApp(Vue)
+
+  let app = new Vue({
+    router,
+    store,
+    i18n,
+    render: () => h(App)
+  })
+
+  const METHODS = {
+    mount(param) {
+
+      console.log('🛰️javascript.js:52/{param}:\n\n ', param)
+      app = app.$mount('#app')
+    },
+
+    unmount() {
+      app.$destroy()
+    }
+  }
+})()

@@ -26,7 +26,7 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
     end = word.end.character
   } else {
     end = position.character
-    start = end - 1
+    start = end
   }
 
   while (start > 0 && !BREAK_CHARACTER.includes(lineContent[start - 1])) {
@@ -35,11 +35,7 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
 
   let statementContent = lineContent.slice(start, end)
 
-  if (statementContent.length <= 1) {
-    if (statementContent !== ')') {
-      return ''
-    }
-
+  if (statementContent.length <= 0) {
     let whitespaceIndex = lineContent.lastIndexOf(' ', start - 1)
 
     if (whitespaceIndex === -1) {

@@ -1,5 +1,6 @@
 {
   "debugger-for-console.insertEmptyLine": "directionReverse",
+  "debugger-for-console.outputNewline": true,
   "debugger-for-console.wrappers": {
     "javascript": "console.log({VALUE})"
   }

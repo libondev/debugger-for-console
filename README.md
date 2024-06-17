@@ -110,6 +110,9 @@ You can personalize the statements you wish to insert via the Settings. (This pl
   // Insert scope symbols in the debug statement
   "debugger-for-console.symbols": false,
 
+  // Show variables and logos in rows. (Very effective when the content is long.)
+  "debugger-for-console.outputNewline": false,
+
   // Is it possible to output only one parameter.
   // The log output method in some languages does not support multiple functions, such as `Java`
   "debugger-for-console.onlyOutputVariable": "auto",

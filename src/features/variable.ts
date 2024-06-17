@@ -9,3 +9,8 @@ export const getOnlyVariable = lazyValue<string>(
     ONLY_OUTPUT_ONE_PARAMETER_LANGUAGE_ID.includes(languageId!)
   ),
 )
+
+export const getOutputNewline = lazyValue<string>(
+  'outputNewline',
+  () => '\\n\\n ',
+)

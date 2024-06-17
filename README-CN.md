@@ -110,6 +110,9 @@ This document is also available in [English](./README-CN.md).
   // 是否插入当前上下文栈
   "debugger-for-console.symbols": false,
 
+  // 把变量和提示符放在不同行输出 (如果内容很长时看起来会更方便)
+  "debugger-for-console.outputNewline": false,
+
   // 是否只输出单个变量
   // 某些语言的日志输出方法不支持多个参数，比如：Java
   "debugger-for-console.onlyOutputVariable": "auto",

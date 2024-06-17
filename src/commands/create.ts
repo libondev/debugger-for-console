@@ -9,7 +9,7 @@ import { getLines } from '../features/lines'
 import { getLevel } from '../features/level'
 import { getScope } from '../features/scope'
 import { getSymbols } from '../features/symbols'
-import { getOnlyVariable } from '../features/variable'
+import { getOnlyVariable, getOutputNewline } from '../features/variable'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
 import {
@@ -79,7 +79,7 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
     const quote = getQuote(document.languageId)
 
     const template = `${start}${quote}${getEmoji()}${
-      getLevel(document)}$1${symbols} ~ [$2]:${quote}, $3${end.join('')}\n`
+      getLevel(document)}$1${symbols}/{$2}:${getOutputNewline()}${quote}, $3${end.join('')}\n`
 
     return (lineNumber: number, text: string) => template
       .replace('$1', getLines(lineNumber) as string)

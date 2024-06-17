@@ -159,6 +159,11 @@
           "default": false,
           "description": "Insert scope symbols in the debug statement. \nTips: Enabling this option can make your debug statements very very very loooooong,\nbecause it represents your code call level."
         },
+        "debugger-for-console.outputNewline": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show variables and logos in rows."
+        },
         "debugger-for-console.onlyOutputVariable": {
           "type": "string",
           "enum": [

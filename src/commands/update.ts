@@ -4,8 +4,7 @@ import { autoSave } from '../features/saver'
 import { getQuote } from '../features/quote'
 import { getEmoji } from '../features/emoji'
 import { getLines } from '../features/lines'
-import { getLevel } from '../features/level'
-import { getOnlyVariable } from '../features/variable'
+import { getOnlyVariable, getOutputNewline } from '../features/variable'
 
 export function updateUserConfig() {
   Object.assign(
@@ -18,8 +17,8 @@ export function updateUserConfig() {
     getQuote,
     getEmoji,
     getLines,
-    getLevel,
     getOnlyVariable,
+    getOutputNewline,
   ]
 
   deps.forEach(dep => dep.update())

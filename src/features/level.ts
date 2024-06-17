@@ -1,12 +1,22 @@
 import { type TextDocument, workspace } from 'vscode'
-import { lazyValue } from '../utils/index'
+import { resolvedConfig } from '../extension'
 
-export const getLevel = lazyValue<TextDocument>(
-  'fileDepth',
-  (depths, document) => {
-    const relationFilePath = workspace.asRelativePath(document!.fileName)
-    const splitFilePaths = relationFilePath.split('/')
+export function getLevel(document: TextDocument) {
+  const depth = resolvedConfig.get('fileDepth', 0)
 
-    return ` ${splitFilePaths.slice(-depths).join('/')}`
-  },
-)
+  if (depth === 0) {
+    return ''
+  }
+
+  const relationFilePath = workspace.asRelativePath(document.fileName)
+
+  let lastIndex = relationFilePath.length
+  for (let i = 0; i < depth; i++) {
+    lastIndex = relationFilePath.lastIndexOf('/', lastIndex - 1)
+    if (lastIndex === -1) {
+      break
+    }
+  }
+
+  return relationFilePath.slice(lastIndex + 1)
+}

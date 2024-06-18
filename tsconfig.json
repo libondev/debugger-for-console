@@ -17,5 +17,5 @@
     ".vscode-test",
     "src/test/files",
     "dist/test/files"
-  ],
+  ]
 }

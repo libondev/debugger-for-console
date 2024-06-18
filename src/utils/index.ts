@@ -71,7 +71,6 @@ export function getAllStatementRanges(document: TextDocument, commentSymbols: st
 
     // not have a '(' or is a single line statement. e.g. debugger
     if (
-      line.range.isSingleLine ||
       singleLineRegexp.test(line.text) ||
       !line.text.includes('(')
     ) {

@@ -34,6 +34,8 @@ printHello()
 
 const initApp = () => { }
 
+const longStatement = window.name.includes('abc')[0].toUpperCase().toLowerCase()
+
 (() => {
   initApp(Vue)
 
@@ -47,7 +49,6 @@ const initApp = () => { }
   const METHODS = {
     mount(param) {
 
-      console.log('🛰️javascript.js:52/{param}:\n\n ', param)
       app = app.$mount('#app')
     },
 

@@ -1,58 +1,34 @@
 {
+  "publisher": "banlify",
   "name": "debugger-for-console",
   "displayName": "Debugger for Console",
-  "description": "Quickly create console debugging information for multiple languages.",
-  "packageManager": "pnpm@6.35.1",
   "version": "0.14.3",
-  "keywords": [],
-  "license": "MIT",
+  "packageManager": "pnpm@6.35.1",
+  "description": "Quickly create console debugging information for multiple languages.",
   "author": "Libon <bon.li@outlook.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/libondev/debugger-for-console#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/libondev/debugger-for-console"
   },
-  "main": "./dist/extension.js",
-  "publisher": "banlify",
-  "icon": "res/icon.png",
-  "files": [
-    "dist"
-  ],
-  "sideEffects": false,
-  "homepage": "https://github.com/libondev/debugger-for-console#readme",
   "bugs": {
     "url": "https://github.com/libondev/debugger-for-console/issues"
   },
-  "scripts": {
-    "dev": "tsup src/extension.ts --watch --external vscode",
-    "build": "npm run typecheck && tsup src/extension.ts --external vscode",
-    "vscode:prepublish": "nr build",
-    "pack": "vsce package --no-dependencies",
-    "release": "bumpp --commit --push --tag",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint src --ext ts ",
-    "lint:fix": "eslint src --ext ts --fix"
-  },
-  "devDependencies": {
-    "@antfu/eslint-config": "^0.39.8",
-    "@antfu/ni": "^0.21.5",
-    "@babel/types": "^7.22.5",
-    "@types/node": "^18.17.1",
-    "@types/vscode": "1.55.0",
-    "@vscode/vsce": "^2.19.0",
-    "bumpp": "^9.1.1",
-    "eslint": "^8.45.0",
-    "pnpm": "^6.35.1",
-    "rimraf": "^3.0.2",
-    "tsup": "^7.1.0",
-    "typescript": "^4.9.5"
-  },
-  "engines": {
-    "vscode": "^1.55.0"
-  },
+  "keywords": [],
   "categories": [
     "Other",
     "Debuggers"
   ],
+  "sideEffects": false,
+  "main": "./dist/extension.js",
+  "icon": "res/icon.png",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "vscode": "^1.55.0"
+  },
   "activationEvents": [
     "onCommand:debugger-for-console.create",
     "onCommand:debugger-for-console.before",
@@ -214,5 +190,29 @@
         }
       }
     }
+  },
+  "scripts": {
+    "dev": "tsup src/extension.ts --watch --external vscode",
+    "build": "npm run typecheck && tsup src/extension.ts --external vscode",
+    "vscode:prepublish": "nr build",
+    "pack": "vsce package --no-dependencies",
+    "release": "bumpp --commit --push --tag",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext ts ",
+    "lint:fix": "eslint src --ext ts --fix"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.39.8",
+    "@antfu/ni": "^0.21.5",
+    "@babel/types": "^7.22.5",
+    "@types/node": "^18.17.1",
+    "@types/vscode": "1.55.0",
+    "@vscode/vsce": "^2.19.0",
+    "bumpp": "^9.1.1",
+    "eslint": "^8.45.0",
+    "pnpm": "^6.35.1",
+    "rimraf": "^3.0.2",
+    "tsup": "^7.1.0",
+    "typescript": "^4.9.5"
   }
 }

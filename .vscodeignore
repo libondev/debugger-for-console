@@ -3,3 +3,11 @@ node_modules
 test
 .github
 .vscode
+README-CN.md
+playground
+tsup.config.tsup
+.gitignore
+pnpm-lock.yaml
+pnpm-workspace.yaml
+tsconfig.json
+tsup.config.ts

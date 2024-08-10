@@ -2,7 +2,7 @@
   "publisher": "banlify",
   "name": "debugger-for-console",
   "displayName": "Debugger for Console",
-  "version": "0.14.3",
+  "version": "0.14.4",
   "packageManager": "pnpm@6.35.1",
   "description": "Quickly create console debugging information for multiple languages.",
   "author": "Libon <bon.li@outlook.com>",

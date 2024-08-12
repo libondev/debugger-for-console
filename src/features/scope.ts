@@ -5,7 +5,7 @@ const BREAK_CHARACTER = [
   // '+', '-', '*', '/', '%', '<', '>', '[', ']',
 ]
 
-const IS_SPREAD_STARTS = /^\.+/
+// const IS_SPREAD_STARTS = /^\.+/
 const IS_SYMBOL_STARTS = /^[?.]*(.*?)[?.]*$/g
 const IS_BRACKETS_ENDS = { '(': ')', '{': '}', '[': ']' }
 
@@ -75,7 +75,7 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
   }
 
   return statementContent
-    .replace(IS_SPREAD_STARTS, '') // e.g.: ...args
+    // .replace(IS_SPREAD_STARTS, '') // e.g.: ...args
     .replace(IS_SYMBOL_STARTS, '$1') // e.g.: ?.args
 }
 

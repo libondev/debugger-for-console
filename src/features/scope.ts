@@ -5,9 +5,8 @@ const BREAK_CHARACTER = [
   // '+', '-', '*', '/', '%', '<', '>', '[', ']',
 ]
 
-// const IS_SPREAD_STARTS = /^\.+/
-const IS_SYMBOL_STARTS = /^[?.]*(.*?)[?.]*$/g
-const IS_BRACKETS_ENDS = { '(': ')', '{': '}', '[': ']' }
+const IS_SYMBOL_STARTS = /^[\}\)\]?.]*(.*?)[\{\(\[?.]*$/g
+const IS_BRACKETS_ENDS_MAP = { '(': ')', '{': '}', '[': ']' }
 
 function calcCharCounts(string: string, char: string) {
   const regex = new RegExp(char, 'g')
@@ -18,7 +17,7 @@ function calcCharCounts(string: string, char: string) {
 }
 
 function getWordAtPosition(document: TextDocument, position: Position): string {
-  const { isEmptyOrWhitespace, text: lineContent } = document.lineAt(position.line)
+  const { isEmptyOrWhitespace, text: lineText } = document.lineAt(position.line)
 
   // empty line or no word
   if (isEmptyOrWhitespace) {
@@ -27,56 +26,63 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
 
   const word = document.getWordRangeAtPosition(position)
 
-  let start, end
+  let startAt = position.character
+  let endAt = position.character
 
   if (word) {
-    start = word.start.character
-    end = word.end.character
-  } else {
-    start = end = position.character
+    startAt = word.start.character
+    endAt = word.end.character
   }
 
-  // Keep moving left until you find the boundary symbol
-  while (start > 0 && !BREAK_CHARACTER.includes(lineContent[start - 1])) {
-    start--
+  // Until you find the first delimiter
+  while (startAt > 0 && !BREAK_CHARACTER.includes(lineText[startAt - 1])) {
+    startAt--
   }
 
   // Get the text content of this range
-  let statementContent = lineContent.slice(start, end)
+  let content = lineText.slice(startAt, endAt)
 
-  // If there is no content, adjust the position to the last space
   // e.g.: obj.value?.[0]?.test()
   //                            ^
-  //                             ^
-  if (statementContent.length === 0) {
-    let whitespaceIndex = lineContent.lastIndexOf(' ', start - 1)
+  if (content.length === 0) {
+    let whitespaceIndex = lineText.lastIndexOf(' ', startAt - 1)
 
-    whitespaceIndex += whitespaceIndex === -1 ? 0 : 1
+    // Avoid intercepting from the last because the index becomes -1.
+    whitespaceIndex += whitespaceIndex === -1 ? 1 : 0
 
-    let newContent = lineContent.slice(whitespaceIndex, end)
+    let newContent = lineText.slice(whitespaceIndex, endAt)
 
     const lastChar = newContent.slice(-1)
 
     // Add brackets if the last character is a bracket. e.g. 'foo(' => 'foo()'
-    if (lastChar in IS_BRACKETS_ENDS) {
-      newContent += IS_BRACKETS_ENDS[lastChar as keyof typeof IS_BRACKETS_ENDS]
+    if (lastChar in IS_BRACKETS_ENDS_MAP) {
+      newContent += IS_BRACKETS_ENDS_MAP[lastChar as keyof typeof IS_BRACKETS_ENDS_MAP]
     }
 
     return newContent
   }
 
-  // Only when this symbol is included will the occurrence count be checked
-  if (statementContent.length > 2 && statementContent.includes('[')) {
-    const diffCounts = calcCharCounts(statementContent, '\\[') - calcCharCounts(statementContent, '\\]')
+  // Automatically complete missing symbols
+  // It is necessary to check only if the length of the content is at least greater than 2.
+  if (content.length >= 2) {
+    // Only when this symbol is included will the occurrence count be checked
+    if (content.includes('[')) {
+      const diffCounts = calcCharCounts(content, '\\[') - calcCharCounts(content, '\\]')
 
-    if (diffCounts) {
-      statementContent = statementContent.padEnd(statementContent.length + diffCounts, ']')
+      if (diffCounts) {
+        content = content.padEnd(content.length + diffCounts, ']')
+      }
+    }
+
+    if (content.startsWith('\'') && !content.endsWith('\'')) {
+      content += '\''
+    } else if (content.startsWith('"') && !content.endsWith('"')) {
+      content += '"'
     }
   }
 
-  return statementContent
-    // .replace(IS_SPREAD_STARTS, '') // e.g.: ...args
-    .replace(IS_SYMBOL_STARTS, '$1') // e.g.: ?.args
+  return content
+    .replace(IS_SYMBOL_STARTS, '$1') // e.g.: ?.args | ...args
 }
 
 export function getScope(document: TextDocument, selection: Selection): string {

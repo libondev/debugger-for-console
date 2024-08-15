@@ -95,15 +95,32 @@ async function create(insertLineOffset: number, displayLineOffset: number) {
 
   const { document, document: { uri } } = editor
 
+  let shouldInsertCounts = 0
+  let hasMultiLineSelection = false
   const mergedSelections = editor.selections.reduce((lines, selection) => {
-    const targetLine = selection.start.line + insertLineOffset
+    if (selection.isSingleLine) {
+      const targetLine = selection.start.line + insertLineOffset
 
-    lines[targetLine] ??= []
+      lines[targetLine] ??= []
 
-    lines[targetLine].push(getScope(document, selection))
+      lines[targetLine].push(getScope(document, selection))
+      shouldInsertCounts++
+    } else {
+      hasMultiLineSelection = true
+    }
 
     return lines
   }, Object.create(null) as Record<number, string[]>)
+
+  if (hasMultiLineSelection) {
+    window.showInformationMessage('multi-line selection is not supported.')
+  }
+
+  if (shouldInsertCounts <= 0) {
+    // avoid popping windows twice at the same time.
+    !hasMultiLineSelection && window.showInformationMessage('Nothing to insert.')
+    return
+  }
 
   const workspaceEdit = new WorkspaceEdit()
   const scopeSymbols = await getSymbols(editor)

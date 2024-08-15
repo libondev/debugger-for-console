@@ -1,19 +1,27 @@
-import { type WorkspaceConfiguration, commands, window } from 'vscode'
+import { commands, window } from 'vscode'
+import type { ExtensionContext, WorkspaceConfiguration } from 'vscode'
 
 import { commandsMapping } from './commands/index'
 import { updateUserConfig } from './commands/update'
 
-export const resolvedConfig = {} as WorkspaceConfiguration
+// eslint-disable-next-line import/no-mutable-exports
+export let resolvedConfig = {} as WorkspaceConfiguration
 
-export function activate(): void {
+export function activate(context: ExtensionContext): void {
   if (!window.activeTextEditor) {
     return
   }
 
   for (const command of Object.entries(commandsMapping)) {
-    commands.registerCommand(...command)
+    const disposable = commands.registerCommand(...command)
+
+    context.subscriptions.push(disposable)
   }
 
   // only update user config when extension is activated
   updateUserConfig()
+}
+
+export function deactivate(): void {
+  resolvedConfig = { } as WorkspaceConfiguration
 }

@@ -1,16 +1,13 @@
 import { workspace } from 'vscode'
-import { resolvedConfig } from '../extension'
 import { autoSave } from '../features/saver'
 import { getQuote } from '../features/quote'
 import { getEmoji } from '../features/emoji'
 import { getLines } from '../features/lines'
+import { resolvedConfig } from '../extension'
 import { getOnlyVariable, getOutputNewline } from '../features/variable'
 
 export function updateUserConfig() {
-  Object.assign(
-    resolvedConfig,
-    workspace.getConfiguration('debugger-for-console'),
-  )
+  Object.assign(resolvedConfig, workspace.getConfiguration('debugger-for-console'))
 
   const deps = [
     autoSave,

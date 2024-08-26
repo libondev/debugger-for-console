@@ -59,14 +59,14 @@ export function getAllStatementRanges(document: TextDocument, commentSymbols: st
   const matchedResults = [...text.matchAll(matchRegexp)]
 
   if (!matchedResults.length) {
-    return []
+    return matchedResults
   }
 
   // Matches the first statement in a line
   const singleLineRegexp = /\(.*?\)($)?/
 
   let line: TextLine
-  const statements = matchedResults.reduce((acc, match) => {
+  const statements = matchedResults.reduce<Range[]>((acc, match) => {
     line = document.lineAt(document.positionAt(match.index!).line)
 
     // not have a '(' or is a single line statement. e.g. debugger
@@ -86,7 +86,7 @@ export function getAllStatementRanges(document: TextDocument, commentSymbols: st
     }
 
     return acc
-  }, [] as Range[])
+  }, [])
 
   return statements
 }

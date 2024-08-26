@@ -1,4 +1,4 @@
-import { commands, window } from 'vscode'
+import { commands } from 'vscode'
 import type { ExtensionContext, WorkspaceConfiguration } from 'vscode'
 
 import { commandsMapping } from './commands/index'
@@ -8,9 +8,9 @@ import { updateUserConfig } from './commands/update'
 export let resolvedConfig = {} as WorkspaceConfiguration
 
 export function activate(context: ExtensionContext): void {
-  if (!window.activeTextEditor) {
-    return
-  }
+  // if (!window.activeTextEditor) {
+  //   return
+  // }
 
   for (const command of Object.entries(commandsMapping)) {
     const disposable = commands.registerCommand(...command)
@@ -23,5 +23,5 @@ export function activate(context: ExtensionContext): void {
 }
 
 export function deactivate(): void {
-  resolvedConfig = { } as WorkspaceConfiguration
+  resolvedConfig = null!
 }

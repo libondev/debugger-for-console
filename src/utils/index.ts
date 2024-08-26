@@ -59,7 +59,7 @@ export function getAllStatementRanges(document: TextDocument, commentSymbols: st
   const matchedResults = [...text.matchAll(matchRegexp)]
 
   if (!matchedResults.length) {
-    return matchedResults
+    return []
   }
 
   // Matches the first statement in a line

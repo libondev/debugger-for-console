@@ -9,7 +9,7 @@ const obj = {
   age: 20,
 }
 
-const list = [...arr]
+const [...list] = [...arr]
 
 function printHello() {
 

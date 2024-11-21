@@ -1,20 +1,21 @@
 import type { Position, Selection, TextDocument } from 'vscode'
 
 const BREAK_CHARACTER = [
-  ' ', '\t', '\n', ',', '=', '{', '}', '(', ')',
-  // '+', '-', '*', '/', '%', '<', '>', '[', ']',
+  ' ', '\t', '\n', ',', '=', '{', '}', '(', ')', '[', ']',
+  // '+', '-', '*', '/', '%', '<', '>',
 ]
 
-const IS_SYMBOL_STARTS = /^[\}\)\]?.]*(.*?)[\{\(\[?.]*$/g
+const IS_SYMBOL_STARTS = /^[\}\)\]?.]*(.*?)[\{\(\[?.]*$/
 const IS_BRACKETS_ENDS_MAP = { '(': ')', '{': '}', '[': ']' }
+const ONLY_SPECIAL_CHARS = /^[^a-zA-Z0-9]+$/
 
-function calcCharCounts(string: string, char: string) {
-  const regex = new RegExp(char, 'g')
+// function calcCharCounts(string: string, char: string) {
+//   const regex = new RegExp(char, 'g')
 
-  const matches = string.match(regex)
+//   const matches = string.match(regex)
 
-  return matches ? matches.length : 0
-}
+//   return matches ? matches.length : 0
+// }
 
 function getWordAtPosition(document: TextDocument, position: Position): string {
   const { isEmptyOrWhitespace, text: lineText } = document.lineAt(position.line)
@@ -42,8 +43,8 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
   // Get the text content of this range
   let content = lineText.slice(startAt, endAt)
 
-  // e.g.: obj.value?.[0]?.test()
-  //                            ^
+  // e.g.: obj.value?.[0]?.test(  )
+  //                           ^  ^
   if (content.length === 0) {
     let whitespaceIndex = lineText.lastIndexOf(' ', startAt - 1)
 
@@ -51,6 +52,12 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
     whitespaceIndex += whitespaceIndex === -1 ? 1 : 0
 
     let newContent = lineText.slice(whitespaceIndex, endAt)
+
+    // If the content is only special characters, return an empty string
+    // e.g.: '{}' => '', '()' => '', '[]' => ''
+    if (ONLY_SPECIAL_CHARS.test(newContent)) {
+      return ''
+    }
 
     const lastChar = newContent.slice(-1)
 
@@ -65,20 +72,16 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
   // Automatically complete missing symbols
   // It is necessary to check only if the length of the content is at least greater than 2.
   if (content.length >= 2) {
-    // Only when this symbol is included will the occurrence count be checked
-    if (content.includes('[')) {
-      const diffCounts = calcCharCounts(content, '\\[') - calcCharCounts(content, '\\]')
-
-      if (diffCounts) {
-        content = content.padEnd(content.length + diffCounts, ']')
-      }
-    }
-
     if (content.startsWith('\'') && !content.endsWith('\'')) {
       content += '\''
     } else if (content.startsWith('"') && !content.endsWith('"')) {
       content += '"'
+    } else if (content.startsWith('`') && !content.endsWith('`')) {
+      content += '`'
     }
+  } else if (ONLY_SPECIAL_CHARS.test(content)) {
+    // single character: '.', ')', ']', etc.
+    return ''
   }
 
   return content

@@ -1,11 +1,23 @@
 import { type TextDocument, workspace } from 'vscode'
 import { resolvedConfig } from '../extension'
 
+const cachedPathMap = new WeakMap<TextDocument, string>()
+
 export function getLevel(document: TextDocument) {
+  if (!document?.fileName) {
+    return ''
+  }
+
   const depth = resolvedConfig.get('fileDepth', 0)
 
   if (depth === 0) {
     return ''
+  }
+
+  const cachedPath = cachedPathMap.get(document)
+
+  if (cachedPath) {
+    return cachedPath
   }
 
   const relationFilePath = workspace.asRelativePath(document.fileName)
@@ -18,5 +30,9 @@ export function getLevel(document: TextDocument) {
     }
   }
 
-  return relationFilePath.slice(lastIndex + 1)
+  const level = relationFilePath.slice(lastIndex + 1)
+
+  cachedPathMap.set(document, level)
+
+  return level
 }

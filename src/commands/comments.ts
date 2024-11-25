@@ -16,16 +16,19 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
     return
   }
 
-  const workspaceEdit = new WorkspaceEdit()
   const commentRegexp = new RegExp(`${commentSymbols}[ ]*`)
+  const workspaceEdit = new WorkspaceEdit()
 
-  const replacer = type === 'comment'
-    ? (range: Range, indents: string, content: string) => {
-        !content.startsWith(commentSymbols) && workspaceEdit.replace(uri, range, `${indents}${commentSymbols} ${content}`)
-      }
-    : (range: Range, indents: string, content: string) => {
-        content.startsWith(commentSymbols) && workspaceEdit.replace(uri, range, `${indents}${content.replace(commentRegexp, '')}`)
-      }
+  const replacer = {
+    comment: (range: Range, indents: string, content: string) => {
+      !content.startsWith(commentSymbols)
+        && workspaceEdit.replace(uri, range, `${indents}${commentSymbols} ${content}`)
+    },
+    uncomment: (range: Range, indents: string, content: string) => {
+      content.startsWith(commentSymbols)
+        && workspaceEdit.replace(uri, range, `${indents}${content.replace(commentRegexp, '')}`)
+    },
+  }[type]
 
   statements.forEach((range) => {
     const { firstNonWhitespaceCharacterIndex, text } = document.lineAt(range.start.line)
@@ -41,6 +44,6 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   autoSave(editor)
 }
 
-export const commentDebuggers = toggle.bind(null, 'comment')
+export const comment = toggle.bind(null, 'comment')
 
-export const uncommentDebuggers = toggle.bind(null, 'uncomment')
+export const uncomment = toggle.bind(null, 'uncomment')

@@ -4,7 +4,7 @@ import { getAllStatementRanges } from '../utils'
 import { autoSave } from '../features/saver'
 import { getComment } from '../features/comment'
 
-export async function removeDebuggers() {
+export async function remove() {
   const editor = window.activeTextEditor!
 
   const { document, document: { uri, languageId } } = editor
@@ -23,7 +23,10 @@ export async function removeDebuggers() {
     let startRange = lineRange.start
     let endRange = lineRange.end
 
-    const [beforeLine, afterLine] = [document.lineAt(startRange.line - 1), document.lineAt(endRange.line + 1)]
+    const [beforeLine, afterLine] = [
+      document.lineAt(startRange.line - 1),
+      document.lineAt(endRange.line + 1),
+    ]
 
     // before empty line
     if (beforeLine.range.isEmpty) {

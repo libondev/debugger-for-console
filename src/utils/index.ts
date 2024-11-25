@@ -90,7 +90,3 @@ export function getAllStatementRanges(document: TextDocument, commentSymbols: st
 
   return statements
 }
-
-export function isLastCharScopeStart(text: string) {
-  return ['(', '{', ':'].includes(text.trim().slice(-1))
-}

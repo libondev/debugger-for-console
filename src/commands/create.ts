@@ -11,10 +11,11 @@ import { getScope } from '../features/scope'
 import { getOnlyVariable, getOutputNewline } from '../features/variable'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
-import {
-  getLanguageStatement,
-  isLastCharScopeStart,
-} from '../utils/index'
+import { getLanguageStatement } from '../utils/index'
+
+function isLastCharScopeStart(text: string) {
+  return ['(', '{', ':'].includes(text.trim().slice(-1))
+}
 
 /**
  * get the indent of the current line(获取插入行的缩进内容)
@@ -60,15 +61,16 @@ function getStatementGenerator(document: TextDocument) {
     throw new Error('No language statement found.')
   } else if (statement.includes('{VALUE}')) {
     const [start, ...end] = statement.split('{VALUE}')
+    const restEndStrings = end.join('')
 
     if (getOnlyVariable(document.languageId)) {
-      return (_: number, text: string) => `${start}$3${end.join('')}\n`.replace('$3', text)
+      return (_: number, t: string) => `${start}${t}${restEndStrings}\n`
     }
 
     const quote = getQuote(document.languageId)
 
-    const template = `${start}${quote}${getEmoji()}${
-      getLevel(document)}$1/[$2]:${getOutputNewline()}${quote}$3${end.join('')}\n`
+    const template = `${start}${quote}${getEmoji()}${getLevel(document)
+    }$1/($2):${getOutputNewline()}${quote}$3${restEndStrings}\n`
 
     return (lineNumber: number, text: string) => template
       .replace('$1', getLines(lineNumber) as string)
@@ -79,35 +81,41 @@ function getStatementGenerator(document: TextDocument) {
   return () => `${statement}\n`
 }
 
-async function create(insertOffset: number, displayOffset: number) {
+const ERROR_MESSAGES = {
+  NOTHING: 'Nothing to insert.',
+  MULTI_LINE: 'Multi-line selection is not supported.',
+} as const
+
+async function _create(insertOffset: number, displayOffset: number) {
   const editor = window.activeTextEditor!
 
   const { document, document: { uri } } = editor
 
-  let shouldInsertCounts = 0
   let hasMultiLineSelection = false
-  const mergedSelections = editor.selections.reduce((lines, selection) => {
+  const mergedSelections = editor.selections.reduce((listMap, selection) => {
     if (selection.isSingleLine) {
       const targetLine = selection.start.line + insertOffset
+      let existLines = listMap.get(targetLine)
 
-      lines[targetLine] ??= []
+      if (!existLines) {
+        listMap.set(targetLine, (existLines = []))
+      }
 
-      lines[targetLine].push(getScope(document, selection))
-      shouldInsertCounts++
+      existLines.push(getScope(document, selection))
     } else {
       hasMultiLineSelection = true
     }
 
-    return lines
-  }, Object.create(null) as Record<number, string[]>)
+    return listMap
+  }, new Map<number, string[]>())
 
   if (hasMultiLineSelection) {
-    window.showInformationMessage('multi-line selection is not supported.')
+    window.showInformationMessage(ERROR_MESSAGES.MULTI_LINE)
   }
 
-  if (shouldInsertCounts <= 0) {
+  if (mergedSelections.size <= 0) {
     // avoid popping windows twice at the same time.
-    !hasMultiLineSelection && window.showInformationMessage('Nothing to insert.')
+    !hasMultiLineSelection && window.showInformationMessage(ERROR_MESSAGES.NOTHING)
     return
   }
 
@@ -115,12 +123,14 @@ async function create(insertOffset: number, displayOffset: number) {
   let position = new Position(0, 0)
 
   const insertPosition = insertOffset > 0 ? 'after' : 'before'
-  const insertEmptyLineConfigValue = resolvedConfig.get('insertEmptyLine') as string
+  const insertEmptyLine = resolvedConfig.get('insertEmptyLine') as string
+
+  const beforeEmptyLine = getBeforeEmptyLine(insertEmptyLine, insertPosition)
+  const afterEmptyLine = getAfterEmptyLine(insertEmptyLine, insertPosition)
+
   const workspaceEdit = new WorkspaceEdit()
 
-  for (const line in mergedSelections) {
-    const lineNumber = Number(line)
-
+  for (const [lineNumber, variables] of mergedSelections) {
     // TODO(optimize feature): find Object/Array/Function Params scope range
     const indents = getInsertLineIndents(document, lineNumber, insertOffset)
 
@@ -129,11 +139,9 @@ async function create(insertOffset: number, displayOffset: number) {
     workspaceEdit.insert(
       uri,
       position,
-      `${getBeforeEmptyLine(insertEmptyLineConfigValue, insertPosition)
-      }${indents}${statementGetter(
-        lineNumber + displayOffset,
-        mergedSelections[line].join(', '),
-      )}${getAfterEmptyLine(insertEmptyLineConfigValue, insertPosition)}`,
+      `${beforeEmptyLine}${indents}${
+        statementGetter(lineNumber + displayOffset, variables.join(', '))
+      }${afterEmptyLine}`,
     )
   }
 
@@ -142,6 +150,6 @@ async function create(insertOffset: number, displayOffset: number) {
   autoSave(editor)
 }
 
-export const createDebuggers = create.bind(null, 1, 0)
+export const create = _create.bind(null, 1, 0)
 
-export const createDebuggersBefore = create.bind(null, 0, 2)
+export const createBefore = _create.bind(null, 0, 2)

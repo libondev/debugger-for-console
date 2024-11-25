@@ -83,6 +83,9 @@ Merge multiple cursors on the same line:
 
 > \> `debugger-for-console.update`: Update the latest workbench configuration. (This allows your modifications to take effect immediately without restarting your editor.)
 
+> [!IMPORTANT]
+> if you find that the indentation of the statement you created is incorrect, please check the indentation method and size configured in your current file or the whole project. The default of the plug-in is: 2 indented spaces.
+
 
 ## Configuration
 

@@ -83,6 +83,9 @@ This document is also available in [English](./README-CN.md).
 
 > \> `debugger-for-console.update`: 更新最新的工作区配置
 
+> [!IMPORTANT]
+> 如果你发现你创建出来的语句的缩进不正确，请检查你当前文件或整个项目中配置的缩进方式与大小，插件的预设为：2个缩进的空格
+
 
 ## 配置项
 

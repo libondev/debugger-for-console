@@ -84,13 +84,13 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
     return (lineNumber: number, text: string) => template
       .replace('$1', getLines(lineNumber) as string)
       .replace('$2', text.replace(/['"`\\]/g, ''))
-      .replace('$3', text ? `,${text}` : '')
+      .replace('$3', text ? `, ${text}` : '')
   }
 
   return () => `${statement}\n`
 }
 
-async function create(insertLineOffset: number, displayLineOffset: number) {
+async function create(insertOffset: number, displayOffset: number) {
   const editor = window.activeTextEditor!
 
   const { document, document: { uri } } = editor
@@ -99,7 +99,7 @@ async function create(insertLineOffset: number, displayLineOffset: number) {
   let hasMultiLineSelection = false
   const mergedSelections = editor.selections.reduce((lines, selection) => {
     if (selection.isSingleLine) {
-      const targetLine = selection.start.line + insertLineOffset
+      const targetLine = selection.start.line + insertOffset
 
       lines[targetLine] ??= []
 
@@ -122,19 +122,19 @@ async function create(insertLineOffset: number, displayLineOffset: number) {
     return
   }
 
-  const workspaceEdit = new WorkspaceEdit()
   const scopeSymbols = await getSymbols(editor)
   const statementGetter = getStatementGenerator(document, scopeSymbols)
   let position = new Position(0, 0)
 
-  const insertPosition = insertLineOffset > 0 ? 'after' : 'before'
+  const insertPosition = insertOffset > 0 ? 'after' : 'before'
   const insertEmptyLineConfigValue = resolvedConfig.get('insertEmptyLine') as string
+  const workspaceEdit = new WorkspaceEdit()
 
   for (const line in mergedSelections) {
     const lineNumber = Number(line)
 
     // TODO(optimize feature): find Object/Array/Function Params scope range
-    const indents = getInsertLineIndents(document, lineNumber, insertLineOffset)
+    const indents = getInsertLineIndents(document, lineNumber, insertOffset)
 
     position = position.translate(lineNumber - position.line)
 
@@ -143,7 +143,7 @@ async function create(insertLineOffset: number, displayLineOffset: number) {
       position,
       `${getBeforeEmptyLine(insertEmptyLineConfigValue, insertPosition)
       }${indents}${statementGetter(
-        lineNumber + displayLineOffset,
+        lineNumber + displayOffset,
         mergedSelections[line].join(', '),
       )}${getAfterEmptyLine(insertEmptyLineConfigValue, insertPosition)}`,
     )

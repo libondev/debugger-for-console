@@ -110,9 +110,6 @@ This document is also available in [English](./README-CN.md).
   // 是否插入行号
   "debugger-for-console.lineNumber": true,
 
-  // 是否插入当前上下文栈
-  "debugger-for-console.symbols": false,
-
   // 把变量和提示符放在不同行输出 (如果内容很长时看起来会更方便)
   "debugger-for-console.outputNewline": false,
 

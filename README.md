@@ -110,9 +110,6 @@ You can personalize the statements you wish to insert via the Settings. (This pl
   // Whether or not whether to insert the line number
   "debugger-for-console.lineNumber": true,
 
-  // Insert scope symbols in the debug statement
-  "debugger-for-console.symbols": false,
-
   // Show variables and logos in rows. (Very effective when the content is long.)
   "debugger-for-console.outputNewline": false,
 

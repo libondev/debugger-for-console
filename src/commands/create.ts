@@ -8,7 +8,6 @@ import { getEmoji } from '../features/emoji'
 import { getLines } from '../features/lines'
 import { getLevel } from '../features/level'
 import { getScope } from '../features/scope'
-import { getSymbols } from '../features/symbols'
 import { getOnlyVariable, getOutputNewline } from '../features/variable'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
@@ -54,7 +53,7 @@ function getInsertLineIndents(
   return indentsChar.repeat(insertLineIndents)
 }
 
-function getStatementGenerator(document: TextDocument, symbols: string) {
+function getStatementGenerator(document: TextDocument) {
   const statement = getLanguageStatement(document)
 
   if (!statement) {
@@ -69,7 +68,7 @@ function getStatementGenerator(document: TextDocument, symbols: string) {
     const quote = getQuote(document.languageId)
 
     const template = `${start}${quote}${getEmoji()}${
-      getLevel(document)}$1${symbols}/[$2]:${getOutputNewline()}${quote}$3${end.join('')}\n`
+      getLevel(document)}$1/[$2]:${getOutputNewline()}${quote}$3${end.join('')}\n`
 
     return (lineNumber: number, text: string) => template
       .replace('$1', getLines(lineNumber) as string)
@@ -112,8 +111,7 @@ async function create(insertOffset: number, displayOffset: number) {
     return
   }
 
-  const scopeSymbols = await getSymbols(editor)
-  const statementGetter = getStatementGenerator(document, scopeSymbols)
+  const statementGetter = getStatementGenerator(document)
   let position = new Position(0, 0)
 
   const insertPosition = insertOffset > 0 ? 'after' : 'before'

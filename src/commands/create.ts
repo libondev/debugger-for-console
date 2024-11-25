@@ -40,28 +40,18 @@ function getInsertLineIndents(
     firstNonWhitespaceCharacterIndex: insertLineIndents,
     text: insertLineText,
   } = lineAt(insertLine - offsetLine)
+  const indentsChar = insertLineText.slice(0, 1) === '\t' ? '\t' : ' '
 
-  // If the target line is the start line of a scope block,
+  // If the target line is the start line of a scope block,`
   // you need to indent one more time on the basis of the current line indent.
   // But if created upwards, this operation is not required
   // 如果目标行是一个作用域块的开始行则需要在当前行的缩进基础上再缩进一次, 但如果向上创建则不需要这个操作
   if (offsetLine && isLastCharScopeStart(insertLineText)) {
+    // insertLineIndents += workspace.getConfiguration('editor', null).get('tabSize', 2)
     insertLineIndents += 2
   }
 
-  return ' '.repeat(insertLineIndents)
-
-  // Uncertain whether this function is needed, currently no feedback on using tab as indent
-  // 不确定是否需要这个功能, 目前还没有得到使用 tab 作为缩进的反馈
-  // const [indentType, indentSize] = workspace
-  //   .getConfiguration('editor', null)
-  //   .get('insertSpaces', true)
-  //   ? ['space', workspace.getConfiguration('editor', null).get('tabSize', 2)]
-  //   : ['tab', 1]
-
-  // return indentType === 'space'
-  //   ? ' '.repeat(targetLineSpaces)
-  //   : '\t'.repeat(targetLineSpaces / indentSize)
+  return indentsChar.repeat(insertLineIndents)
 }
 
 function getStatementGenerator(document: TextDocument, symbols: string) {

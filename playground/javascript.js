@@ -34,7 +34,7 @@ printHello()
 
 const initApp = () => { }
 
-const longStatement = window.name.includes('abc')[0].toUpperCase().toLowerCase()
+const veryLongStatement = window.name.includes('abc'.toUpperCase())[0].toLowerCase().includes('a')
 
 (() => {
   initApp(Vue)

@@ -1,4 +1,4 @@
-import { Position, WorkspaceEdit, window, workspace } from 'vscode'
+import { Position, window } from 'vscode'
 import type { TextDocument } from 'vscode'
 
 import { resolvedConfig } from '../extension'
@@ -12,6 +12,7 @@ import { getOnlyVariable, getOutputNewline } from '../features/variable'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
 import { getLanguageStatement } from '../utils/index'
+import { smartToggleEditor } from '../utils/smart-editor'
 
 function isLastCharScopeStart(text: string) {
   return ['(', '{', ':'].includes(text.trim().slice(-1))
@@ -38,15 +39,15 @@ function getInsertLineIndents(
   // 获取光标所行的信息
   let {
     firstNonWhitespaceCharacterIndex: insertLineIndents,
-    text: insertLineText,
+    text,
   } = lineAt(insertLine - offsetLine)
-  const indentsChar = insertLineText.slice(0, 1) === '\t' ? '\t' : ' '
+  const indentsChar = text.slice(0, 1) === '\t' ? '\t' : ' '
 
   // If the target line is the start line of a scope block,`
   // you need to indent one more time on the basis of the current line indent.
   // But if created upwards, this operation is not required
   // 如果目标行是一个作用域块的开始行则需要在当前行的缩进基础上再缩进一次, 但如果向上创建则不需要这个操作
-  if (offsetLine && isLastCharScopeStart(insertLineText)) {
+  if (offsetLine && isLastCharScopeStart(text)) {
     // insertLineIndents += workspace.getConfiguration('editor', null).get('tabSize', 2)
     insertLineIndents += 2
   }
@@ -87,9 +88,13 @@ const ERROR_MESSAGES = {
 } as const
 
 async function _create(insertOffset: number, displayOffset: number) {
-  const editor = window.activeTextEditor!
+  const editor = window.activeTextEditor
 
-  const { document, document: { uri } } = editor
+  if (!editor) {
+    return
+  }
+
+  const { document } = editor
 
   let hasMultiLineSelection = false
   const mergedSelections = editor.selections.reduce((listMap, selection) => {
@@ -128,7 +133,7 @@ async function _create(insertOffset: number, displayOffset: number) {
   const beforeEmptyLine = getBeforeEmptyLine(insertEmptyLine, insertPosition)
   const afterEmptyLine = getAfterEmptyLine(insertEmptyLine, insertPosition)
 
-  const workspaceEdit = new WorkspaceEdit()
+  const smartEditor = smartToggleEditor(mergedSelections.size > 1, document, editor)
 
   for (const [lineNumber, variables] of mergedSelections) {
     // TODO(optimize feature): find Object/Array/Function Params scope range
@@ -136,8 +141,7 @@ async function _create(insertOffset: number, displayOffset: number) {
 
     position = position.translate(lineNumber - position.line)
 
-    workspaceEdit.insert(
-      uri,
+    smartEditor.insert(
       position,
       `${beforeEmptyLine}${indents}${
         statementGetter(lineNumber + displayOffset, variables.join(', '))
@@ -145,7 +149,7 @@ async function _create(insertOffset: number, displayOffset: number) {
     )
   }
 
-  await workspace.applyEdit(workspaceEdit)
+  await smartEditor.apply()
 
   autoSave(editor)
 }

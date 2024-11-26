@@ -5,7 +5,7 @@ const BREAK_CHARACTER = [
   // '+', '-', '*', '/', '%', '<', '>',
 ]
 
-const IS_SYMBOL_STARTS = /^[\}\)\]?.]*(.*?)[\{\(\[?.]*$/
+const IS_SYMBOL_STARTS = /^[}\])?.=]*([\s\S]*?)(?:[{([?.=]*)$/
 const IS_BRACKETS_ENDS_MAP = { '(': ')', '{': '}', '[': ']' }
 const ONLY_SPECIAL_CHARS = /^[^a-zA-Z0-9]+$/
 
@@ -18,7 +18,7 @@ const ONLY_SPECIAL_CHARS = /^[^a-zA-Z0-9]+$/
 // }
 
 function getWordAtPosition(document: TextDocument, position: Position): string {
-  const { isEmptyOrWhitespace, text: lineText } = document.lineAt(position.line)
+  const { isEmptyOrWhitespace, text } = document.lineAt(position.line)
 
   // empty line or no word
   if (isEmptyOrWhitespace) {
@@ -36,25 +36,23 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
   }
 
   // Until you find the first delimiter
-  while (startAt > 0 && !BREAK_CHARACTER.includes(lineText[startAt - 1])) {
+  while (startAt > 0 && !BREAK_CHARACTER.includes(text[startAt - 1])) {
     startAt--
   }
 
   // Get the text content of this range
-  let content = lineText.slice(startAt, endAt)
+  let content = text.slice(startAt, endAt)
 
   // e.g.: obj.value?.[0]?.test(  )
   //                           ^  ^
   if (content.length === 0) {
-    let whitespaceIndex = lineText.lastIndexOf(' ', startAt - 1)
+    // Avoid including truncated spaces, so +1 is required.
+    const whitespaceIndex = text.lastIndexOf(' ', startAt) + 1
 
-    // Avoid intercepting from the last because the index becomes -1.
-    whitespaceIndex += whitespaceIndex === -1 ? 1 : 0
-
-    let newContent = lineText.slice(whitespaceIndex, endAt)
+    let newContent = text.slice(whitespaceIndex, endAt)
 
     // If the content is only special characters, return an empty string
-    // e.g.: '{}' => '', '()' => '', '[]' => ''
+    // e.g.: ('{}','()','[]') => ''
     if (ONLY_SPECIAL_CHARS.test(newContent)) {
       return ''
     }
@@ -66,7 +64,7 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
       newContent += IS_BRACKETS_ENDS_MAP[lastChar as keyof typeof IS_BRACKETS_ENDS_MAP]
     }
 
-    return newContent
+    return newContent.replace(IS_SYMBOL_STARTS, '$1') // e.g.: ?.args | ...args
   }
 
   // Automatically complete missing symbols
@@ -93,11 +91,11 @@ export function getScope(document: TextDocument, selection: Selection): string {
     return getWordAtPosition(document, selection.anchor)
   }
 
-  const { isEmptyOrWhitespace, text: lineContent } = document.lineAt(selection.start.line)
+  const { isEmptyOrWhitespace, text } = document.lineAt(selection.start.line)
 
   if (isEmptyOrWhitespace) {
     return ''
   }
 
-  return lineContent.slice(selection.start.character, selection.end.character)
+  return text.slice(selection.start.character, selection.end.character)
 }

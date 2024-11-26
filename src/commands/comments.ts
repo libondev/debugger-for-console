@@ -1,13 +1,18 @@
 import type { Range } from 'vscode'
-import { WorkspaceEdit, window, workspace } from 'vscode'
+import { window } from 'vscode'
 import { getAllStatementRanges } from '../utils'
 import { autoSave } from '../features/saver'
 import { getComment } from '../features/comment'
+import { smartToggleEditor } from '../utils/smart-editor'
 
 async function toggle(type: 'comment' | 'uncomment' = 'comment') {
-  const editor = window.activeTextEditor!
+  const editor = window.activeTextEditor
 
-  const { document, document: { uri, languageId } } = editor
+  if (!editor) {
+    return
+  }
+
+  const { document, document: { languageId } } = editor
   const commentSymbols = getComment(languageId)
 
   const statements = getAllStatementRanges(document, commentSymbols)
@@ -17,16 +22,17 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   }
 
   const commentRegexp = new RegExp(`${commentSymbols}[ ]*`)
-  const workspaceEdit = new WorkspaceEdit()
+
+  const smartEditor = smartToggleEditor(statements.length > 1, document, editor)
 
   const replacer = {
     comment: (range: Range, indents: string, content: string) => {
       !content.startsWith(commentSymbols)
-        && workspaceEdit.replace(uri, range, `${indents}${commentSymbols} ${content}`)
+        && smartEditor.replace(range, `${indents}${commentSymbols} ${content}`)
     },
     uncomment: (range: Range, indents: string, content: string) => {
       content.startsWith(commentSymbols)
-        && workspaceEdit.replace(uri, range, `${indents}${content.replace(commentRegexp, '')}`)
+        && smartEditor.replace(range, `${indents}${content.replace(commentRegexp, '')}`)
     },
   }[type]
 
@@ -39,7 +45,7 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
     replacer(range, indents, content)
   })
 
-  await workspace.applyEdit(workspaceEdit)
+  await smartEditor.apply()
 
   autoSave(editor)
 }

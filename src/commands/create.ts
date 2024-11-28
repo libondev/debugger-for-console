@@ -2,7 +2,6 @@ import { Position, window } from 'vscode'
 import type { TextDocument } from 'vscode'
 
 import { resolvedConfig } from '../extension'
-import { autoSave } from '../features/saver'
 import { getQuote } from '../features/quote'
 import { getEmoji } from '../features/emoji'
 import { getLines } from '../features/lines'
@@ -141,17 +140,18 @@ async function _create(insertOffset: number, displayOffset: number) {
 
     position = position.translate(lineNumber - position.line)
 
+    const contents = `${beforeEmptyLine}${indents}${statementGetter(
+      lineNumber + displayOffset,
+      variables.join(', '),
+    )}${afterEmptyLine}`
+
     smartEditor.insert(
       position,
-      `${beforeEmptyLine}${indents}${
-        statementGetter(lineNumber + displayOffset, variables.join(', '))
-      }${afterEmptyLine}`,
+      contents,
     )
   }
 
-  await smartEditor.apply()
-
-  autoSave(editor)
+  smartEditor.applyEdit()
 }
 
 export const create = _create.bind(null, 1, 0)

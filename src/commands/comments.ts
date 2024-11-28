@@ -1,7 +1,6 @@
 import type { Range } from 'vscode'
 import { window } from 'vscode'
 import { getAllStatementRanges } from '../utils'
-import { autoSave } from '../features/saver'
 import { getComment } from '../features/comment'
 import { smartToggleEditor } from '../utils/smart-editor'
 
@@ -45,9 +44,7 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
     replacer(range, indents, content)
   })
 
-  await smartEditor.apply()
-
-  autoSave(editor)
+  smartEditor.applyEdit()
 }
 
 export const comment = toggle.bind(null, 'comment')

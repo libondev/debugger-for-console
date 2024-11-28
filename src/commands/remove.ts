@@ -1,7 +1,6 @@
 import { window } from 'vscode'
 import { getAllStatementRanges } from '../utils'
 
-import { autoSave } from '../features/saver'
 import { getComment } from '../features/comment'
 import { smartToggleEditor } from '../utils/smart-editor'
 
@@ -46,7 +45,5 @@ export async function remove() {
     smartEditor.delete(lineRange.with(startRange, endRange))
   })
 
-  await smartEditor.apply()
-
-  autoSave(editor)
+  smartEditor.applyEdit()
 }

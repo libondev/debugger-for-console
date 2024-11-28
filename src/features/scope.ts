@@ -82,8 +82,7 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
     return ''
   }
 
-  return content
-    .replace(IS_SYMBOL_STARTS, '$1') // e.g.: ?.args | ...args
+  return content.replace(IS_SYMBOL_STARTS, '$1') // e.g.: ?.args | ...args
 }
 
 export function getScope(document: TextDocument, selection: Selection): string {

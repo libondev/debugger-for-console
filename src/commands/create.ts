@@ -14,7 +14,7 @@ import { getLanguageStatement } from '../utils/index'
 import { smartToggleEditor } from '../utils/smart-editor'
 
 function isLastCharScopeStart(text: string) {
-  return ['(', '{', ':'].includes(text.trim().slice(-1))
+  return ['(', '{', ':'].includes(text.trim()[text.length - 1])
 }
 
 /**

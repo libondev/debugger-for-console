@@ -1,9 +1,6 @@
 import type { Position, Selection, TextDocument } from 'vscode'
 
-const BREAK_CHARACTER = [
-  ' ', '\t', '\n', ',', '=', '{', '}', '(', ')', '[', ']',
-  // '+', '-', '*', '/', '%', '<', '>',
-]
+const BREAK_CHARACTER = ' \t\n={}()[]'
 
 const IS_SYMBOL_STARTS = /^[}\])?.=]*([\s\S]*?)(?:[{([?.=]*)$/
 const IS_BRACKETS_ENDS_MAP = { '(': ')', '{': '}', '[': ']' }
@@ -48,12 +45,9 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
     startAt--
   }
 
-  // Get the text content of this range
-  let content = text.slice(startAt, endAt)
-
-  // e.g.: obj.value?.[0]?.test(  )
+  // e.g.: obj.value?.[0]?.test(  );    or empty text
   //                           ^  ^
-  if (content.length === 0) {
+  if (startAt === endAt) {
     // Avoid including truncated spaces, so +1 is required.
     const whitespaceIndex = text.lastIndexOf(' ', startAt) + 1
 
@@ -65,7 +59,7 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
       return ''
     }
 
-    const lastChar = newContent.slice(-1)
+    const lastChar = newContent[newContent.length - 1]
 
     // Add brackets if the last character is a bracket. e.g. 'foo(' => 'foo()'
     if (lastChar in IS_BRACKETS_ENDS_MAP) {

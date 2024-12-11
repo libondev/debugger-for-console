@@ -9,13 +9,21 @@ const IS_SYMBOL_STARTS = /^[}\])?.=]*([\s\S]*?)(?:[{([?.=]*)$/
 const IS_BRACKETS_ENDS_MAP = { '(': ')', '{': '}', '[': ']' }
 const ONLY_SPECIAL_CHARS = /^[^a-zA-Z0-9]+$/
 
-// function calcCharCounts(string: string, char: string) {
-//   const regex = new RegExp(char, 'g')
+const ENLARGED_SELECTION_SYMBOLS = '\'"`'
 
-//   const matches = string.match(regex)
+function ensureCorrectPosition(text: string, start: number, char: string, reverse: boolean) {
+  const searchMethod = reverse ? text.lastIndexOf.bind(text) : text.indexOf.bind(text)
 
-//   return matches ? matches.length : 0
-// }
+  const offset = reverse ? -1 : 1
+
+  let idx = searchMethod(char, start + offset)
+
+  while (idx >= 0 && text[idx - 1] === '\\') {
+    idx = searchMethod(char, idx + offset)
+  }
+
+  return reverse ? idx : idx + offset
+}
 
 function getWordAtPosition(document: TextDocument, position: Position): string {
   const { isEmptyOrWhitespace, text } = document.lineAt(position.line)
@@ -67,19 +75,26 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
     return newContent.replace(IS_SYMBOL_STARTS, '$1') // e.g.: ?.args | ...args
   }
 
-  // Automatically complete missing symbols
-  // It is necessary to check only if the length of the content is at least greater than 2.
-  if (content.length >= 2) {
-    if (content.startsWith('\'') && !content.endsWith('\'')) {
-      content += '\''
-    } else if (content.startsWith('"') && !content.endsWith('"')) {
-      content += '"'
-    } else if (content.startsWith('`') && !content.endsWith('`')) {
-      content += '`'
-    }
-  } else if (ONLY_SPECIAL_CHARS.test(content)) {
-    // single character: '.', ')', ']', etc.
+  // Get the text content of this range
+  const content = text.slice(startAt, endAt)
+
+  // only character: '.', ')', ']', etc.
+  if (ONLY_SPECIAL_CHARS.test(content)) {
     return ''
+  }
+
+  const _firstChar = content[0]
+  const _lastChar = content[content.length - 1]
+
+  // if the first character is a symbol, then we need to enlarge the selection
+  if (ENLARGED_SELECTION_SYMBOLS.includes(_firstChar)) {
+    endAt = ensureCorrectPosition(text, startAt, _firstChar, false)
+
+    return text.slice(startAt, endAt)
+  } else if (ENLARGED_SELECTION_SYMBOLS.includes(_lastChar)) {
+    startAt = ensureCorrectPosition(text, startAt, _lastChar, true)
+
+    return text.slice(startAt, endAt)
   }
 
   return content.replace(IS_SYMBOL_STARTS, '$1') // e.g.: ?.args | ...args

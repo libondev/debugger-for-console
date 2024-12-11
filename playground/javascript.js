@@ -9,6 +9,7 @@ const obj = {
   age: 20,
 }
 
+const stringWithSpaces = `Hello\" \' \` World`
 const [...list] = [...arr]
 
 function printHello() {

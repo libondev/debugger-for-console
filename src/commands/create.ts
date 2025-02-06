@@ -13,8 +13,10 @@ import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 import { getLanguageStatement } from '../utils/index'
 import { smartToggleEditor } from '../utils/smart-editor'
 
+// if the last character of the text is a scope block start character, return true
+// 判断最后一个字符是否是作用域块的开始字符
 function isLastCharScopeStart(text: string) {
-  return ['(', '{', ':'].includes(text.trim()[text.length - 1])
+  return ['(', '{', ':'].includes(text[text.length - 1])
 }
 
 /**
@@ -42,11 +44,11 @@ function getInsertLineIndents(
   } = lineAt(insertLine - offsetLine)
   const indentsChar = text.slice(0, 1) === '\t' ? '\t' : ' '
 
-  // If the target line is the start line of a scope block,`
+  // If the target line is the start line of a scope block,
   // you need to indent one more time on the basis of the current line indent.
   // But if created upwards, this operation is not required
   // 如果目标行是一个作用域块的开始行则需要在当前行的缩进基础上再缩进一次, 但如果向上创建则不需要这个操作
-  if (offsetLine && isLastCharScopeStart(text)) {
+  if (offsetLine && isLastCharScopeStart(text.trim())) {
     // insertLineIndents += workspace.getConfiguration('editor', null).get('tabSize', 2)
     insertLineIndents += 2
   }

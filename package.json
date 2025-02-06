@@ -190,7 +190,7 @@
     "pack": "npx vsce package --no-dependencies",
     "release": "bumpp --commit --push --tag",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --ext ts ",
+    "lint": "eslint src --ext ts",
     "lint:fix": "eslint src --ext ts --fix"
   },
   "devDependencies": {

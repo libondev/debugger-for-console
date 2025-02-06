@@ -1,6 +1,7 @@
 import type { Position, Selection, TextDocument } from 'vscode'
 
-const BREAK_CHARACTER = ' \t\n={}()[]'
+// const BREAK_CHARACTER = ' \t\n={}()[]'
+const BREAK_CHARACTER = ' \t\n={}'
 
 const IS_SYMBOL_STARTS = /^[}\])?.=]*([\s\S]*?)(?:[{([?.=]*)$/
 const IS_BRACKETS_ENDS_MAP = { '(': ')', '{': '}', '[': ']' }
@@ -8,6 +9,7 @@ const ONLY_SPECIAL_CHARS = /^[^a-zA-Z0-9]+$/
 
 const ENLARGED_SELECTION_SYMBOLS = '\'"`'
 
+// Find the correct character position at the beginning/end of the string
 function ensureCorrectPosition(text: string, start: number, char: string, reverse: boolean) {
   const searchMethod = reverse ? text.lastIndexOf.bind(text) : text.indexOf.bind(text)
 
@@ -22,6 +24,7 @@ function ensureCorrectPosition(text: string, start: number, char: string, revers
   return reverse ? idx : idx + offset
 }
 
+// Get the word at the given position
 function getWordAtPosition(document: TextDocument, position: Position): string {
   const { isEmptyOrWhitespace, text } = document.lineAt(position.line)
 
@@ -80,6 +83,7 @@ function getWordAtPosition(document: TextDocument, position: Position): string {
   const _firstChar = content[0]
   const _lastChar = content[content.length - 1]
 
+  // completion string symbol. ( 'lorem   ->  'lorem' )
   // if the first character is a symbol, then we need to enlarge the selection
   if (ENLARGED_SELECTION_SYMBOLS.includes(_firstChar)) {
     endAt = ensureCorrectPosition(text, startAt, _firstChar, false)

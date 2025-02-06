@@ -1,4 +1,4 @@
-import { window } from 'vscode'
+import { Position, Range, window } from 'vscode'
 import { getAllStatementRanges } from '../utils'
 
 import { getComment } from '../features/comment'
@@ -23,26 +23,15 @@ export async function remove() {
 
   const smartEditor = smartToggleEditor(statements.length > 1, document, editor)
 
-  statements.forEach((lineRange) => {
-    let startRange = lineRange.start
-    let endRange = lineRange.end
+  statements.forEach((line) => {
+    // delete the whole line
+    const startRange = new Position(line.start.line, 0)
+    const endRange = new Position(line.start.line + 1, 0)
 
-    const [beforeLine, afterLine] = [
-      document.lineAt(startRange.line - 1),
-      document.lineAt(endRange.line + 1),
-    ]
+    // position to range
+    const range = new Range(startRange, endRange)
 
-    // before empty line
-    if (beforeLine.range.isEmpty) {
-      startRange = beforeLine.range.start
-    }
-
-    // after empty line
-    if (afterLine.range.isEmpty) {
-      endRange = afterLine.range.end
-    }
-
-    smartEditor.delete(lineRange.with(startRange, endRange))
+    smartEditor.delete(range)
   })
 
   smartEditor.applyEdit()

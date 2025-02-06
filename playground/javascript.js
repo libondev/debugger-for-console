@@ -2,19 +2,25 @@
 /* eslint-disable */
 
 const num = 10
+
+const str = 'Hello'
+
 const arr = ['a', 'b', 'c']
+
+const [...list] = [...arr];
+
+const arrowFn = (...args) => { }
+
+const stringWithSpacesAndQuotes = `Hello\" \' \` World`
 
 const obj = {
   name: 'John',
   age: 20,
 }
 
-const stringWithSpaces = `Hello\" \' \` World`
-const [...list] = [...arr]
+function fnScope() {
 
-function printHello() {
-
-  const test = 'TEST'
+  const test = 'TEST';
 
   obj.value?.[0]?.test()
 
@@ -27,24 +33,14 @@ function printHello() {
     })
 }
 
-if (true) {
-  printHello()
-}
+const veryLongStatement = window.name.includes('abc'.toUpperCase())[0].toLowerCase().includes('a')?.length
 
-printHello()
-
-const initApp = () => { }
-
-const veryLongStatement = window.name.includes('abc'.toUpperCase())[0].toLowerCase().includes('a')
-
-(() => {
-  initApp(Vue)
-
+function initApp(Vue) {
   let app = new Vue({
     router,
     store,
     i18n,
-    render: () => h(App)
+    render: () => h(App),
   })
 
   const METHODS = {
@@ -55,6 +51,17 @@ const veryLongStatement = window.name.includes('abc'.toUpperCase())[0].toLowerCa
 
     unmount() {
       app.$destroy()
+
     }
   }
-})()
+}
+
+if (Math.random() > 0.5) {
+  fnScope(
+  )
+
+} else {
+  initApp(
+
+  )
+}

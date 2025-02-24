@@ -6,7 +6,10 @@ const BREAK_CHARACTER = ' \t\n={}()[]'
 // 如果内容不是英文字符/数字/_/$ 的话则返回空字符串
 const ONLY_HAS_SYMBOL_REGEX = /^[^a-zA-Z0-9_$]+$/
 
+// 是不是已特殊符号作为字符串的开头
 const IS_SYMBOL_START_REGEX = /^[}\])?.=;]*([\s\S]*?)(?:[{([?.=;]*)$/
+
+const IS_TAIL_SYMBOL_ENDS_REGEX = /\?/
 
 /**
  * Is member call
@@ -18,7 +21,7 @@ const IS_SYMBOL_START_REGEX = /^[}\])?.=;]*([\s\S]*?)(?:[{([?.=;]*)$/
  * ::stdout()
  * ```
  */
-const IS_MEMBER_CALL = '.:?'
+const IS_MEMBER_CALL = ['.', ':', '!.', '?.']
 
 // 成对符号的映射
 const PAIRED_SYMBOL_MAP = {
@@ -88,7 +91,7 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   // is empty text, or only special characters, or member call
   // e.g.: obj.value?.[0]?.test(  );
   //                           ^  ^
-  if (startAt === endAt || IS_MEMBER_CALL.includes(text[startAt])) {
+  if (startAt === endAt || IS_MEMBER_CALL.some(callSymbol => text.startsWith(callSymbol))) {
     // Find the position of the first space from the starting position to the left,
     // Avoid including truncated spaces, so + 1 is required.
     // 从开始位置向左查找第一个空格的位置，避免包含截断的空格，所以需要 +1
@@ -104,6 +107,7 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
     const lastChar = content[content.length - 1] as PairedSymbolKeys
 
     // Add brackets if the last character is a bracket. e.g. 'foo(' => 'foo()'
+    // 补全结尾的括号
     if (lastChar in PAIRED_SYMBOL_MAP) {
       content += PAIRED_SYMBOL_MAP[lastChar]
     }
@@ -141,7 +145,7 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
     return text.slice(startAt, endAt)
   }
 
-  return content
+  return content.replace(IS_TAIL_SYMBOL_ENDS_REGEX, '')
 }
 
 export function getScope(document: TextDocument, selection: Selection): string {

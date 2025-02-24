@@ -46,6 +46,7 @@ function initApp(Vue) {
   const METHODS = {
     mount(param) {
 
+      console.info('🍙javascript.js:50/(app.$mount(#app)):\n ', app.$mount('#app'))
       app = app.$mount('#app')
     },
 

@@ -10,7 +10,7 @@ import { getScope } from '../features/scope'
 import { getOnlyVariable, getOutputNewline } from '../features/variable'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
-import { getLanguageStatement } from '../utils/index'
+import { getEllipsisString, getLanguageStatement } from '../utils/index'
 import { smartToggleEditor } from '../utils/smart-editor'
 
 // if the last character of the text is a scope block start character, return true
@@ -76,7 +76,7 @@ function getStatementGenerator(document: TextDocument) {
 
     return (lineNumber: number, text: string) => template
       .replace('$1', getLines(lineNumber) as string)
-      .replace('$2', text.replace(/['"`\\]/g, ''))
+      .replace('$2', getEllipsisString(text, true))
       .replace('$3', text ? `, ${text}` : '')
   }
 

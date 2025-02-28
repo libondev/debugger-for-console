@@ -91,7 +91,7 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   // is empty text, or only special characters, or member call
   // e.g.: obj.value?.[0]?.test(  );
   //                           ^  ^
-  if (startAt === endAt || IS_MEMBER_CALL.some(callSymbol => text.startsWith(callSymbol))) {
+  if (startAt === endAt || IS_MEMBER_CALL.some(s => content.startsWith(s))) {
     // Find the position of the first space from the starting position to the left,
     // Avoid including truncated spaces, so + 1 is required.
     // 从开始位置向左查找第一个空格的位置，避免包含截断的空格，所以需要 +1

@@ -120,6 +120,9 @@ This document is also available in [English](./README-CN.md).
   // 是否在日志消息前/后插入空行
   "debugger-for-console.insertEmptyLine": "none",
 
+  // 精简过长的路径及变量名(大于 8 个字符时自动使用 ... 代替中间的内容)
+  "debugger-for-console.ellipsis": "none",
+
   // 自定义不同语言的输出语句
   "debugger-for-console.wrappers": {
     "php": "var_dump({VALUE})",

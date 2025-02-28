@@ -120,6 +120,9 @@ You can personalize the statements you wish to insert via the Settings. (This pl
   // Whether to insert an empty line before or after the log message or not.
   "debugger-for-console.insertEmptyLine": "none",
 
+  // Reduce the excessively long path and variable name (when it is more than 8 characters, automatically use `...` instead of the middle content)
+  "debugger-for-console.ellipsis": "none",
+
   // Customize debugging statements for different languages
   "debugger-for-console.wrappers": {
     "php": "var_dump({VALUE})",

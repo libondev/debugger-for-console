@@ -1,5 +1,6 @@
 import { type TextDocument, workspace } from 'vscode'
 import { resolvedConfig } from '../extension'
+import { getEllipsisString } from '../utils/index'
 
 const cachedPathMap = new WeakMap<TextDocument, string>()
 
@@ -30,7 +31,7 @@ export function getLevel(document: TextDocument) {
     }
   }
 
-  const level = relationFilePath.slice(lastIndex + 1)
+  const level = getEllipsisString(relationFilePath.slice(lastIndex + 1))
 
   cachedPathMap.set(document, level)
 

@@ -1,5 +1,6 @@
 import type { Range, TextDocument, TextLine } from 'vscode'
 import { resolvedConfig } from '../extension'
+import { getEllipsis } from '../features/ellipsis'
 
 export function lazyValue<Params>(
   configKey: string,
@@ -91,18 +92,22 @@ export function getAllStatementRanges(document: TextDocument, commentSymbols: st
   return statements
 }
 
-const ELLIPSIS_REGEX = /^(.{2}).*(.{4})$/
+const ELLIPSIS_REGEX = /^(.{2}).*(.{3})$/
 
 // 获取精简后的字符串内容
 export function getEllipsisString(str: string, trimQuotes?: boolean) {
-  let newStr = str
-  if (trimQuotes) {
-    newStr = str.replace(/['"`\\]/g, '')
+  if (getEllipsis()) {
+    let newStr = str
+    if (trimQuotes) {
+      newStr = str.replace(/['"`\\]/g, '')
+    }
+
+    if (newStr.length >= 8) {
+      newStr = newStr.replace(ELLIPSIS_REGEX, '$1...$2')
+    }
+
+    return newStr
   }
 
-  if (newStr.length >= 8) {
-    newStr = newStr.replace(ELLIPSIS_REGEX, '$1...$2')
-  }
-
-  return newStr
+  return str
 }

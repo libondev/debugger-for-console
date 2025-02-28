@@ -132,6 +132,11 @@
           "default": false,
           "description": "Show variables and logos in rows."
         },
+        "debugger-for-console.ellipsis": {
+          "type": "boolean",
+          "default": true,
+          "description": "Simplify long paths and variable names."
+        },
         "debugger-for-console.onlyOutputVariable": {
           "type": "string",
           "enum": [

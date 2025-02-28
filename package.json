@@ -114,7 +114,7 @@
         },
         "debugger-for-console.fileDepth": {
           "type": "number",
-          "default": 2,
+          "default": 1,
           "description": "Set the relative path depth of files. (Set to 0 to disable the path)."
         },
         "debugger-for-console.autoSave": {

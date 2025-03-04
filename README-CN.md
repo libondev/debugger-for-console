@@ -121,7 +121,7 @@ This document is also available in [English](./README-CN.md).
   "debugger-for-console.insertEmptyLine": "none",
 
   // 精简过长的路径及变量名(大于 8 个字符时自动使用 ... 代替中间的内容)
-  "debugger-for-console.ellipsis": "none",
+  "debugger-for-console.ellipsis": true,
 
   // 自定义不同语言的输出语句
   "debugger-for-console.wrappers": {
@@ -130,7 +130,7 @@ This document is also available in [English](./README-CN.md).
     "rust": "println!({VALUE})",
     "go": "println({VALUE})",
     "csharp": "Console.Log({VALUE})",
-    // TIPS: `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `vue`, 和 `svelte` 都使用 `javascript` 这一条配置.
+    // TIPS: `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `vue`, `html`, 和 `svelte` 都使用 `javascript` 这一条配置.
     "javascript": "console.log({VALUE})",
     "default": "console.log({VALUE})"
   }

@@ -20,7 +20,7 @@ export function lazyValue<Params>(
 // This damn JavaScript language types
 export const JAVASCRIPT_ALIAS = [
   'javascript', 'javascriptreact', 'svelte',
-  'typescript', 'typescriptreact', 'vue',
+  'typescript', 'typescriptreact', 'vue', 'html',
 ]
 
 // Get the statement corresponding to the language of the current document.
@@ -92,12 +92,13 @@ export function getAllStatementRanges(document: TextDocument, commentSymbols: st
   return statements
 }
 
-const ELLIPSIS_REGEX = /^(.{2}).*(.{3})$/
+const ELLIPSIS_REGEX = /^(.{1}).*(.{3})$/
 
 // 获取精简后的字符串内容
 export function getEllipsisString(str: string, trimQuotes?: boolean) {
   if (getEllipsis()) {
     let newStr = str
+
     if (trimQuotes) {
       newStr = str.replace(/['"`\\]/g, '')
     }

@@ -7,12 +7,12 @@ const str = 'Hello'
 
 const arr = ['a', 'b', 'c']
 
-const [...list] = [...arr];
+const [...list] = [...arr]
 
 const arrowFn = (..._args) => {}
 
 const stringWithSpacesAndQuotes = `Hello\" \' \` World`
-console.info('🛰️javascript.js:14/(stringWithSpacesAndQuotes):\n', stringWithSpacesAndQuotes)
+console.debug('🌿j....js:14/(stringWithSpacesAndQuotes):\n', stringWithSpacesAndQuotes)
 
 const obj = {
   name: 'John',

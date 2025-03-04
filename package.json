@@ -36,32 +36,32 @@
   "contributes": {
     "commands": [
       {
-        "title": "Debugger for Console: Insert a debug statement after the current line",
+        "title": "Debugger for Console: Insert after the current line",
         "command": "debugger-for-console.create",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Debugger for Console: Insert a debug statement before the current line",
+        "title": "Debugger for Console: Insert before the current line",
         "command": "debugger-for-console.before",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Debugger for Console: Comment all debugger statements",
+        "title": "Debugger for Console: Comment all statements",
         "command": "debugger-for-console.comment",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Debugger for Console: Uncomment all debugger statements",
+        "title": "Debugger for Console: Uncomment all statements",
         "command": "debugger-for-console.uncomment",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Debugger for Console: Remove all debugger statements",
+        "title": "Debugger for Console: Delete all statements",
         "command": "debugger-for-console.remove",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "title": "Debugger for Console: Update the latest workbench configuration",
+        "title": "Debugger for Console: Use the latest configuration",
         "command": "debugger-for-console.update",
         "when": "editorTextFocus && !editorReadonly"
       }

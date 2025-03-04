@@ -71,20 +71,20 @@ Merge multiple cursors on the same line:
 
 ### command
 
-> \> `debugger-for-console.create`: Insert a debug statement after the current line
+> \> `debugger-for-console.create`: Insert after the current line
 
-> \> `debugger-for-console.before`: Insert a debug statement before the current line
+> \> `debugger-for-console.before`: Insert before the current line
 
-> \> `debugger-for-console.remove`: Remove all debugger statements
+> \> `debugger-for-console.remove`: Delete all statements
 
-> \> `debugger-for-console.comment`: Comment all debugger statements
+> \> `debugger-for-console.comment`: Comment all statements
 
-> \> `debugger-for-console.uncomment`: Uncomment all debugger statements
+> \> `debugger-for-console.uncomment`: Uncomment all statements
 
-> \> `debugger-for-console.update`: Update the latest workbench configuration. (This allows your modifications to take effect immediately without restarting your editor.)
+> \> `debugger-for-console.update`: Use the latest configuration (This allows your modifications to take effect immediately without restarting your editor.)
 
 > [!IMPORTANT]
-> if you find that the indentation of the statement you created is incorrect, please check the indentation method and size configured in your current file or the whole project. The default of the plug-in is: 2 indented spaces.
+> if you find that the indentation of the statement you created is incorrect, please check the indentation method and size configured in your current file or the whole project. The default of the plugin is: 2 indented spaces.
 
 
 ## Configuration
@@ -121,7 +121,7 @@ You can personalize the statements you wish to insert via the Settings. (This pl
   "debugger-for-console.insertEmptyLine": "none",
 
   // Reduce the excessively long path and variable name (when it is more than 8 characters, automatically use `...` instead of the middle content)
-  "debugger-for-console.ellipsis": "none",
+  "debugger-for-console.ellipsis": true,
 
   // Customize debugging statements for different languages
   "debugger-for-console.wrappers": {
@@ -130,7 +130,7 @@ You can personalize the statements you wish to insert via the Settings. (This pl
     "rust": "println!({VALUE})",
     "go": "println({VALUE})",
     "csharp": "Console.Log({VALUE})",
-    // TIPS: The keys `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `vue`, and `svelte` all correspond to JavaScript.
+    // TIPS: The keys `javascript`, `typescript`, `javascriptreact`, `typescriptreact`, `vue`, `html`, and `svelte` all correspond to JavaScript.
     "javascript": "console.log({VALUE})",
     "default": "console.log({VALUE})"
   }

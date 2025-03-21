@@ -5,6 +5,8 @@ const num = 10
 
 const str = 'Hello'
 
+const reg = /abcdefg/
+
 const arr = ['a', 'b', 'c']
 
 const [...list] = [...arr]
@@ -12,7 +14,6 @@ const [...list] = [...arr]
 const arrowFn = (..._args) => {}
 
 const stringWithSpacesAndQuotes = `Hello\" \' \` World`
-console.debug('🌿j....js:14/(stringWithSpacesAndQuotes):\n', stringWithSpacesAndQuotes)
 
 const obj = {
   name: 'John',
@@ -47,7 +48,6 @@ function initApp(Vue) {
   const METHODS = {
     mount(param) {
 
-      console.info('🍙javascript.js:50/(app.$mount(#app)):\n ', app.$mount('#app'))
       app = app.$mount('#app')
     },
 
@@ -60,10 +60,12 @@ function initApp(Vue) {
 
 if (Math.random() > 0.5) {
   fnScope(
+
   )
 
 } else {
   initApp(
 
   )
+
 }

@@ -1,10 +1,20 @@
-import { type TextDocument, workspace } from 'vscode'
+import { type TextDocument, window, workspace } from 'vscode'
 import { resolvedConfig } from '../extension'
 import { getEllipsisString } from '../utils/index'
 
 const cachedPathMap = new WeakMap<TextDocument, string>()
 
-export function getLevel(document: TextDocument) {
+export function resetDepthCache() {
+  const editor = window.activeTextEditor
+  if (!editor) {
+    return
+  }
+
+  const document = editor.document
+  cachedPathMap.delete(document)
+}
+
+export function getDepth(document: TextDocument) {
   if (!document?.fileName) {
     return ''
   }

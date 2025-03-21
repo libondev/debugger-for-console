@@ -134,7 +134,7 @@
         },
         "debugger-for-console.ellipsis": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Simplify long paths and variable names."
         },
         "debugger-for-console.onlyOutputVariable": {

@@ -92,7 +92,9 @@ export function getAllStatementRanges(document: TextDocument, commentSymbols: st
   return statements
 }
 
-const ELLIPSIS_REGEX = /^(.{1}).*(.{3})$/
+// const ELLIPSIS_REGEX = /^(.{1}).*(.{3})$/
+const ELLIPSIS_REGEX = /^(.{3}).*/
+const ELLIPSIS_MAX_LENGTH = 10
 
 // 获取精简后的字符串内容
 export function getEllipsisString(str: string, trimQuotes?: boolean) {
@@ -103,8 +105,8 @@ export function getEllipsisString(str: string, trimQuotes?: boolean) {
       newStr = str.replace(/['"`\\]/g, '')
     }
 
-    if (newStr.length >= 8) {
-      newStr = newStr.replace(ELLIPSIS_REGEX, '$1...$2')
+    if (newStr.length >= ELLIPSIS_MAX_LENGTH) {
+      newStr = newStr.replace(ELLIPSIS_REGEX, '$1…')
     }
 
     return newStr

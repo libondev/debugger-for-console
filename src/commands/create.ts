@@ -5,7 +5,7 @@ import { resolvedConfig } from '../extension'
 import { getQuote } from '../features/quote'
 import { getEmoji } from '../features/emoji'
 import { getLines } from '../features/lines'
-import { getLevel } from '../features/level'
+import { getDepth } from '../features/depth'
 import { getScope } from '../features/scope'
 import { getOnlyVariable, getOutputNewline } from '../features/variable'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
@@ -71,7 +71,7 @@ function getStatementGenerator(document: TextDocument) {
 
     const quote = getQuote(document.languageId)
 
-    const template = `${start}${quote}${getEmoji()}${getLevel(document)
+    const template = `${start}${quote}${getEmoji()}${getDepth(document)
     }$1/($2):${getOutputNewline()}${quote}$3${restEndStrings}\n`
 
     return (lineNumber: number, text: string) => template

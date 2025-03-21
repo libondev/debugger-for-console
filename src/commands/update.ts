@@ -5,6 +5,7 @@ import { getEmoji } from '../features/emoji'
 import { getLines } from '../features/lines'
 import { resolvedConfig } from '../extension'
 import { getEllipsis } from '../features/ellipsis'
+import { resetDepthCache } from '../features/depth'
 import { getOnlyVariable, getOutputNewline } from '../features/variable'
 
 export function updateUserConfig() {
@@ -18,6 +19,7 @@ export function updateUserConfig() {
     getEllipsis,
     getOnlyVariable,
     getOutputNewline,
+    { update: resetDepthCache },
   ]
 
   deps.forEach(dep => dep.update())

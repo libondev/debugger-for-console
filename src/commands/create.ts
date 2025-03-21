@@ -6,7 +6,7 @@ import { getQuote } from '../features/quote'
 import { getEmoji } from '../features/emoji'
 import { getLines } from '../features/lines'
 import { getDepth } from '../features/depth'
-import { getScope } from '../features/scope'
+import { getCompletion } from '../features/completion'
 import { getOnlyVariable, getOutputNewline } from '../features/variable'
 import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
 
@@ -107,7 +107,7 @@ async function _create(insertOffset: number, displayOffset: number) {
         listMap.set(targetLine, (existLines = []))
       }
 
-      existLines.push(getScope(document, selection))
+      existLines.push(getCompletion(document, selection))
     } else {
       hasMultiLineSelection = true
     }

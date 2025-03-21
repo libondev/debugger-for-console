@@ -30,6 +30,7 @@ const PAIRED_SYMBOL_MAP = {
   '[': ']',
   '"': '"',
   '`': '`',
+  '/': '/',
   '\'': '\'',
 }
 
@@ -148,7 +149,8 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   return content.replace(IS_TAIL_SYMBOL_ENDS_REGEX, '')
 }
 
-export function getScope(document: TextDocument, selection: Selection): string {
+// Get the completed variable(获取补全的变量名称)
+export function getCompletion(document: TextDocument, selection: Selection): string {
   // If the selection of the cursor is empty,
   // the selection is obtained in a form conforming to the programming grammar.
   if (selection.isEmpty) {

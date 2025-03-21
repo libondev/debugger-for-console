@@ -1,8 +1,6 @@
 import type { TextDocument, TextEditor } from 'vscode'
 import { WorkspaceEdit, workspace } from 'vscode'
 
-import { autoSave } from '../features/saver'
-
 interface Change {
   type: 'insert' | 'replace' | 'delete'
   args: any
@@ -25,8 +23,6 @@ function createEditor(editor: TextEditor) {
           (builder[type] as any)(...args)
         })
       })
-
-      autoSave(editor)
     },
   }
 }
@@ -40,8 +36,6 @@ function createWorkspace(editor: TextEditor, { uri }: TextDocument) {
     delete: edit.delete.bind(edit, uri),
     async applyEdit() {
       await workspace.applyEdit(edit)
-
-      autoSave(editor)
     },
   }
 }

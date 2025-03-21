@@ -117,11 +117,6 @@
           "default": 1,
           "description": "Set the relative path depth of files. (Set to 0 to disable the path)."
         },
-        "debugger-for-console.autoSave": {
-          "type": "boolean",
-          "default": false,
-          "description": "Automatically save the current file after executing an operation."
-        },
         "debugger-for-console.lineNumber": {
           "type": "boolean",
           "default": true,

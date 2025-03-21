@@ -3,12 +3,11 @@ import type { TextDocument } from 'vscode'
 
 import { resolvedConfig } from '../extension'
 import { getQuote } from '../features/quote'
-import { getEmoji } from '../features/emoji'
-import { getLines } from '../features/lines'
-import { getDepth } from '../features/depth'
-import { getCompletion } from '../features/completion'
-import { getOnlyVariable, getOutputNewline } from '../features/variable'
-import { getAfterEmptyLine, getBeforeEmptyLine } from '../features/empty-line'
+import { getRandomEmoji } from '../features/random-emoji'
+import { getFileDepth } from '../features/file-depth'
+import { getNumberLine } from '../features/number-line'
+import { getVariableCompletion } from '../features/variable-completion'
+import { getAfterEmptyLine, getBeforeEmptyLine, getOnlyVariable, getOutputNewline } from '../features/output'
 
 import { getEllipsisString, getLanguageStatement } from '../utils/index'
 import { smartToggleEditor } from '../utils/smart-editor'
@@ -71,11 +70,11 @@ function getStatementGenerator(document: TextDocument) {
 
     const quote = getQuote(document.languageId)
 
-    const template = `${start}${quote}${getEmoji()}${getDepth(document)
+    const template = `${start}${quote}${getRandomEmoji()}${getFileDepth(document)
     }$1/($2):${getOutputNewline()}${quote}$3${restEndStrings}\n`
 
     return (lineNumber: number, text: string) => template
-      .replace('$1', getLines(lineNumber) as string)
+      .replace('$1', getNumberLine(lineNumber) as string)
       .replace('$2', getEllipsisString(text, true))
       .replace('$3', text ? `, ${text}` : '')
   }
@@ -107,7 +106,7 @@ async function _create(insertOffset: number, displayOffset: number) {
         listMap.set(targetLine, (existLines = []))
       }
 
-      existLines.push(getCompletion(document, selection))
+      existLines.push(getVariableCompletion(document, selection))
     } else {
       hasMultiLineSelection = true
     }
@@ -129,7 +128,7 @@ async function _create(insertOffset: number, displayOffset: number) {
   let position = new Position(0, 0)
 
   const insertPosition = insertOffset > 0 ? 'after' : 'before'
-  const insertEmptyLine = resolvedConfig.get('insertEmptyLine') as string
+  const insertEmptyLine = resolvedConfig.get<string>('insertEmptyLine', 'none')
 
   const beforeEmptyLine = getBeforeEmptyLine(insertEmptyLine, insertPosition)
   const afterEmptyLine = getAfterEmptyLine(insertEmptyLine, insertPosition)

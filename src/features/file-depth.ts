@@ -4,7 +4,7 @@ import { getEllipsisString } from '../utils/index'
 
 const cachedPathMap = new WeakMap<TextDocument, string>()
 
-export function resetDepthCache() {
+export function resetFileDepthCache() {
   const editor = window.activeTextEditor
   if (!editor) {
     return
@@ -14,12 +14,12 @@ export function resetDepthCache() {
   cachedPathMap.delete(document)
 }
 
-export function getDepth(document: TextDocument) {
+export function getFileDepth(document: TextDocument) {
   if (!document?.fileName) {
     return ''
   }
 
-  const depth = resolvedConfig.get('fileDepth', 0)
+  const depth = resolvedConfig.get<number>('fileDepth', 0)
 
   if (depth === 0) {
     return ''

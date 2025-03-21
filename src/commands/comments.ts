@@ -1,7 +1,7 @@
 import type { Range } from 'vscode'
 import { window } from 'vscode'
 import { getAllStatementRanges } from '../utils'
-import { getComment } from '../features/comment'
+import { getCommentSymbol } from '../features/comment-symbol'
 import { smartToggleEditor } from '../utils/smart-editor'
 
 async function toggle(type: 'comment' | 'uncomment' = 'comment') {
@@ -12,7 +12,7 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
   }
 
   const { document, document: { languageId } } = editor
-  const commentSymbols = getComment(languageId)
+  const commentSymbols = getCommentSymbol(languageId)
 
   const statements = getAllStatementRanges(document, commentSymbols)
 

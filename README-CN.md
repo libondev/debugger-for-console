@@ -94,9 +94,6 @@ This document is also available in [English](./README-CN.md).
 ```json5
 // 默认配置
 {
-  // 执行操作后自动保存当前文件
-  "debugger-for-console.autoSave": false,
-
   // 指定插入语句时要使用的引号类型
   // 备注: 有些语言的字符串只能使用双引号, 比如：Go，C#，rust
   "debugger-for-console.quote": "'",

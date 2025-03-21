@@ -1,7 +1,7 @@
 import { Position, Range, window } from 'vscode'
 import { getAllStatementRanges } from '../utils'
 
-import { getComment } from '../features/comment'
+import { getCommentSymbol } from '../features/comment-symbol'
 import { smartToggleEditor } from '../utils/smart-editor'
 
 export async function remove() {
@@ -13,7 +13,7 @@ export async function remove() {
 
   const { document, document: { languageId } } = editor
 
-  const commentSymbols = getComment(languageId)
+  const commentSymbols = getCommentSymbol(languageId)
 
   const statements = getAllStatementRanges(document, commentSymbols)
 

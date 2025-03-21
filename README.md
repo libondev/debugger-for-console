@@ -94,9 +94,6 @@ You can personalize the statements you wish to insert via the Settings. (This pl
 ```json5
 // Default Settings
 {
-  // Automatically save the current file after executing an operation
-  "debugger-for-console.autoSave": false,
-
   // Specify the type of quotation marks to use when inserting statements
   // Note: Some languages that require the use of double quotes may not support this feature, e.g., Go, C#, rust
   "debugger-for-console.quote": "'",

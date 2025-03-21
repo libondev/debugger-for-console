@@ -1,21 +1,6 @@
 import type { Range, TextDocument, TextLine } from 'vscode'
 import { resolvedConfig } from '../extension'
-import { getEllipsis } from '../features/ellipsis'
-
-export function lazyValue<Params>(
-  configKey: string,
-  generator: (configValue: string | boolean, params?: Params) => void | string | boolean,
-) {
-  let _generator = generator
-
-  const getter = (params?: Params) => _generator(resolvedConfig.get(configKey)!, params)
-
-  getter.update = () => {
-    _generator = resolvedConfig.get(configKey) ? generator : () => ''
-  }
-
-  return getter
-}
+import { getIsEllipsis } from '../features/output'
 
 // This damn JavaScript language types
 export const JAVASCRIPT_ALIAS = [
@@ -98,7 +83,7 @@ const ELLIPSIS_MAX_LENGTH = 10
 
 // 获取精简后的字符串内容
 export function getEllipsisString(str: string, trimQuotes?: boolean) {
-  if (getEllipsis()) {
+  if (getIsEllipsis()) {
     let newStr = str
 
     if (trimQuotes) {

@@ -150,7 +150,7 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
 }
 
 // Get the completed variable(获取补全的变量名称)
-export function getCompletion(document: TextDocument, selection: Selection): string {
+export function getVariableCompletion(document: TextDocument, selection: Selection): string {
   // If the selection of the cursor is empty,
   // the selection is obtained in a form conforming to the programming grammar.
   if (selection.isEmpty) {

@@ -33,14 +33,14 @@ function getMultiLineStatement(document: TextDocument, line: TextLine) {
 }
 
 // Get the start/end line of a single-line statement.
-export function getAllStatementRanges(document: TextDocument, commentSymbols: string) {
+export function getAllStatementRanges(document: TextDocument, symbols: string) {
   const text = document.getText()
 
   if (!text.trim()) {
     return []
   }
 
-  const matchRegexp = new RegExp(`^[${commentSymbols}[ ]*]*${getLanguageStatement(document).replace(/{VALUE}/, '.*?')}`, 'gm')
+  const matchRegexp = new RegExp(`^[ \t]*[${symbols}[ \t]*]*${getLanguageStatement(document).replace(/{VALUE}/, '.*?')}`, 'gms')
 
   const matchedResults = [...text.matchAll(matchRegexp)]
 

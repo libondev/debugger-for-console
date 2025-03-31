@@ -83,12 +83,12 @@ const ELLIPSIS_MAX_LENGTH = 10
 
 // 获取精简后的字符串内容
 export function getEllipsisString(str: string, trimQuotes?: boolean) {
+  if (trimQuotes) {
+    str = str.replace(/['"`\\]/g, '')
+  }
+
   if (getIsEllipsis()) {
     let newStr = str
-
-    if (trimQuotes) {
-      newStr = str.replace(/['"`\\]/g, '')
-    }
 
     if (newStr.length >= ELLIPSIS_MAX_LENGTH) {
       newStr = newStr.replace(ELLIPSIS_REGEX, '$1…')

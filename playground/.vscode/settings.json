@@ -1,3 +1,8 @@
 {
-  "debugger-for-console.ellipsis": true
+  "debugger-for-console.outputNewline": false,
+  "debugger-for-console.onlyVariable": "enable",
+  "debugger-for-console.wrappers": {
+    "javascript": "console.error('%c {VALUE}', 'color: red', {VALUE})"
+    // "javascript": "console.warn('Custom Wrapper', {VALUE})"
+  }
 }

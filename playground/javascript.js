@@ -22,7 +22,8 @@ const obj = {
 
 function fnScope() {
 
-  const test = 'TEST';
+  const say = 'hello,' + 'world!';
+  console.debug('🚀jav…:25/(say):\n', say)
 
   obj.value?.[0]?.test()
 

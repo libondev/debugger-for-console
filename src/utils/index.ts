@@ -2,6 +2,9 @@ import type { Range, TextDocument, TextLine } from 'vscode'
 import { resolvedConfig } from '../extension'
 import { getIsEllipsis } from '../features/output'
 
+export const VARIABLE_PLACEHOLDER = '{VALUE}'
+export const VARIABLE_PLACEHOLDER_REGEX = new RegExp(VARIABLE_PLACEHOLDER, 'g')
+
 // This damn JavaScript language types
 export const JAVASCRIPT_ALIAS = [
   'javascript', 'javascriptreact', 'svelte',
@@ -40,7 +43,11 @@ export function getAllStatementRanges(document: TextDocument, symbols: string) {
     return []
   }
 
-  const matchRegexp = new RegExp(`^[ \t]*[${symbols}[ \t]*]*${getLanguageStatement(document).replace(/{VALUE}/, '.*?')}`, 'gms')
+  const matchRegexp = new RegExp(`^[ \t]*[${symbols}[ \t]*]*${
+    getLanguageStatement(document)
+    .replace(VARIABLE_PLACEHOLDER_REGEX, '.*?')
+    .replace(/\(|\)|\[|\]|\{|\}/g, '\\$&')
+   }`, 'gms')
 
   const matchedResults = [...text.matchAll(matchRegexp)]
 

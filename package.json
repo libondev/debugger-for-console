@@ -132,7 +132,7 @@
           "default": false,
           "description": "Simplify long paths and variable names."
         },
-        "debugger-for-console.onlyOutputVariable": {
+        "debugger-for-console.onlyVariable": {
           "type": "string",
           "enum": [
             "auto",

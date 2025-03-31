@@ -13,7 +13,7 @@ export function getOutputNewline() {
 const ONLY_OUTPUT_ONE_PARAMETER_LANGUAGE_ID = ['java']
 
 export function getOnlyVariable(languageId: string) {
-  const isOnlyVariable = resolvedConfig.get<string>('onlyOutputVariable', 'auto')
+  const isOnlyVariable = resolvedConfig.get<string>('onlyVariable', 'auto')
 
   return isOnlyVariable === 'enable' ||
   ONLY_OUTPUT_ONE_PARAMETER_LANGUAGE_ID.includes(languageId!)

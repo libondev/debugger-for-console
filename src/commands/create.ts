@@ -9,7 +9,12 @@ import { getNumberLine } from '../features/number-line'
 import { getVariableCompletion } from '../features/variable-completion'
 import { getAfterEmptyLine, getBeforeEmptyLine, getOnlyVariable, getOutputNewline } from '../features/output'
 
-import { getEllipsisString, getLanguageStatement } from '../utils/index'
+import {
+  VARIABLE_PLACEHOLDER,
+  VARIABLE_PLACEHOLDER_REGEX,
+  getEllipsisString,
+  getLanguageStatement,
+} from '../utils/index'
 import { smartToggleEditor } from '../utils/smart-editor'
 
 // if the last character of the text is a scope block start character, return true
@@ -60,23 +65,23 @@ function getStatementGenerator(document: TextDocument) {
 
   if (!statement) {
     throw new Error('No language statement found.')
-  } else if (statement.includes('{VALUE}')) {
-    const [start, ...end] = statement.split('{VALUE}')
-    const restEndStrings = end.join('')
+  } else if (statement.includes(VARIABLE_PLACEHOLDER)) {
+    const formatter = (str: string) => `${statement.replace(VARIABLE_PLACEHOLDER_REGEX, str)}\n`
 
     if (getOnlyVariable(document.languageId)) {
-      return (_: number, t: string) => `${start}${t}${restEndStrings}\n`
+      return (_: number, t: string) => formatter(t)
     }
 
     const quote = getQuote(document.languageId)
 
-    const template = `${start}${quote}${getRandomEmoji()}${getFileDepth(document)
-    }$1/($2):${getOutputNewline()}${quote}$3${restEndStrings}\n`
+    const template = `${quote}${getRandomEmoji()}${getFileDepth(document)
+    }$1/($2):${getOutputNewline()}${quote}$3`
 
-    return (lineNumber: number, text: string) => template
+    return (lineNumber: number, text: string) => formatter(template
       .replace('$1', getNumberLine(lineNumber) as string)
       .replace('$2', getEllipsisString(text, true))
-      .replace('$3', text ? `, ${text}` : '')
+      .replace('$3', text ? `, ${text}` : ''),
+    )
   }
 
   return () => `${statement}\n`

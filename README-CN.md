@@ -63,9 +63,6 @@ This document is also available in [English](./README-CN.md).
 ![](res/uncomment-all-statements.gif)
 
 #### 多光标
-多个光标在不同行:
-![](res/multi-cursor-insert.gif)
-
 多个光标在相同行:
 ![](res/merged-multi-cursor-insert.gif)
 
@@ -112,7 +109,7 @@ This document is also available in [English](./README-CN.md).
 
   // 是否只输出单个变量
   // 某些语言的日志输出方法不支持多个参数，比如：Java
-  "debugger-for-console.onlyOutputVariable": "auto",
+  "debugger-for-console.onlyVariable": "auto",
 
   // 是否在日志消息前/后插入空行
   "debugger-for-console.insertEmptyLine": "none",
@@ -138,11 +135,13 @@ This document is also available in [English](./README-CN.md).
 
 ```json5
 {
+  "debugger-for-console.outputNewline": false,
+  "debugger-for-console.onlyVariable": "enable",
   "debugger-for-console.wrappers": {
-    "javascript": "console.warn({VALUE})"
-    // 或者
     // "javascript": "debugger"
-    // "javascript": "print({VALUE})"
+    // "javascript": "print({VALUE})",
+    "javascript": "console.error('%c {VALUE}', 'color: red', {VALUE})"
+    // "javascript": "console.warn('Custom Wrapper', {VALUE})"
   }
 }
 ```

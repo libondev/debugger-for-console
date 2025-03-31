@@ -63,11 +63,8 @@ This extension is freely available in the [Visual Studio Code Marketplace](https
 ![](res/uncomment-all-statements.gif)
 
 #### Multi cursor
-Insert at multiple line cursors:
-![](res/multi-cursor-insert.gif)
-
 Merge multiple cursors on the same line:
-![](res/merged-multi-cursor-insert.gif)
+![](res/multi-cursor-insert.gif)
 
 ### command
 
@@ -138,11 +135,13 @@ You can personalize the statements you wish to insert via the Settings. (This pl
 
 ```json5
 {
+  "debugger-for-console.outputNewline": false,
+  "debugger-for-console.onlyVariable": "enable",
   "debugger-for-console.wrappers": {
-    "javascript": "console.warn({VALUE})"
-    // OR
     // "javascript": "debugger"
-    // "javascript": "print({VALUE})"
+    // "javascript": "print({VALUE})",
+    "javascript": "console.error('%c {VALUE}', 'color: red', {VALUE})"
+    // "javascript": "console.warn('Custom Wrapper', {VALUE})"
   }
 }
 ```

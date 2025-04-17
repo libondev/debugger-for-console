@@ -19,7 +19,7 @@ export function getOnlyVariable(languageId: string) {
   ONLY_OUTPUT_ONE_PARAMETER_LANGUAGE_ID.includes(languageId!)
 }
 
-export function getBeforeEmptyLine(configValue: string, direction: string) {
+export function getBeforeBlankLine(configValue: string, direction: string) {
   if (
     ['before', 'both'].includes(configValue)
     || (configValue === 'direction' && direction === 'before')
@@ -31,7 +31,7 @@ export function getBeforeEmptyLine(configValue: string, direction: string) {
   return ''
 }
 
-export function getAfterEmptyLine(configValue: string, direction: string) {
+export function getAfterBlankLine(configValue: string, direction: string) {
   if (
     ['after', 'both'].includes(configValue)
     || (configValue === 'direction' && direction === 'after')

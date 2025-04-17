@@ -106,3 +106,52 @@ export function getEllipsisString(str: string, trimQuotes?: boolean) {
 
   return str
 }
+
+// 转义正则表达式
+export function escapeRegexp(string: string) {
+  // return string.replace(' ', '\\s*').replace(/[.*+^?${}()|[\]\\]/g, '\\$&')
+  return string.replace(/[.+*^${}()|[\]\\]/g, '\\$&').replace(' ', '\\s*')
+}
+
+export function generateBlockRegexp(symbols: string[]) {
+  const symbol = symbols.map(s => escapeRegexp(s)).join('|')
+
+  return new RegExp(`(?:${symbol})\\s*$`)
+}
+
+// 获取到当前行需要缩进的次数
+export function getIndentCount(
+  lineCount: number,
+  insertLineNumber: number,
+  nonBlankIndex: number,
+) {
+  // if first line(文档的第一行)
+  if (insertLineNumber <= 0) {
+    return 0
+  } else if (insertLineNumber >= lineCount) {
+    // if last line(最后一行)
+    return -1
+  }
+
+  return nonBlankIndex
+}
+
+// 获取缩进类型
+export function getIndentType(nonBlankIndex: number, text: string) {
+  if (nonBlankIndex === 0) {
+    return ' '
+  }
+
+  const firstChar = text.slice(0, 1) || ' '
+
+  return firstChar
+}
+
+// 根据缩进大小和类型生成缩进字符串
+export function getIndentString(count: number, indentType: string) {
+  if (count <= 0) {
+    return ''
+  }
+
+  return indentType.repeat(count)
+}

@@ -1,4 +1,4 @@
-import { Position, window } from 'vscode'
+import { Position, window, workspace } from 'vscode'
 import type { TextDocument } from 'vscode'
 
 import { resolvedConfig } from '../extension'
@@ -7,7 +7,14 @@ import { getRandomEmoji } from '../features/random-emoji'
 import { getFileDepth } from '../features/file-depth'
 import { getNumberLine } from '../features/number-line'
 import { getVariableCompletion } from '../features/variable-completion'
-import { getAfterEmptyLine, getBeforeEmptyLine, getOnlyVariable, getOutputNewline } from '../features/output'
+import {
+  getAfterBlankLine,
+  getBeforeBlankLine,
+  getOnlyVariable,
+  getOutputNewline,
+} from '../features/output'
+
+import { getBlockBoundaryLineWithIndent } from '../utils/scope'
 
 import {
   VARIABLE_PLACEHOLDER,
@@ -17,47 +24,22 @@ import {
 } from '../utils/index'
 import { smartToggleEditor } from '../utils/smart-editor'
 
-// if the last character of the text is a scope block start character, return true
-// 判断最后一个字符是否是作用域块的开始字符
-function isLastCharScopeStart(text: string) {
-  return ['(', '{', ':'].includes(text[text.length - 1])
+const ERROR_MESSAGES = {
+  NOTHING: 'Nothing to insert.',
+  MULTI_LINE: 'Multi-line selection is not supported.',
+} as const
+
+export const tabSizeConfig = {
+  value: 2,
+  set() {
+    this.value = workspace.getConfiguration('editor').get('tabSize', 2)
+  },
 }
 
-/**
- * get the indent of the current line(获取插入行的缩进内容)
- * @param document current editor document(当前编辑器的文档对象)
- * @param insertLine insert line number(插入行的行号)
- * @returns spaces(缩进内容)
- */
-function getInsertLineIndents(
-  { lineAt, lineCount }: TextDocument,
-  insertLine: number,
-  offsetLine: number,
-) {
-  if (insertLine <= 0) { // if first line(文档的第一行)
-    return ''
-  } else if (insertLine >= lineCount) { // if last line(最后一行)
-    return '\n'
-  }
-
-  // Get information about the line where the cursor is located
-  // 获取光标所行的信息
-  let {
-    firstNonWhitespaceCharacterIndex: insertLineIndents,
-    text,
-  } = lineAt(insertLine - offsetLine)
-  const indentsChar = text.slice(0, 1) === '\t' ? '\t' : ' '
-
-  // If the target line is the start line of a scope block,
-  // you need to indent one more time on the basis of the current line indent.
-  // But if created upwards, this operation is not required
-  // 如果目标行是一个作用域块的开始行则需要在当前行的缩进基础上再缩进一次, 但如果向上创建则不需要这个操作
-  if (offsetLine && isLastCharScopeStart(text.trim())) {
-    // insertLineIndents += workspace.getConfiguration('editor', null).get('tabSize', 2)
-    insertLineIndents += 2
-  }
-
-  return indentsChar.repeat(insertLineIndents)
+interface MergedSelection {
+  line: number
+  indents: string
+  text: string[]
 }
 
 function getStatementGenerator(document: TextDocument) {
@@ -87,11 +69,6 @@ function getStatementGenerator(document: TextDocument) {
   return () => `${statement}\n`
 }
 
-const ERROR_MESSAGES = {
-  NOTHING: 'Nothing to insert.',
-  MULTI_LINE: 'Multi-line selection is not supported.',
-} as const
-
 async function _create(insertOffset: number, displayOffset: number) {
   const editor = window.activeTextEditor
 
@@ -101,23 +78,31 @@ async function _create(insertOffset: number, displayOffset: number) {
 
   const { document } = editor
 
+  // 合并多个在同一行的选区
   let hasMultiLineSelection = false
   const mergedSelections = editor.selections.reduce((listMap, selection) => {
     if (selection.isSingleLine) {
-      const targetLine = selection.start.line + insertOffset
+      const startLine = selection.start.line
+      const targetLine = startLine + insertOffset
+
       let existLines = listMap.get(targetLine)
 
       if (!existLines) {
-        listMap.set(targetLine, (existLines = []))
+        existLines = {
+          ...getBlockBoundaryLineWithIndent(document, startLine, insertOffset),
+          text: [],
+        }
+
+        listMap.set(targetLine, existLines)
       }
 
-      existLines.push(getVariableCompletion(document, selection))
+      existLines.text.push(getVariableCompletion(document, selection))
     } else {
       hasMultiLineSelection = true
     }
 
     return listMap
-  }, new Map<number, string[]>())
+  }, new Map<number, MergedSelection>())
 
   if (hasMultiLineSelection) {
     window.showInformationMessage(ERROR_MESSAGES.MULTI_LINE)
@@ -135,21 +120,19 @@ async function _create(insertOffset: number, displayOffset: number) {
   const insertPosition = insertOffset > 0 ? 'after' : 'before'
   const insertEmptyLine = resolvedConfig.get<string>('insertEmptyLine', 'none')
 
-  const beforeEmptyLine = getBeforeEmptyLine(insertEmptyLine, insertPosition)
-  const afterEmptyLine = getAfterEmptyLine(insertEmptyLine, insertPosition)
+  const beforeBlank = getBeforeBlankLine(insertEmptyLine, insertPosition)
+  const afterBlank = getAfterBlankLine(insertEmptyLine, insertPosition)
 
+  // 如果选区大于1则使用智能编辑器批量应用修改，否则使用普通编辑器
   const smartEditor = smartToggleEditor(mergedSelections.size > 1, document, editor)
 
   for (const [lineNumber, variables] of mergedSelections) {
-    // TODO(optimize feature): find Object/Array/Function Params scope range
-    const indents = getInsertLineIndents(document, lineNumber, insertOffset)
+    position = position.translate(variables.line - position.line)
 
-    position = position.translate(lineNumber - position.line)
-
-    const contents = `${beforeEmptyLine}${indents}${statementGetter(
+    const contents = `${beforeBlank}${variables.indents}${statementGetter(
       lineNumber + displayOffset,
-      variables.join(', '),
-    )}${afterEmptyLine}`
+      variables.text.join(', '),
+    )}${afterBlank}`
 
     smartEditor.insert(
       position,

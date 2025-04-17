@@ -8,6 +8,10 @@ const str = 'Hello'
 const reg = /abcdefg/
 
 const arr = ['a', 'b', 'c']
+const multiArr = [
+  ...arr,
+  ...arr,
+]
 
 const [...list] = [...arr]
 
@@ -23,7 +27,18 @@ const obj = {
 function fnScope() {
 
   const say = 'hello,' + 'world!';
-  console.debug('🚀jav…:25/(say):\n', say)
+
+  const obj = {
+    name: 'John',
+    age: 20,
+    value: [
+      {
+        test() {
+
+        }
+      }
+    ]
+  }
 
   obj.value?.[0]?.test()
 
@@ -46,9 +61,17 @@ function initApp(Vue) {
     render: () => h(App),
   })
 
-  const METHODS = {
-    mount(param) {
+  const arr = new Array([
+    1,
+    2,
+    3,
+  ])
 
+  const METHODS = {
+    mount({
+      aaa,
+      bbb,
+    }) {
       app = app.$mount('#app')
     },
 
@@ -62,10 +85,14 @@ function initApp(Vue) {
 if (Math.random() > 0.5) {
   fnScope(
 
+    '123',
+
   )
 
 } else {
   initApp(
+
+    '456',
 
   )
 

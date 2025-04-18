@@ -24,7 +24,7 @@ const obj = {
   age: 20,
 }
 
-function fnScope() {
+function fnScope(length = obj['name'].length) {
 
   const say = 'hello,' + 'world!';
 
@@ -85,15 +85,16 @@ function initApp(Vue) {
 if (Math.random() > 0.5) {
   fnScope(
 
-    '123',
+    obj['name'].length,
 
   )
 
 } else {
   initApp(
 
-    '456',
+    obj['name'].length,
 
   )
+  console.info('🛰️javascript.js:95/(obj[name].length):', obj['name'].length)
 
 }

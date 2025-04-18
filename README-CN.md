@@ -15,9 +15,10 @@ This document is also available in [English](./README-CN.md).
 4. 可能有些时候我更希望用 `debugger` 来替代 `console.log`，但它不支持。
 5. 在同一行创建了多个光标的时候，它会在当前行下面创建多条语句，而且和你插入光标的顺序完全无关。
 6. 有的时候我希望我不想要那些乱七八糟的输出格式，我就想打印一个简单的变量，但它不支持。
-7. ...
+7. 没法帮我在 array/object/function 的边界位置创建语句（避免语法错误）。
+8. ...
 
->! 我想我还是有必要再重申一遍，Turbo Console Log 这个插件也很棒，只是有些不符合我的使用习惯而已，如果你也有以上困扰的话不妨试试这个（这个劲儿大😂），反正安装一个插件又不要钱（速来白嫖）。 😇
+>! 我想我还是有必要再唠叨一遍，Turbo Console Log 这个插件也很棒，只是有些不符合我的使用习惯而已，并没有踩一捧一，如果你也有以上困扰的话不妨试试这个，反正安装一个插件又不要钱（速来白嫖）。😇
 
 当然如果你觉得好用的话，不妨可以给我一颗 ⭐（求你了）这是对我最大的鼓励（别逼我跪下来求你），感谢你的使用~
 
@@ -37,12 +38,17 @@ This document is also available in [English](./README-CN.md).
 ## 使用
 
 ### 快捷键
-#### 在当前行下面创建调试语句
+#### 在当前行上面创建调试语句
 <kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>↑(ArrowUp)</kbd>
 
 ![](res/create-statement-before.gif)
 
-#### 在当前行上面创建调试语句
+#### 在当前行下面创建调试语句
+<kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>↓(ArrowDown)</kbd>
+
+![](res/find-scope-boundary.gif)
+
+#### 自动找到 object/array/function 边界位置创建
 <kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>↓(ArrowDown)</kbd>
 
 ![](res/create-statement-after.gif)

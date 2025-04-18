@@ -15,7 +15,8 @@ First of all, I have to admit that it is really great, and even the motivation o
 4. Can't customize what you create. For example, sometimes I want to use `debugger` instead of `console.log`.
 5. Creating multiple lines of cursor in the same line will create multiple statements, and the order is not guaranteed.
 6. Occasionally I want a clean log output, but I don't want to create it manually.
-7. ...
+7. Unable to create log outside array/object/function.
+8. ...
 
 >! Let me reiterate that there is nothing wrong with it, but it can't meet my needs in some ways. If you have these problems, you might as well try this plugin, which is free anyway. 😇
 
@@ -46,6 +47,11 @@ This extension is freely available in the [Visual Studio Code Marketplace](https
 <kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>↓(ArrowDown)</kbd>
 
 ![](res/create-statement-after.gif)
+
+#### Automatically find object/array/function boundaries
+<kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>↓(ArrowDown)</kbd>
+
+![](res/find-scope-boundary.gif)
 
 #### Remove all statements on document
 <kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>←(Backspace)</kbd>

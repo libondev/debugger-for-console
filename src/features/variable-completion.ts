@@ -36,6 +36,8 @@ const PAIRED_SYMBOL_MAP = {
 
 type PairedSymbolKeys = keyof typeof PAIRED_SYMBOL_MAP
 
+const IN_PARAMETER_REGEX = /.*?(\()\S*|\D+/
+
 // Find the correct character position at the beginning/end of the string
 // 如果成对的符号没有正确闭合的话则继续查找正确的闭合位置
 function ensureCorrectPosition(text: string, start: number, char: string, reverse: boolean) {
@@ -54,7 +56,7 @@ function ensureCorrectPosition(text: string, start: number, char: string, revers
 
 // Get the word at the given position
 function getCorrectVariableScope(document: TextDocument, anchorPosition: Position): string {
-  const { isEmptyOrWhitespace, text } = document.lineAt(anchorPosition.line)
+  const { isEmptyOrWhitespace, text, firstNonWhitespaceCharacterIndex } = document.lineAt(anchorPosition.line)
 
   // empty line or no word
   if (isEmptyOrWhitespace) {
@@ -64,6 +66,7 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   let startAt = anchorPosition.character
   let endAt = anchorPosition.character
 
+  // 读取自带的分词
   const word = document.getWordRangeAtPosition(anchorPosition)
 
   if (word) {
@@ -93,24 +96,28 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   // e.g.: obj.value?.[0]?.test(  );
   //                           ^  ^
   if (startAt === endAt || IS_MEMBER_CALL.some(s => content.startsWith(s))) {
-    // Find the position of the first space from the starting position to the left,
-    // Avoid including truncated spaces, so + 1 is required.
-    // 从开始位置向左查找第一个空格的位置，避免包含截断的空格，所以需要 +1
-    const whitespaceIndex = text.lastIndexOf(' ', startAt) + 1
+    content = text.slice(firstNonWhitespaceCharacterIndex, endAt)
 
-    content = text.slice(whitespaceIndex, endAt)
+    // 上面直接截取到开头可能会得到这种结果：setSelectedImage(result.assets[0].uri)
+    //                          ^                                    ^
+    // 这种结果一般是想要获取到函数调用时传入的参数，所以需要从 '(' 开始截取
+    if (IN_PARAMETER_REGEX.test(content)) {
+      const breakPoint = content.indexOf('(') + 1
+
+      return content.slice(breakPoint)
+    }
 
     // If the content is only special characters, return an empty string, e.g.: '{}', '()', '[]'
     if (ONLY_HAS_SYMBOL_REGEX.test(content)) {
       return ''
     }
 
-    const lastChar = content[content.length - 1] as PairedSymbolKeys
+    const lastChar = content[content.length - 1]
 
     // Add brackets if the last character is a bracket. e.g. 'foo(' => 'foo()'
-    // 补全结尾的括号
+    // 补全结尾的括号，比如: 'foo(' => 'foo()'
     if (lastChar in PAIRED_SYMBOL_MAP) {
-      content += PAIRED_SYMBOL_MAP[lastChar]
+      content += PAIRED_SYMBOL_MAP[lastChar as PairedSymbolKeys]
     }
 
     return content.replace(IS_SYMBOL_START_REGEX, '$1')

@@ -1,11 +1,11 @@
 /* eslint-disable eslint-comments/no-unlimited-disable */
 /* eslint-disable */
 
-const num = 10
+const num = 10;
 
-const str = 'Hello'
+const str = 'Hello';
 
-const reg = /abcdefg/
+const reg = /abcdefg/;
 
 const arr = ['a', 'b', 'c']
 const multiArr = [
@@ -40,7 +40,7 @@ function fnScope(length = obj['name'].length) {
     ]
   }
 
-  obj.value?.[0]?.test()
+  obj.value?.[0]?.test();
 
   Promise.resolve()
     .then((res) => {
@@ -50,6 +50,11 @@ function fnScope(length = obj['name'].length) {
 
     })
 }
+
+watch(
+  () => preferences.theme.mode,
+  () => globalThis.updateTheme(getLatestTheme()),
+);
 
 const veryLongStatement = window.name.includes('abc'.toUpperCase())[0].toLowerCase().includes('a')?.length
 
@@ -95,6 +100,5 @@ if (Math.random() > 0.5) {
     obj['name'].length,
 
   )
-  console.info('🛰️javascript.js:95/(obj[name].length):', obj['name'].length)
 
 }

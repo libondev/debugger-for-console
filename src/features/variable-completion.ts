@@ -7,12 +7,14 @@ const BREAK_CHARACTER = ' \t\n={}()[]'
 const ONLY_HAS_SYMBOL_REGEX = /^[^a-zA-Z0-9_$]+$/
 
 // 是不是已特殊符号作为字符串的开头
-const IS_SYMBOL_START_REGEX = /^[}\])?.=;]*([\s\S]*?)(?:[{([?.=;]*)$/
+const IS_SYMBOL_STARTS_WITH_REGEX = /^[}\])?.=;]*([\s\S]*?)(?:[{([?.=;]*)$/
 
-// 用于判断是否处于函数参数中
-const IS_IN_FN_PARAMETER_REGEX = /.*?(\()\S*|\D+/
+// 判断参数是否没有闭合的括号
+const IS_NO_CLOSING_BRACKET_REGEXP = /\(([^()]+\([^()]*(?:\)|$))$/
 
 const IS_TAIL_SYMBOL_ENDS_REGEX = /\?/
+
+const PURE_VARIABLE_REGEX = /[^a-zA-Z0-9_$]/g
 
 /**
  * Is member call
@@ -59,7 +61,7 @@ function ensureCorrectPosition(text: string, start: number, char: string, revers
 
 // Get the word at the given position
 function getCorrectVariableScope(document: TextDocument, anchorPosition: Position): string {
-  const { isEmptyOrWhitespace, text } = document.lineAt(anchorPosition.line)
+  const { isEmptyOrWhitespace, text, firstNonWhitespaceCharacterIndex } = document.lineAt(anchorPosition.line)
 
   // empty line or no word
   if (isEmptyOrWhitespace) {
@@ -67,7 +69,7 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   }
 
   let startAt = anchorPosition.character
-  let endAt = anchorPosition.character
+  let endAt = Math.min(text.indexOf(';', startAt), text.length)
 
   // 读取自带的分词
   const word = document.getWordRangeAtPosition(anchorPosition)
@@ -84,11 +86,15 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   }
 
   // trim tail semicolon
-  let content = text.slice(startAt, endAt).replace(/;*$/, '')
+  let content = text.slice(startAt, endAt)
+
+  if (!content) {
+    return text.slice(firstNonWhitespaceCharacterIndex, endAt)
+  }
 
   // js spread operator
   if (content.startsWith('...')) {
-    return content.slice(3)
+    return content.split(' ')[0].replace(PURE_VARIABLE_REGEX, '')
   }
 
   // is empty text, or only special characters, or member call
@@ -99,20 +105,14 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
     content = text.slice(whitespaceIndex, endAt)
 
     // 上面直接截取到开头可能会得到这种结果：setSelectedImage(result.assets[0].uri)
-    //                          ^                                    ^
-    // 这种结果一般是想要获取到函数调用时传入的参数，所以需要从 '(' 开始截取
-    if (IS_IN_FN_PARAMETER_REGEX.test(content)) {
-      const breakPoint = content.indexOf('(') + 1
-
-      return content.slice(breakPoint)
+    //                               ^                                   ^
+    // 这种结果一般是想要获取到函数调用时传入的参数，截取到 '(' 开始的位置
+    const isNoClosingBracket = content.match(IS_NO_CLOSING_BRACKET_REGEXP)
+    if (isNoClosingBracket !== null) {
+      return isNoClosingBracket[1]
     }
 
-    // If the content is only special characters, return an empty string, e.g.: '{}', '()', '[]'
-    if (ONLY_HAS_SYMBOL_REGEX.test(content)) {
-      return ''
-    }
-
-    return content.replace(IS_SYMBOL_START_REGEX, '$1')
+    return content.replace(IS_SYMBOL_STARTS_WITH_REGEX, '$1')
   }
 
   // only character: '.', ')', ']', etc.
@@ -155,14 +155,7 @@ export function getVariableCompletion(document: TextDocument, selection: Selecti
   if (selection.isEmpty) {
     const variableString = getCorrectVariableScope(document, selection.anchor)
 
-    const lastChar = variableString[variableString.length - 1]
-
-    // 补全结尾的括号，比如: 'foo(' => 'foo()'
-    if (lastChar in PAIRED_BRACKET_MAP) {
-      return variableString + PAIRED_BRACKET_MAP[lastChar as keyof typeof PAIRED_BRACKET_MAP]
-    }
-
-    return variableString
+    return completionBracket(variableString)
   }
 
   const { isEmptyOrWhitespace, text } = document.lineAt(selection.start.line)
@@ -172,4 +165,15 @@ export function getVariableCompletion(document: TextDocument, selection: Selecti
   }
 
   return text.slice(selection.start.character, selection.end.character)
+}
+
+// 补全结尾缺失的括号
+function completionBracket(content: string) {
+  const matchedBracket = PAIRED_BRACKET_MAP[content[content.length - 1] as keyof typeof PAIRED_BRACKET_MAP]
+
+  if (matchedBracket) {
+    return content + matchedBracket
+  }
+
+  return content
 }

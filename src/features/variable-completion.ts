@@ -9,6 +9,9 @@ const ONLY_HAS_SYMBOL_REGEX = /^[^a-zA-Z0-9_$]+$/
 // 是不是已特殊符号作为字符串的开头
 const IS_SYMBOL_START_REGEX = /^[}\])?.=;]*([\s\S]*?)(?:[{([?.=;]*)$/
 
+// 用于判断是否处于函数参数中
+const IS_IN_FN_PARAMETER_REGEX = /.*?(\()\S*|\D+/
+
 const IS_TAIL_SYMBOL_ENDS_REGEX = /\?/
 
 /**
@@ -23,20 +26,20 @@ const IS_TAIL_SYMBOL_ENDS_REGEX = /\?/
  */
 const IS_MEMBER_CALL = ['.', ':', '!.', '?.']
 
-// 成对符号的映射
-const PAIRED_SYMBOL_MAP = {
-  '(': ')',
-  '{': '}',
-  '[': ']',
+const PAIRED_STRING_MAP = {
   '"': '"',
   '`': '`',
   '/': '/',
   '\'': '\'',
 }
 
-type PairedSymbolKeys = keyof typeof PAIRED_SYMBOL_MAP
+const PAIRED_BRACKET_MAP = {
+  '(': ')',
+  '{': '}',
+  '[': ']',
+}
 
-const IN_PARAMETER_REGEX = /.*?(\()\S*|\D+/
+type PairedSymbolKeys = keyof typeof PAIRED_STRING_MAP
 
 // Find the correct character position at the beginning/end of the string
 // 如果成对的符号没有正确闭合的话则继续查找正确的闭合位置
@@ -56,7 +59,7 @@ function ensureCorrectPosition(text: string, start: number, char: string, revers
 
 // Get the word at the given position
 function getCorrectVariableScope(document: TextDocument, anchorPosition: Position): string {
-  const { isEmptyOrWhitespace, text, firstNonWhitespaceCharacterIndex } = document.lineAt(anchorPosition.line)
+  const { isEmptyOrWhitespace, text } = document.lineAt(anchorPosition.line)
 
   // empty line or no word
   if (isEmptyOrWhitespace) {
@@ -81,11 +84,7 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   }
 
   // trim tail semicolon
-  while (text[endAt - 1] === ';') {
-    endAt--
-  }
-
-  let content = text.slice(startAt, endAt)
+  let content = text.slice(startAt, endAt).replace(/;*$/, '')
 
   // js spread operator
   if (content.startsWith('...')) {
@@ -96,12 +95,13 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   // e.g.: obj.value?.[0]?.test(  );
   //                           ^  ^
   if (startAt === endAt || IS_MEMBER_CALL.some(s => content.startsWith(s))) {
-    content = text.slice(firstNonWhitespaceCharacterIndex, endAt)
+    const whitespaceIndex = text.lastIndexOf(' ', startAt) + 1
+    content = text.slice(whitespaceIndex, endAt)
 
     // 上面直接截取到开头可能会得到这种结果：setSelectedImage(result.assets[0].uri)
     //                          ^                                    ^
     // 这种结果一般是想要获取到函数调用时传入的参数，所以需要从 '(' 开始截取
-    if (IN_PARAMETER_REGEX.test(content)) {
+    if (IS_IN_FN_PARAMETER_REGEX.test(content)) {
       const breakPoint = content.indexOf('(') + 1
 
       return content.slice(breakPoint)
@@ -110,14 +110,6 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
     // If the content is only special characters, return an empty string, e.g.: '{}', '()', '[]'
     if (ONLY_HAS_SYMBOL_REGEX.test(content)) {
       return ''
-    }
-
-    const lastChar = content[content.length - 1]
-
-    // Add brackets if the last character is a bracket. e.g. 'foo(' => 'foo()'
-    // 补全结尾的括号，比如: 'foo(' => 'foo()'
-    if (lastChar in PAIRED_SYMBOL_MAP) {
-      content += PAIRED_SYMBOL_MAP[lastChar as PairedSymbolKeys]
     }
 
     return content.replace(IS_SYMBOL_START_REGEX, '$1')
@@ -129,8 +121,8 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   }
 
   /**
-   * get the start and end key paired symbol
-   * 获取成对符号的开始和结束符号
+   * gets the starting and ending positions of paired strings
+   * 获取成对的字符串开始和结束位置
    * @example
    * ```js
    * 'lorem -> 'lorem'
@@ -140,8 +132,8 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
    * (lorem -> (lorem)
    * ```
    */
-  const startPairedSymbol = PAIRED_SYMBOL_MAP[content[0] as PairedSymbolKeys]
-  const endPairedSymbol = PAIRED_SYMBOL_MAP[content[content.length - 1] as PairedSymbolKeys]
+  const startPairedSymbol = PAIRED_STRING_MAP[content[0] as PairedSymbolKeys]
+  const endPairedSymbol = PAIRED_STRING_MAP[content[content.length - 1] as PairedSymbolKeys]
 
   if (startPairedSymbol && !endPairedSymbol) {
     endAt = ensureCorrectPosition(text, startAt, startPairedSymbol, false)
@@ -161,7 +153,16 @@ export function getVariableCompletion(document: TextDocument, selection: Selecti
   // If the selection of the cursor is empty,
   // the selection is obtained in a form conforming to the programming grammar.
   if (selection.isEmpty) {
-    return getCorrectVariableScope(document, selection.anchor)
+    const variableString = getCorrectVariableScope(document, selection.anchor)
+
+    const lastChar = variableString[variableString.length - 1]
+
+    // 补全结尾的括号，比如: 'foo(' => 'foo()'
+    if (lastChar in PAIRED_BRACKET_MAP) {
+      return variableString + PAIRED_BRACKET_MAP[lastChar as keyof typeof PAIRED_BRACKET_MAP]
+    }
+
+    return variableString
   }
 
   const { isEmptyOrWhitespace, text } = document.lineAt(selection.start.line)

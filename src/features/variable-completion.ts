@@ -10,7 +10,8 @@ const ONLY_HAS_SYMBOL_REGEX = /^[^a-zA-Z0-9_$]+$/
 const IS_SYMBOL_STARTS_WITH_REGEX = /^[}\])?.=;]*([\s\S]*?)(?:[{([?.=;]*)$/
 
 // 判断参数是否没有闭合的括号
-const IS_NO_CLOSING_BRACKET_REGEXP = /\(([^()]+\([^()]*(?:\)|$))$/
+// const IS_NO_CLOSING_BRACKET_REGEXP = /\(([^()]+\([^()]*(?:\)|$))$/
+const IS_NO_CLOSING_BRACKET_REGEXP = /\(([^(]*(?:\([^()]*\)[^()]*)*(?:\([^()]*)?(?:\[[^\]]*\])*)$/
 
 const IS_TAIL_SYMBOL_ENDS_REGEX = /\?/
 
@@ -61,7 +62,7 @@ function ensureCorrectPosition(text: string, start: number, char: string, revers
 
 // Get the word at the given position
 function getCorrectVariableScope(document: TextDocument, anchorPosition: Position): string {
-  const { isEmptyOrWhitespace, text, firstNonWhitespaceCharacterIndex } = document.lineAt(anchorPosition.line)
+  const { isEmptyOrWhitespace, text } = document.lineAt(anchorPosition.line)
 
   // empty line or no word
   if (isEmptyOrWhitespace) {
@@ -69,7 +70,9 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   }
 
   let startAt = anchorPosition.character
-  let endAt = Math.min(text.indexOf(';', startAt), text.length)
+  let endAt = text.indexOf(';', startAt)
+
+  endAt = endAt === -1 ? anchorPosition.character : Math.min(endAt, text.length)
 
   // 读取自带的分词
   const word = document.getWordRangeAtPosition(anchorPosition)
@@ -88,9 +91,9 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   // trim tail semicolon
   let content = text.slice(startAt, endAt)
 
-  if (!content) {
-    return text.slice(firstNonWhitespaceCharacterIndex, endAt)
-  }
+  // if (!content) {
+  //   return text.slice(firstNonWhitespaceCharacterIndex, endAt)
+  // }
 
   // js spread operator
   if (content.startsWith('...')) {

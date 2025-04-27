@@ -40,6 +40,10 @@ function fnScope(length = obj['name'].length) {
     ]
   }
 
+  const sortedEntries = Object.entries(obj).sort(
+    (a, b) => parseInt(a[1]) - parseInt(b[1]),
+  );
+
   obj.value?.[0]?.test();
 
   Promise.resolve()

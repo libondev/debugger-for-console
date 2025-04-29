@@ -13,6 +13,7 @@ const insideBlockRegexpNext = generateBlockRegexp([
   '= [',
   '({',
   '([',
+  '(',
   ',',
 ])
 

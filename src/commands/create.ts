@@ -14,7 +14,7 @@ import {
   getOutputNewline,
 } from '../features/output'
 
-import { getBlockBoundaryLineWithIndent } from '../utils/scope'
+import { getBlockBoundaryLineWithIndent } from '../utils/block-scope'
 
 import {
   VARIABLE_PLACEHOLDER,

@@ -32,11 +32,9 @@ function fnScope(length = obj['name'].length) {
     name: 'John',
     age: 20,
     value: [
-      {
-        test() {
-
-        }
-      }
+      1,
+      2,
+      3,
     ]
   }
 

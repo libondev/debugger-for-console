@@ -23,11 +23,8 @@ const insideBlockRegexpPrev = generateBlockRegexp([
 ])
 
 const blockStartSymbolRegexp = generateBlockRegexp([
-  '= {',
-  '= [',
-  ') {',
-  '({',
-  '([',
+  '{',
+  '[',
   '[',
   '(',
 ])
@@ -95,14 +92,16 @@ export function getBlockBoundaryLineWithIndent(document: TextDocument, line: num
   let targetLine = line + offsetLineSize
   const boundaryRegexp = offset ? blockEndSymbolRegexp : blockStartSymbolRegexp
 
-  // 逐行查找
+  // 逐行向上或向下查找开始/结束符号
   while (true) {
+    // TODO: 支持查找嵌套作用域
     const {
       text,
       isEmptyOrWhitespace,
       firstNonWhitespaceCharacterIndex: targetLineIndent,
     } = document.lineAt(targetLine)
 
+    // 如果目标行超出范围，或者目标行不是空行且以开始/结束符号结尾，则表示找到目标行
     if (
       targetLine < 0 ||
       targetLine > documentMaxRows ||

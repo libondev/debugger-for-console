@@ -35,6 +35,8 @@ const blockEndSymbolRegexp = generateBlockRegexp([
   '};?',
   '];?',
   ');?',
+  ' as .*;?',
+  ' satisfies .*;?',
 ])
 
 const insertIndentRegexp = generateBlockRegexp([

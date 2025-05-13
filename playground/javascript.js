@@ -38,6 +38,10 @@ function fnScope(length = obj['name'].length) {
     ]
   }
 
+  const arrowFn = (arr) => {
+
+  }
+
   const sortedEntries = Object.entries(obj).sort(
     (a, b) => parseInt(a[1]) - parseInt(b[1]),
   );

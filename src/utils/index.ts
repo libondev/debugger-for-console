@@ -110,7 +110,8 @@ export function getEllipsisString(str: string, trimQuotes?: boolean) {
 // 转义正则表达式
 export function escapeRegexp(string: string) {
   // return string.replace(' ', '\\s*').replace(/[.*+^?${}()|[\]\\]/g, '\\$&')
-  return string.replace(/[.+*^${}()|[\]\\]/g, '\\$&').replace(' ', '\\s*')
+  // return string.replace(/[.+*^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s*')
+  return string.replace(/[+^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s*')
 }
 
 export function generateBlockRegexp(symbols: string[]) {

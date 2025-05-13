@@ -1,4 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+/* eslint-disable eslint-comments/no-unlimited-disable */
+/* eslint-disable */
+
 // @ts-nocheck
 
 import { StyleSheet, View } from 'react-native'
@@ -23,6 +25,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 })
+
+const obj = {
+  a: 1,
+  b: 2,
+} satisfies Record<string, any>
+
+const obj2 = {
+  a: 1,
+  b: 2,
+} as Record<string, any>
 
 export default function Index() {
   const [selectedImage, setSelectedImage] = useState<string>()

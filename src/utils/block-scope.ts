@@ -5,12 +5,13 @@ import {
   getIndentCount,
   getIndentString,
   getIndentType,
-} from './index'
+} from './shared'
 
 // 向下创建的时候以这些符号作为结尾时，表示处于作用域内部
 const insideBlockRegexpNext = generateBlockRegexp([
   '= {',
   '= [',
+  '<{',
   '({',
   '([',
   '(',
@@ -54,6 +55,7 @@ export function getBlockBoundaryLineWithIndent(document: TextDocument, line: num
     firstNonWhitespaceCharacterIndex,
   } = document.lineAt(line)
 
+  // 获取文档最大行数已经缩进类型
   const documentMaxRows = document.lineCount
   const indentsType = getIndentType(firstNonWhitespaceCharacterIndex, text)
   let indentsCount = getIndentCount(
@@ -70,6 +72,7 @@ export function getBlockBoundaryLineWithIndent(document: TextDocument, line: num
     }
   }
 
+  // 根据 offset 获取作用域符号正则，向上和向下的查找规则不同
   const insideBlockRegexp = offset ? insideBlockRegexpNext : insideBlockRegexpPrev
 
   // 如果不是以作用域符号结尾则表示处于作用域外部，不需要进一步查找

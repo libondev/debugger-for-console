@@ -36,6 +36,15 @@ const obj2 = {
   b: 2,
 } as Record<string, any>
 
+const props = defineProps<{
+  abc: number;
+  data: Array<{
+    id: string;
+    [key: string]: any;
+  }>;
+  zyx: number;
+}>()
+
 export default function Index() {
   const [selectedImage, setSelectedImage] = useState<string>()
 

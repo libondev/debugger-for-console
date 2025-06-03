@@ -1,10 +1,7 @@
 # Debugger for Console
 Effortlessly generate console debugging information for various languages.
 
-这个文档还有 [简体中文](./README-CN.md) 版本。
-
-## BREAKING CHANGE
-From version 0.11.0 onwards, replace the placeholder variable with {VALUE} instead of $.
+This document also has a [简体中文](./README-CN.md) version.
 
 ## Why not [Turbo Console Log](https://marketplace.visualstudio.com/items?itemName=ChakrounAnas.turbo-console-log)?
 First of all, I have to admit that it is really great, and even the motivation of my plug-in is because of it, but I did find some problems in use (maybe I was wrong😜).

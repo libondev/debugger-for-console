@@ -3,9 +3,6 @@
 
 This document is also available in [English](./README-CN.md).
 
-## BREAKING CHANGE
-从0.11.0版本开始，将占位符变量替换为{VALUE}而不是$。
-
 ## 为什么不用 [Turbo Console Log](https://marketplace.visualstudio.com/items?itemName=ChakrounAnas.turbo-console-log)?
 首先，我必须承认它确实很棒，甚至我做这个插件的动机都是因为它，不过我的确以我的使用习惯在使用的发现了一些问题（当然这也有可能是我的使用“姿势”不对的问题😜）。
 

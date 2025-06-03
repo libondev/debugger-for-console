@@ -1,5 +1,5 @@
 import { Position, Range, window } from 'vscode'
-import { getAllStatementRanges } from '../utils'
+import { getAllStatementRanges } from '../utils/shared'
 
 import { getCommentSymbol } from '../features/comment-symbol'
 import { smartToggleEditor } from '../utils/smart-editor'

@@ -1,6 +1,6 @@
 import { type TextDocument, window, workspace } from 'vscode'
 import { resolvedConfig } from '../extension'
-import { getEllipsisString } from '../utils/index'
+import { getEllipsisString } from '../utils/shared'
 
 const cachedPathMap = new WeakMap<TextDocument, string>()
 

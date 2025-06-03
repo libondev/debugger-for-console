@@ -21,7 +21,7 @@ import {
   VARIABLE_PLACEHOLDER_REGEX,
   getEllipsisString,
   getLanguageStatement,
-} from '../utils/index'
+} from '../utils/shared'
 import { smartToggleEditor } from '../utils/smart-editor'
 
 const ERROR_MESSAGES = {

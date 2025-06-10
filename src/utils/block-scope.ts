@@ -16,11 +16,15 @@ const insideBlockRegexpNext = generateBlockRegexp([
   '([',
   '(',
   ',',
+  '|',
+  '&',
 ])
 
 // 向上创建时只要以 , 结尾就表示处于作用域内部，不考虑对象函数的形式
 const insideBlockRegexpPrev = generateBlockRegexp([
   ',',
+  '|',
+  '&',
 ])
 
 const blockStartSymbolRegexp = generateBlockRegexp([

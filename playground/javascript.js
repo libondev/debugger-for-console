@@ -38,6 +38,12 @@ function fnScope(length = obj['name'].length) {
     ]
   }
 
+  const is = (
+    1 &&
+    2 ||
+    3
+  )
+
   const arrowFn = (arr) => {
 
   }

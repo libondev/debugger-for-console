@@ -34,6 +34,7 @@ const blockStartSymbolRegexp = generateBlockRegexp([
   '(',
 ])
 
+// 向下创建的时候遇到哪些符号视作为作用域闭合
 const blockEndSymbolRegexp = generateBlockRegexp([
   '});?',
   ']);?',

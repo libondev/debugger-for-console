@@ -37,6 +37,10 @@ const obj2 = {
 } as Record<string, any>
 
 const props = defineProps<{
+  data: any;
+}>();
+
+const props = defineProps<{
   abc: number;
   data: Array<{
     id: string;

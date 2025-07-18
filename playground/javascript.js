@@ -24,6 +24,14 @@ const obj = {
   age: 20,
 }
 
+const computedStyle = computed(() => {
+  const styles = {
+    ...config.style,
+  };
+
+  return styles;
+});
+
 function fnScope(length = obj['name'].length) {
 
   const say = 'hello,' + 'world!';

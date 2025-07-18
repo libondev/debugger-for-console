@@ -15,7 +15,7 @@ const IS_NO_CLOSING_BRACKET_REGEXP = /\(([^(]*(?:\([^()]*\)[^()]*)*(?:\([^()]*)?
 
 const IS_TAIL_SYMBOL_ENDS_REGEX = /\?/
 
-const PURE_VARIABLE_REGEX = /[^a-zA-Z0-9_$]/g
+const PURE_VARIABLE_REGEX = /^[^a-zA-Z0-9_$]+|[^a-zA-Z0-9_$!]+$/g
 
 /**
  * Is member call
@@ -90,10 +90,6 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
 
   // trim tail semicolon
   let content = text.slice(startAt, endAt)
-
-  // if (!content) {
-  //   return text.slice(firstNonWhitespaceCharacterIndex, endAt)
-  // }
 
   // js spread operator
   if (content.startsWith('...')) {

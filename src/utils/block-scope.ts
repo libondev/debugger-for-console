@@ -41,6 +41,8 @@ const blockEndSymbolRegexp = generateBlockRegexp([
   '};?',
   '];?',
   ');?',
+  '} =.*;?',
+  '] =.*;?',
   ' as .*;?',
   ' satisfies .*;?',
 ])

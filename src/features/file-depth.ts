@@ -31,7 +31,8 @@ export function getFileDepth(document: TextDocument) {
     return cachedPath
   }
 
-  const relationFilePath = workspace.asRelativePath(document.fileName)
+  // Fixed the issue where the path could not be correctly captured when opening a file separately in the windows environment
+  const relationFilePath = workspace.asRelativePath(document.fileName).replaceAll('\\', '/')
 
   let lastIndex = relationFilePath.length
   for (let i = 0; i < depth; i++) {

@@ -56,14 +56,17 @@ function getStatementGenerator(document: TextDocument) {
 
     const quote = getQuote(document.languageId)
 
-    const template = `${quote}${getRandomEmoji()}${getFileDepth(document)
-    }$1/($2):${getOutputNewline()}${quote}$3`
+    const template = `${quote}${getRandomEmoji()}${getFileDepth(
+      document,
+    )}$1/($2):${getOutputNewline()}${quote}$3`
 
-    return (lineNumber: number, text: string) => formatter(template
-      .replace('$1', getNumberLine(lineNumber) as string)
-      .replace('$2', getEllipsisString(text, true))
-      .replace('$3', text ? `, ${text}` : ''),
-    )
+    return (lineNumber: number, text: string) =>
+      formatter(
+        template
+          .replace('$1', getNumberLine(lineNumber) as string)
+          .replace('$2', getEllipsisString(text, true))
+          .replace('$3', text ? `, ${text}` : ''),
+      )
   }
 
   return () => `${statement}\n`
@@ -110,7 +113,9 @@ async function _create(insertOffset: number, displayOffset: number) {
 
   if (mergedSelections.size <= 0) {
     // avoid popping windows twice at the same time.
-    !hasMultiLineSelection && window.showInformationMessage(ERROR_MESSAGES.NOTHING)
+    if (!hasMultiLineSelection) {
+      window.showInformationMessage(ERROR_MESSAGES.NOTHING)
+    }
     return
   }
 
@@ -134,10 +139,7 @@ async function _create(insertOffset: number, displayOffset: number) {
       variables.text.join(', '),
     )}${afterBlank}`
 
-    smartEditor.insert(
-      position,
-      contents,
-    )
+    smartEditor.insert(position, contents)
   }
 
   smartEditor.applyEdit()

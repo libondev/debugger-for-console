@@ -10,5 +10,31 @@
     "vite",
     "Vitesse",
     "vitest"
-  ]
+  ],
+  "[javascript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "never"
+  },
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "oxc.enable": true,
+  "oxc.lint.run": "onSave",
+  "oxc.typeAware": true,
+  "eslint.enable": false,
+  "prettier.enable": false,
+  "typescript.experimental.useTsgo": true
 }

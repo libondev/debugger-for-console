@@ -1,11 +1,6 @@
 import type { TextDocument } from 'vscode'
 import { tabSizeConfig } from '../commands/create'
-import {
-  generateBlockRegexp,
-  getIndentCount,
-  getIndentString,
-  getIndentType,
-} from './shared'
+import { generateBlockRegexp, getIndentCount, getIndentString, getIndentType } from './shared'
 
 // 向下创建的时候以这些符号作为结尾时，表示处于作用域内部
 const insideBlockRegexpNext = generateBlockRegexp([
@@ -21,18 +16,9 @@ const insideBlockRegexpNext = generateBlockRegexp([
 ])
 
 // 向上创建时只要以 , 结尾就表示处于作用域内部，不考虑对象函数的形式
-const insideBlockRegexpPrev = generateBlockRegexp([
-  ',',
-  '|',
-  '&',
-])
+const insideBlockRegexpPrev = generateBlockRegexp([',', '|', '&'])
 
-const blockStartSymbolRegexp = generateBlockRegexp([
-  '{',
-  '[',
-  '[',
-  '(',
-])
+const blockStartSymbolRegexp = generateBlockRegexp(['{', '[', '[', '('])
 
 // 向下创建的时候遇到哪些符号视作为作用域闭合
 const blockEndSymbolRegexp = generateBlockRegexp([
@@ -47,20 +33,15 @@ const blockEndSymbolRegexp = generateBlockRegexp([
   ' satisfies .*;?',
 ])
 
-const insertIndentRegexp = generateBlockRegexp([
-  '{',
-  '(',
-  '[',
-  ':',
-])
+const insertIndentRegexp = generateBlockRegexp(['{', '(', '[', ':'])
 
 // 获取作用域结束或开始的边界行和最终创建时的缩进
-export function getBlockBoundaryLineWithIndent(document: TextDocument, line: number, offset: number) {
-  const {
-    text,
-    isEmptyOrWhitespace,
-    firstNonWhitespaceCharacterIndex,
-  } = document.lineAt(line)
+export function getBlockBoundaryLineWithIndent(
+  document: TextDocument,
+  line: number,
+  offset: number,
+) {
+  const { text, isEmptyOrWhitespace, firstNonWhitespaceCharacterIndex } = document.lineAt(line)
 
   // 获取文档最大行数已经缩进类型
   const documentMaxRows = document.lineCount

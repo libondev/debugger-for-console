@@ -1,0 +1,26 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "rules": {
+    "curly": "error",
+    "end-of-line": "off",
+    "brace-style": [
+      "error",
+      "1tbs",
+      {
+        "allowSingleLine": false
+      }
+    ],
+  },
+  "plugins": [
+    "oxc",
+    "import",
+    "promise",
+    "unicorn",
+    "typescript"
+  ],
+  "ignorePatterns": [
+    "dist/",
+    "playground/",
+    "node_modules/"
+  ],
+}

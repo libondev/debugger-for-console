@@ -7,8 +7,13 @@ export const VARIABLE_PLACEHOLDER_REGEX = new RegExp(VARIABLE_PLACEHOLDER, 'g')
 
 // This damn JavaScript language types
 export const JAVASCRIPT_ALIAS = [
-  'javascript', 'javascriptreact', 'svelte',
-  'typescript', 'typescriptreact', 'vue', 'html',
+  'javascript',
+  'javascriptreact',
+  'svelte',
+  'typescript',
+  'typescriptreact',
+  'vue',
+  'html',
 ]
 
 // Get the statement corresponding to the language of the current document.
@@ -26,10 +31,17 @@ function getMultiLineStatement(document: TextDocument, line: TextLine) {
   let count = 1
 
   while (count > 0) {
-    nextLine.text.includes('(') && count++
-    nextLine.text.includes(')') && count--
+    if (nextLine.text.includes('(')) {
+      count++
+    }
 
-    count && (nextLine = document.lineAt(nextLine.lineNumber + 1))
+    if (nextLine.text.includes(')')) {
+      count--
+    }
+
+    if (count) {
+      nextLine = document.lineAt(nextLine.lineNumber + 1)
+    }
   }
 
   return { start: line.range.start.line, end: nextLine.range.end.line }
@@ -43,11 +55,12 @@ export function getAllStatementRanges(document: TextDocument, symbols: string) {
     return []
   }
 
-  const matchRegexp = new RegExp(`^[ \t]*[${symbols}[ \t]*]*${
-    getLanguageStatement(document)
-    .replace(VARIABLE_PLACEHOLDER_REGEX, '.*?')
-    .replace(/\(|\)|\[|\]|\{|\}/g, '\\$&')
-   }`, 'gms')
+  const matchRegexp = new RegExp(
+    `^[ \t]*[${symbols}[ \t]*]*${getLanguageStatement(document)
+      .replace(VARIABLE_PLACEHOLDER_REGEX, '.*?')
+      .replace(/\(|\)|\[|\]|\{|\}/g, '\\$&')}`,
+    'gms',
+  )
 
   const matchedResults = [...text.matchAll(matchRegexp)]
 
@@ -63,10 +76,7 @@ export function getAllStatementRanges(document: TextDocument, symbols: string) {
     line = document.lineAt(document.positionAt(match.index!).line)
 
     // not have a '(' or is a single line statement. e.g. debugger
-    if (
-      singleLineRegexp.test(line.text) ||
-      !line.text.includes('(')
-    ) {
+    if (singleLineRegexp.test(line.text) || !line.text.includes('(')) {
       acc.push(line.range)
     } else {
       // multi-line statement
@@ -115,17 +125,13 @@ export function escapeRegexp(string: string) {
 }
 
 export function generateBlockRegexp(symbols: string[]) {
-  const symbol = symbols.map(s => escapeRegexp(s)).join('|')
+  const symbol = symbols.map((s) => escapeRegexp(s)).join('|')
 
   return new RegExp(`(?:${symbol})\\s*$`)
 }
 
 // 获取到当前行需要缩进的次数
-export function getIndentCount(
-  lineCount: number,
-  insertLineNumber: number,
-  nonBlankIndex: number,
-) {
+export function getIndentCount(lineCount: number, insertLineNumber: number, nonBlankIndex: number) {
   // if first line(文档的第一行)
   if (insertLineNumber <= 0) {
     return 0

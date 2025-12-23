@@ -25,9 +25,7 @@ export async function getCurrentSymbol(): Promise<vscode.SymbolInformation | und
   }
 
   // 查找光标所在的符号
-  return symbols.find(symbol =>
-    symbol.location.range.contains(position),
-  )
+  return symbols.find((symbol) => symbol.location.range.contains(position))
 }
 
 /**

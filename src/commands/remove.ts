@@ -11,7 +11,10 @@ export async function remove() {
     return
   }
 
-  const { document, document: { languageId } } = editor
+  const {
+    document,
+    document: { languageId },
+  } = editor
 
   const commentSymbols = getCommentSymbol(languageId)
 

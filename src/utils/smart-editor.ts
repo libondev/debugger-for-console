@@ -20,7 +20,7 @@ function createEditor(editor: TextEditor) {
     async applyEdit() {
       await editor.edit((builder) => {
         changes.forEach(({ type, args }) => {
-          (builder[type] as any)(...args)
+          ;(builder[type] as any)(...args)
         })
       })
     },
@@ -45,7 +45,5 @@ export function smartToggleEditor(
   document: TextDocument,
   editor: TextEditor,
 ) {
-  return useWorkspace
-    ? createWorkspace(document)
-    : createEditor(editor)
+  return useWorkspace ? createWorkspace(document) : createEditor(editor)
 }

@@ -11,7 +11,10 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
     return
   }
 
-  const { document, document: { languageId } } = editor
+  const {
+    document,
+    document: { languageId },
+  } = editor
   const commentSymbols = getCommentSymbol(languageId)
 
   const statements = getAllStatementRanges(document, commentSymbols)
@@ -26,12 +29,14 @@ async function toggle(type: 'comment' | 'uncomment' = 'comment') {
 
   const replacer = {
     comment: (range: Range, indents: string, content: string) => {
-      !content.startsWith(commentSymbols)
-        && smartEditor.replace(range, `${indents}${commentSymbols} ${content}`)
+      if (!content.startsWith(commentSymbols)) {
+        smartEditor.replace(range, `${indents}${commentSymbols} ${content}`)
+      }
     },
     uncomment: (range: Range, indents: string, content: string) => {
-      content.startsWith(commentSymbols)
-        && smartEditor.replace(range, `${indents}${content.replace(commentRegexp, '')}`)
+      if (content.startsWith(commentSymbols)) {
+        smartEditor.replace(range, `${indents}${content.replace(commentRegexp, '')}`)
+      }
     },
   }[type]
 

@@ -33,7 +33,7 @@ const PAIRED_STRING_MAP = {
   '"': '"',
   '`': '`',
   '/': '/',
-  '\'': '\'',
+  "'": "'",
 }
 
 const PAIRED_BRACKET_MAP = {
@@ -99,7 +99,7 @@ function getCorrectVariableScope(document: TextDocument, anchorPosition: Positio
   // is empty text, or only special characters, or member call
   // e.g.: obj.value?.[0]?.test(  );
   //                           ^  ^
-  if (startAt === endAt || IS_MEMBER_CALL.some(s => content.startsWith(s))) {
+  if (startAt === endAt || IS_MEMBER_CALL.some((s) => content.startsWith(s))) {
     const whitespaceIndex = text.lastIndexOf(' ', startAt) + 1
     content = text.slice(whitespaceIndex, endAt)
 
@@ -168,7 +168,8 @@ export function getVariableCompletion(document: TextDocument, selection: Selecti
 
 // 补全结尾缺失的括号
 function completionBracket(content: string) {
-  const matchedBracket = PAIRED_BRACKET_MAP[content[content.length - 1] as keyof typeof PAIRED_BRACKET_MAP]
+  const matchedBracket =
+    PAIRED_BRACKET_MAP[content[content.length - 1] as keyof typeof PAIRED_BRACKET_MAP]
 
   if (matchedBracket) {
     return content + matchedBracket

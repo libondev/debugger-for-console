@@ -6,10 +6,7 @@ import { tabSizeConfig } from './create'
 export function updateUserConfig() {
   Object.assign(resolvedConfig, workspace.getConfiguration('debugger-for-console'))
 
-  const deps = [
-    resetFileDepthCache,
-    tabSizeConfig.set.bind(tabSizeConfig),
-  ]
+  const deps = [resetFileDepthCache, tabSizeConfig.set.bind(tabSizeConfig)]
 
-  deps.forEach(dep => dep())
+  deps.forEach((dep) => dep())
 }

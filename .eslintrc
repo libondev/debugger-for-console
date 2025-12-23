@@ -1,9 +1,0 @@
-{
-  "extends": "@antfu",
-  "rules": {
-    "curly": "off",
-    "brace-style": "off",
-    "operator-linebreak": "off",
-    "@typescript-eslint/brace-style": "off"
-  }
-}

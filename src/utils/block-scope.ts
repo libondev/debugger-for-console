@@ -87,6 +87,20 @@ export function getBlockBoundaryLineWithIndent(
 
   // 逐行向上或向下查找开始/结束符号
   while (true) {
+    if (targetLine < 0) {
+      targetLine = 0
+      indentsCount = 0
+      break
+    }
+
+    // 走到文档末尾仍未找到边界时，按 “最后一行的下一行” 处理（向下插入时）
+    // 这里把 targetLine clamp 到最后一行，最终返回时会 +1 得到 `lineCount`
+    if (targetLine >= documentMaxRows) {
+      targetLine = Math.max(0, documentMaxRows - 1)
+      indentsCount = document.lineAt(targetLine).firstNonWhitespaceCharacterIndex
+      break
+    }
+
     // TODO: 支持查找嵌套作用域
     const {
       text,
@@ -95,11 +109,7 @@ export function getBlockBoundaryLineWithIndent(
     } = document.lineAt(targetLine)
 
     // 如果目标行超出范围，或者目标行不是空行且以开始/结束符号结尾，则表示找到目标行
-    if (
-      targetLine < 0 ||
-      targetLine > documentMaxRows ||
-      (!isEmptyOrWhitespace && boundaryRegexp.test(text))
-    ) {
+    if (!isEmptyOrWhitespace && boundaryRegexp.test(text)) {
       // 找到目标行以后，将目标行的缩进字符串作为最终的缩进字符串
       indentsCount = targetLineIndent
       break

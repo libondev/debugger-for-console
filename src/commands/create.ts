@@ -122,19 +122,20 @@ async function _create(insertOffset: number, displayOffset: number) {
   const statementGetter = getStatementGenerator(document)
   let position = new Position(0, 0)
 
-  const insertPosition = insertOffset > 0 ? 'after' : 'before'
-  const insertEmptyLine = resolvedConfig.get<string>('insertEmptyLine', 'none')
-
-  const beforeBlank = getBeforeBlankLine(insertEmptyLine, insertPosition)
-  const afterBlank = getAfterBlankLine(insertEmptyLine, insertPosition)
-
   // 如果选区大于1则使用智能编辑器批量应用修改，否则使用普通编辑器
   const smartEditor = smartToggleEditor(mergedSelections.size > 1, document, editor)
 
   for (const [lineNumber, variables] of mergedSelections) {
-    position = position.translate(variables.line - position.line)
+    // `getBlockBoundaryLineWithIndent` 在插入点为 EOF 之后时可能返回 `line = document.lineCount`。
+    // VS Code 对越界 Position 的行为会导致内容被直接拼接到最后一行行尾（例如 `}console.log(...)`）。
+    const isAfterEOF = variables.line >= document.lineCount
+    position = isAfterEOF
+      ? document.lineAt(Math.max(0, document.lineCount - 1)).range.end
+      : position.translate(variables.line - position.line)
 
-    const contents = `${beforeBlank}${variables.indents}${statementGetter(
+    // 若插入到最后一行行尾，需要先补一个换行，保证语句落在新的一行上
+    const ensureNewline = isAfterEOF && insertOffset > 0 ? '\n' : ''
+    const contents = `${ensureNewline}${beforeBlank}${variables.indents}${statementGetter(
       lineNumber + displayOffset,
       variables.text.join(', '),
     )}${afterBlank}`

@@ -32,7 +32,7 @@ const computedStyle = computed(() => {
   return styles;
 });
 
-function fnScope(length = obj['name'].length) {
+async function fnScope(length = obj['name'].length) {
 
   const say = 'hello,' + 'world!';
 
@@ -61,6 +61,10 @@ function fnScope(length = obj['name'].length) {
   );
 
   obj.value?.[0]?.test();
+
+  const res = await fetch('https://api.github.com/users/octocat', {
+    data: fn(data),
+  });
 
   Promise.resolve()
     .then((res) => {

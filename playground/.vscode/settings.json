@@ -1,4 +1,5 @@
 {
+  "oxc.enable": false,
   "debugger-for-console.outputNewline": false,
   // "debugger-for-console.onlyVariable": "enable",
   "debugger-for-console.wrappers": {

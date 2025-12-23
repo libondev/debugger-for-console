@@ -122,25 +122,12 @@ if (Math.random() > 0.5) {
 
 export function getTemplate(colors) {
   const {
-    name,
-    mode,
-    accent,
-    border,
     background,
-    editorForeground,
     foreground,
     ...theme
   } = colors
 
   theme.key ||= theme.css
-  theme.css ||= theme.variable
-  theme.json ||= theme.property
-  theme.regexp ||= theme.string
-  theme.storage ||= theme.keyword
-  theme.classes ||= theme.attribute
-  theme.inputBackground ||= background
-  theme.sidebarBackground ||= background
-  theme.activeBackground ||= theme.sidebarBackground
 
   return theme
 }

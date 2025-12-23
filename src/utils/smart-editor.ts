@@ -27,7 +27,7 @@ function createEditor(editor: TextEditor) {
   }
 }
 
-function createWorkspace(editor: TextEditor, { uri }: TextDocument) {
+function createWorkspace({ uri }: TextDocument) {
   const edit = new WorkspaceEdit()
 
   return {
@@ -46,6 +46,6 @@ export function smartToggleEditor(
   editor: TextEditor,
 ) {
   return useWorkspace
-    ? createWorkspace(editor, document)
+    ? createWorkspace(document)
     : createEditor(editor)
 }

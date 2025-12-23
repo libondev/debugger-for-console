@@ -1,18 +1,12 @@
 import { Position, window, workspace } from 'vscode'
 import type { TextDocument } from 'vscode'
 
-import { resolvedConfig } from '../extension'
 import { getQuote } from '../features/quote'
 import { getRandomEmoji } from '../features/random-emoji'
 import { getFileDepth } from '../features/file-depth'
 import { getNumberLine } from '../features/number-line'
 import { getVariableCompletion } from '../features/variable-completion'
-import {
-  getAfterBlankLine,
-  getBeforeBlankLine,
-  getOnlyVariable,
-  getOutputNewline,
-} from '../features/output'
+import { getOnlyVariable, getOutputNewline } from '../features/output'
 
 import { getBlockBoundaryLineWithIndent } from '../utils/block-scope'
 
@@ -135,10 +129,10 @@ async function _create(insertOffset: number, displayOffset: number) {
 
     // 若插入到最后一行行尾，需要先补一个换行，保证语句落在新的一行上
     const ensureNewline = isAfterEOF && insertOffset > 0 ? '\n' : ''
-    const contents = `${ensureNewline}${beforeBlank}${variables.indents}${statementGetter(
+    const contents = `${ensureNewline}${variables.indents}${statementGetter(
       lineNumber + displayOffset,
       variables.text.join(', '),
-    )}${afterBlank}`
+    )}`
 
     smartEditor.insert(position, contents)
   }

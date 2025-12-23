@@ -5,15 +5,16 @@ import { getIsEllipsis } from '../features/output'
 export const VARIABLE_PLACEHOLDER = '{VALUE}'
 export const VARIABLE_PLACEHOLDER_REGEX = new RegExp(VARIABLE_PLACEHOLDER, 'g')
 
-// This damn JavaScript language types
+// This damn JavaScript language types, who's next?
 export const JAVASCRIPT_ALIAS = [
   'javascript',
   'javascriptreact',
-  'svelte',
   'typescript',
   'typescriptreact',
-  'vue',
+  'svelte',
+  'astro',
   'html',
+  'vue',
 ]
 
 // Get the statement corresponding to the language of the current document.

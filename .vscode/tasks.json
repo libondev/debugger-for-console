@@ -10,16 +10,23 @@
       "presentation": {
         "reveal": "never"
       },
-      // "problemMatcher": [
-      //   {
-      //     "base": "$ts-webpack-watch",
-      //     "background": {
-      //       "activeOnStart": true,
-      //       "beginsPattern": "Build start",
-      //       "endsPattern": "Build success"
-      //     }
-      //   }
-      // ],
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "Building entry",
+            "endsPattern": "Build success"
+          }
+        }
+      ],
       "group": "build"
     }
   ]

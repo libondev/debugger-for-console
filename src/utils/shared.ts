@@ -26,7 +26,7 @@ export function getLanguageStatement({ languageId }: TextDocument): string {
   return resolvedConfig.get(`wrappers.${languageId}`) || resolvedConfig.get('wrappers.default')!
 }
 
-// Gets the start/end line of a multi-line statement.
+// 获取多行语句的开始/结束行
 function getMultiLineStatement(document: TextDocument, line: TextLine) {
   let nextLine = document.lineAt(line.lineNumber + 1)
   let count = 1
@@ -48,7 +48,7 @@ function getMultiLineStatement(document: TextDocument, line: TextLine) {
   return { start: line.range.start.line, end: nextLine.range.end.line }
 }
 
-// Get the start/end line of a single-line statement.
+// 获取单行语句的开始/结束行
 export function getAllStatementRanges(document: TextDocument, symbols: string) {
   const text = document.getText()
 
@@ -59,7 +59,7 @@ export function getAllStatementRanges(document: TextDocument, symbols: string) {
   const matchRegexp = new RegExp(
     `^[ \t]*[${symbols}[ \t]*]*${getLanguageStatement(document)
       .replace(VARIABLE_PLACEHOLDER_REGEX, '.*?')
-      .replace(/\(|\)|\[|\]|\{|\}/g, '\\$&')}`,
+      .replace(/[()[\]{}]/g, '\\$&')}`,
     'gms',
   )
 
@@ -69,21 +69,18 @@ export function getAllStatementRanges(document: TextDocument, symbols: string) {
     return []
   }
 
-  // Matches the first statement in a line
-  const singleLineRegexp = /\(.*?\)($)?/
+  const singleLineRegexp = /\(.*\)/
 
   let line: TextLine
   const statements = matchedResults.reduce<Range[]>((acc, match) => {
     line = document.lineAt(document.positionAt(match.index!).line)
 
-    // not have a '(' or is a single line statement. e.g. debugger
+    // 没有 '(' 或是一个单行语句。例如：debugger
     if (singleLineRegexp.test(line.text) || !line.text.includes('(')) {
       acc.push(line.range)
     } else {
-      // multi-line statement
       const { start, end } = getMultiLineStatement(document, line)
 
-      // Push the range of the statement
       for (let i = start; i <= end; i++) {
         acc.push(document.lineAt(i).range)
       }
@@ -120,8 +117,6 @@ export function getEllipsisString(str: string, trimQuotes?: boolean) {
 
 // 转义正则表达式
 export function escapeRegexp(string: string) {
-  // return string.replace(' ', '\\s*').replace(/[.*+^?${}()|[\]\\]/g, '\\$&')
-  // return string.replace(/[.+*^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s*')
   return string.replace(/[+^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s*')
 }
 

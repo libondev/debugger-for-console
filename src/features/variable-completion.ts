@@ -149,7 +149,7 @@ function getCorrectVariableScope(
   // e.g.: obj.value?.[0]?.test(  );
   //                           ^  ^
   if (startAt === endAt || IS_MEMBER_CALL.test(content)) {
-    const whitespaceIndex = text.lastIndexOf(' ', startAt) + 1
+    const whitespaceIndex = text.slice(0, startAt).lastIndexOf(' ') + 1
     content = text.slice(whitespaceIndex, endAt)
 
     // 上面直接截取到开头可能会得到这种结果：setSelectedImage(result.assets[0].uri)

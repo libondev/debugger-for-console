@@ -15,27 +15,3 @@ export function getOnlyVariable(languageId: string) {
 
   return isOnlyVariable === 'enable' || ONLY_OUTPUT_ONE_PARAMETER_LANGUAGE_ID.includes(languageId!)
 }
-
-export function getBeforeBlankLine(configValue: string, direction: string) {
-  if (
-    ['before', 'both'].includes(configValue) ||
-    (configValue === 'direction' && direction === 'before') ||
-    (configValue === 'directionReverse' && direction === 'after')
-  ) {
-    return '\n'
-  }
-
-  return ''
-}
-
-export function getAfterBlankLine(configValue: string, direction: string) {
-  if (
-    ['after', 'both'].includes(configValue) ||
-    (configValue === 'direction' && direction === 'after') ||
-    (configValue === 'directionReverse' && direction === 'before')
-  ) {
-    return '\n'
-  }
-
-  return ''
-}

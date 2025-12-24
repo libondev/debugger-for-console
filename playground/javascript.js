@@ -82,12 +82,12 @@ watch(
 
 const veryLongStatement = window.name.includes('abc'.toUpperCase())[0].toLowerCase().includes('a')?.length
 
-function initApp(Vue) {
+function initApp( Vue ) {
   let app = new Vue({
     router,
     store,
     i18n,
-    render: () => h(App)
+    render: () => h(App),
   })
 
   const arr = new Array([
@@ -95,6 +95,8 @@ function initApp(Vue) {
     2,
     3,
   ])
+
+  setSelectedImage(result.assets[0].uri)
 
   const METHODS = {
     mount({

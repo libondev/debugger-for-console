@@ -9,8 +9,50 @@ const ONLY_HAS_SYMBOL_REGEX = /^[^\w$]+$/
 // 是不是已特殊符号作为字符串的开头
 const IS_SYMBOL_STARTS_WITH_REGEX = /^[}\])?.=;]*([\s\S]*?)(?:[{([?.=;]*)$/
 
-// 判断参数是否没有闭合的括号
-const IS_NO_CLOSING_BRACKET_REGEXP = /\(([^(]*(?:\([^()]*\)[^()]*)*(?:\([^()]*)?(?:\[[^\]]*\])*)$/
+/**
+ * 判断内容末尾是否处于“函数调用参数输入中”（存在未闭合的 '('）
+ * - e.g. `setSelectedImage(result.assets[0].uri` -> `result.assets[0].uri`
+ * - e.g. `h(App)` -> null（括号已闭合，不应当被认为在参数输入中）
+ */
+function getUnclosedCallArgsTail(content: string): string | null {
+  const openParenStack: number[] = []
+
+  // 仅做轻量字符串跳过：避免字符串里的 '(' ')' 干扰判断
+  let inQuote: "'" | '"' | '`' | null = null
+
+  for (let i = 0; i < content.length; i++) {
+    const ch = content[i]
+
+    if (inQuote) {
+      // 处理转义引号
+      if (ch === inQuote && content[i - 1] !== '\\') {
+        inQuote = null
+      }
+      continue
+    }
+
+    if (ch === "'" || ch === '"' || ch === '`') {
+      inQuote = ch
+      continue
+    }
+
+    if (ch === '(') {
+      openParenStack.push(i)
+      continue
+    }
+
+    if (ch === ')' && openParenStack.length) {
+      openParenStack.pop()
+    }
+  }
+
+  if (!openParenStack.length) {
+    return null
+  }
+
+  const lastOpenParenIndex = openParenStack[openParenStack.length - 1]
+  return content.slice(lastOpenParenIndex + 1)
+}
 
 const IS_TAIL_SYMBOL_ENDS_REGEX = /^\?|\?$/g
 
@@ -112,10 +154,10 @@ function getCorrectVariableScope(
 
     // 上面直接截取到开头可能会得到这种结果：setSelectedImage(result.assets[0].uri)
     //                               ^                                   ^
-    // 这种结果一般是想要获取到函数调用时传入的参数，截取到 '(' 开始的位置
-    const isNoClosingBracket = content.match(IS_NO_CLOSING_BRACKET_REGEXP)
-    if (isNoClosingBracket !== null) {
-      return isNoClosingBracket[1]
+    // 如果截取到的参数是未闭合的函数调用参数，则返回函数调用时的参数
+    const unclosedCallArgsTail = getUnclosedCallArgsTail(content)
+    if (unclosedCallArgsTail !== null) {
+      return unclosedCallArgsTail
     }
 
     return content.replace(IS_SYMBOL_STARTS_WITH_REGEX, '$1')

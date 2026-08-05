@@ -1,7 +1,8 @@
 import type { Range } from 'vscode'
 import { window } from 'vscode'
-import { getAllStatementRanges } from '../utils/shared'
-import { getCommentSymbol } from '../features/comment-symbol'
+
+import { getCommentSymbol } from '../core/language'
+import { getAllStatementRanges } from '../core/statement-finder'
 import { smartToggleEditor } from '../utils/smart-editor'
 
 async function toggle(type: 'comment' | 'uncomment' = 'comment') {

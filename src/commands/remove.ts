@@ -1,7 +1,7 @@
 import { Position, Range, window } from 'vscode'
-import { getAllStatementRanges } from '../utils/shared'
 
-import { getCommentSymbol } from '../features/comment-symbol'
+import { getCommentSymbol } from '../core/language'
+import { getAllStatementRanges } from '../core/statement-finder'
 import { smartToggleEditor } from '../utils/smart-editor'
 
 export async function remove() {

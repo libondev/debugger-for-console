@@ -1,15 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "rules": {
-    "curly": "error",
-    "end-of-line": "off",
-    "brace-style": [
-      "error",
-      "1tbs",
-      {
-        "allowSingleLine": false
-      }
-    ],
+    "curly": "error"
   },
   "plugins": [
     "oxc",

@@ -1,0 +1,159 @@
+import type { TextDocument } from 'vscode'
+
+import { tabSizeConfig } from '../config'
+import { generateBlockRegexp } from '../utils/regexp'
+
+// 向下创建的时候以这些符号作为结尾时，表示处于作用域内部
+const insideBlockRegexpNext = generateBlockRegexp([
+  '= {',
+  '= [',
+  '<{',
+  '({',
+  '([',
+  '(',
+  ',',
+  '|',
+  '&',
+])
+
+// 向上创建时只要以 , 结尾就表示处于作用域内部，不考虑对象函数的形式
+const insideBlockRegexpPrev = generateBlockRegexp([',', '|', '&'])
+
+const blockStartSymbolRegexp = generateBlockRegexp(['{', '[', '[', '('])
+
+// 向下创建的时候遇到哪些符号视作为作用域闭合
+const blockEndSymbolRegexp = generateBlockRegexp([
+  '});?',
+  ']);?',
+  '};?',
+  '];?',
+  ');?',
+  '} =.*;?',
+  '] =.*;?',
+  ' as .*;?',
+  ' satisfies .*;?',
+])
+
+const insertIndentRegexp = generateBlockRegexp(['{', '(', '[', ':'])
+
+// 获取到当前行需要缩进的次数
+function getIndentCount(lineCount: number, insertLineNumber: number, nonBlankIndex: number) {
+  // if first line(文档的第一行)
+  if (insertLineNumber <= 0) {
+    return 0
+  } else if (insertLineNumber >= lineCount) {
+    // if last line(最后一行)
+    return -1
+  }
+
+  return nonBlankIndex
+}
+
+// 获取缩进类型
+function getIndentType(nonBlankIndex: number, text: string) {
+  if (nonBlankIndex === 0) {
+    return ' '
+  }
+
+  const firstChar = text.slice(0, 1) || ' '
+
+  return firstChar
+}
+
+// 根据缩进大小和类型生成缩进字符串
+function getIndentString(count: number, indentType: string) {
+  if (count <= 0) {
+    return ''
+  }
+
+  return indentType.repeat(count)
+}
+
+// 获取作用域结束或开始的边界行和最终创建时的缩进
+export function getBlockBoundaryLineWithIndent(
+  document: TextDocument,
+  line: number,
+  offset: number,
+) {
+  const { text, isEmptyOrWhitespace, firstNonWhitespaceCharacterIndex } = document.lineAt(line)
+
+  // 获取文档最大行数已经缩进类型
+  const documentMaxRows = document.lineCount
+  const indentsType = getIndentType(firstNonWhitespaceCharacterIndex, text)
+  let indentsCount = getIndentCount(
+    documentMaxRows,
+    line + offset,
+    firstNonWhitespaceCharacterIndex,
+  )
+
+  // 如果当前行是空行则直接返回当前行
+  if (isEmptyOrWhitespace) {
+    return {
+      line: line + offset,
+      indents: '',
+    }
+  }
+
+  // 根据 offset 获取作用域符号正则，向上和向下的查找规则不同
+  const insideBlockRegexp = offset ? insideBlockRegexpNext : insideBlockRegexpPrev
+
+  // 如果不是以作用域符号结尾则表示处于作用域外部，不需要进一步查找
+  const isInsideBlock = insideBlockRegexp.test(text)
+
+  // 如果当前行的最后一个字符是 { ( : 并且是向下创建，则需要增加一次缩进
+  if (offset && insertIndentRegexp.test(text)) {
+    indentsCount += tabSizeConfig.value
+  }
+
+  const indentsString = getIndentString(indentsCount, indentsType)
+
+  if (!isInsideBlock) {
+    return {
+      line: line + offset,
+      indents: indentsString,
+    }
+  }
+
+  // 如果 offset === 0 则表示向上创建，否则是向下创建
+  const offsetLineSize = offset ? 1 : -1
+  let targetLine = line + offsetLineSize
+  const boundaryRegexp = offset ? blockEndSymbolRegexp : blockStartSymbolRegexp
+
+  // 逐行向上或向下查找开始/结束符号
+  while (true) {
+    if (targetLine < 0) {
+      targetLine = 0
+      indentsCount = 0
+      break
+    }
+
+    // 走到文档末尾仍未找到边界时，按 “最后一行的下一行” 处理（向下插入时）
+    // 这里把 targetLine clamp 到最后一行，最终返回时会 +1 得到 `lineCount`
+    if (targetLine >= documentMaxRows) {
+      targetLine = Math.max(0, documentMaxRows - 1)
+      indentsCount = document.lineAt(targetLine).firstNonWhitespaceCharacterIndex
+      break
+    }
+
+    // TODO: 支持查找嵌套作用域
+    const {
+      text,
+      isEmptyOrWhitespace,
+      firstNonWhitespaceCharacterIndex: targetLineIndent,
+    } = document.lineAt(targetLine)
+
+    // 如果目标行超出范围，或者目标行不是空行且以开始/结束符号结尾，则表示找到目标行
+    if (!isEmptyOrWhitespace && boundaryRegexp.test(text)) {
+      // 找到目标行以后，将目标行的缩进字符串作为最终的缩进字符串
+      indentsCount = targetLineIndent
+      break
+    }
+
+    targetLine += offsetLineSize
+  }
+
+  return {
+    line: offset ? targetLine + offsetLineSize : targetLine,
+    indents: getIndentString(indentsCount, indentsType),
+  }
+}

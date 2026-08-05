@@ -1,21 +1,8 @@
-import { Position, window, workspace } from 'vscode'
-import type { TextDocument } from 'vscode'
+import { Position, window } from 'vscode'
 
-import { getQuote } from '../features/quote'
-import { getRandomEmoji } from '../features/random-emoji'
-import { getFileDepth } from '../features/file-depth'
-import { getNumberLine } from '../features/number-line'
-import { getVariableCompletion } from '../features/variable-completion'
-import { getOnlyVariable, getOutputNewline } from '../features/output'
-
-import { getBlockBoundaryLineWithIndent } from '../utils/block-scope'
-
-import {
-  VARIABLE_PLACEHOLDER,
-  VARIABLE_PLACEHOLDER_REGEX,
-  getEllipsisString,
-  getLanguageStatement,
-} from '../utils/shared'
+import { getBlockBoundaryLineWithIndent } from '../core/block-scope'
+import { getVariableCompletion } from '../core/selection'
+import { getStatementGenerator } from '../core/statement'
 import { smartToggleEditor } from '../utils/smart-editor'
 
 const ERROR_MESSAGES = {
@@ -23,47 +10,10 @@ const ERROR_MESSAGES = {
   MULTI_LINE: 'Multi-line selection is not supported.',
 } as const
 
-export const tabSizeConfig = {
-  value: 2,
-  set() {
-    this.value = workspace.getConfiguration('editor').get('tabSize', 2)
-  },
-}
-
 interface MergedSelection {
   line: number
   indents: string
   text: string[]
-}
-
-function getStatementGenerator(document: TextDocument) {
-  const statement = getLanguageStatement(document)
-
-  if (!statement) {
-    throw new Error('No language statement found.')
-  } else if (statement.includes(VARIABLE_PLACEHOLDER)) {
-    const formatter = (str: string) => `${statement.replace(VARIABLE_PLACEHOLDER_REGEX, str)}\n`
-
-    if (getOnlyVariable(document.languageId)) {
-      return (_: number, t: string) => formatter(t)
-    }
-
-    const quote = getQuote(document.languageId)
-
-    const template = `${quote}${getRandomEmoji()}${getFileDepth(
-      document,
-    )}$1/($2):${getOutputNewline()}${quote}$3`
-
-    return (lineNumber: number, text: string) =>
-      formatter(
-        template
-          .replace('$1', getNumberLine(lineNumber) as string)
-          .replace('$2', getEllipsisString(text, true))
-          .replace('$3', text ? `, ${text}` : ''),
-      )
-  }
-
-  return () => `${statement}\n`
 }
 
 async function _create(insertOffset: number, displayOffset: number) {

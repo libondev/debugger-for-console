@@ -1,4 +1,4 @@
-import { comment, uncomment } from './comments'
+import { comment, uncomment } from './comment'
 import { create, createBefore } from './create'
 import { remove } from './remove'
 import { updateUserConfig } from './update'

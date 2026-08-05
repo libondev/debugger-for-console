@@ -1,12 +1,9 @@
-import { workspace } from 'vscode'
-import { resolvedConfig } from '../extension'
-import { resetFileDepthCache } from '../features/file-depth'
-import { tabSizeConfig } from './create'
+import { refreshConfig } from '../config'
+import { resetFileDepthCache } from '../core/message'
 
 export function updateUserConfig() {
-  Object.assign(resolvedConfig, workspace.getConfiguration('debugger-for-console'))
+  refreshConfig()
 
-  const deps = [resetFileDepthCache, tabSizeConfig.set.bind(tabSizeConfig)]
-
-  deps.forEach((dep) => dep())
+  // 配置变化后文件路径深度缓存需要失效
+  resetFileDepthCache()
 }

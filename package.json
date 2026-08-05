@@ -203,11 +203,11 @@
     "fmt": "oxfmt src"
   },
   "devDependencies": {
-    "@types/vscode": "1.55.0",
-    "@vscode/vsce": "^2.19.0",
-    "oxfmt": "^0.20.0",
-    "oxlint": "^1.35.0",
-    "tsup": "^7.1.0",
-    "typescript": "^4.9.5"
+    "@types/vscode": "1.125.0",
+    "@vscode/vsce": "^2.32.0",
+    "oxfmt": "^0.62.0",
+    "oxlint": "^1.77.0",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2"
   }
 }

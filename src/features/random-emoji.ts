@@ -1,6 +1,6 @@
 import { resolvedConfig } from '../extension'
 
-const EMOJIS = [
+const DEFAULT_EMOJIS = [
   '🚀',
   '🛸',
   '🛰️',
@@ -25,7 +25,10 @@ const EMOJIS = [
 
 export function getRandomEmoji() {
   if (resolvedConfig.get('emoji')) {
-    return EMOJIS[Math.floor(Math.random() * EMOJIS.length)]
+    const customEmojiList = resolvedConfig.get<string[]>('emojiList', [])
+    const emojiList = customEmojiList.length > 0 ? customEmojiList : DEFAULT_EMOJIS
+
+    return emojiList[Math.floor(Math.random() * emojiList.length)]
   }
 
   return ''

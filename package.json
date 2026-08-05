@@ -102,6 +102,35 @@
           "default": true,
           "description": "Determine whether to insert an emoji."
         },
+        "debugger-for-console.emojiList": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "🚀",
+            "🛸",
+            "🛰️",
+            "👑",
+            "🔭",
+            "✨",
+            "🍀",
+            "🍻",
+            "🍿",
+            "🍉",
+            "🔥",
+            "🥑",
+            "🎡",
+            "🍙",
+            "📦",
+            "📫",
+            "🍟",
+            "🍭",
+            "🍩",
+            "🌿"
+          ],
+          "description": "Customize the list of emojis to randomly select from. You can add or remove emojis as you like."
+        },
         "debugger-for-console.quote": {
           "type": "string",
           "enum": [

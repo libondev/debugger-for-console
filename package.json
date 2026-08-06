@@ -203,7 +203,7 @@
     "fmt": "oxfmt src"
   },
   "devDependencies": {
-    "@types/vscode": "1.125.0",
+    "@types/vscode": "1.55.0",
     "@vscode/vsce": "^2.32.0",
     "oxfmt": "^0.62.0",
     "oxlint": "^1.77.0",

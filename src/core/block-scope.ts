@@ -1,72 +1,150 @@
 import type { TextDocument } from 'vscode'
 
 import { tabSizeConfig } from '../config'
-import { generateBlockRegexp } from '../utils/regexp'
 
-// 向下创建的时候以这些符号作为结尾时，表示处于作用域内部
-const insideBlockRegexpNext = generateBlockRegexp([
-  '= {',
-  '= [',
-  '<{',
-  '({',
-  '([',
-  '(',
-  ',',
-  '|',
-  '&',
-])
+type ScopeSymbol = '{' | '[' | '('
+type StringDelimiter = '"' | "'" | '`'
 
-// 向上创建时只要以 , 结尾就表示处于作用域内部，不考虑对象函数的形式
-const insideBlockRegexpPrev = generateBlockRegexp([',', '|', '&'])
-
-const blockStartSymbolRegexp = generateBlockRegexp(['{', '[', '[', '('])
-
-// 向下创建的时候遇到哪些符号视作为作用域闭合
-const blockEndSymbolRegexp = generateBlockRegexp([
-  '});?',
-  ']);?',
-  '};?',
-  '];?',
-  ');?',
-  '} =.*;?',
-  '] =.*;?',
-  ' as .*;?',
-  ' satisfies .*;?',
-])
-
-const insertIndentRegexp = generateBlockRegexp(['{', '(', '[', ':'])
-
-// 获取到当前行需要缩进的次数
-function getIndentCount(lineCount: number, insertLineNumber: number, nonBlankIndex: number) {
-  // if first line(文档的第一行)
-  if (insertLineNumber <= 0) {
-    return 0
-  } else if (insertLineNumber >= lineCount) {
-    // if last line(最后一行)
-    return -1
-  }
-
-  return nonBlankIndex
+interface Scope {
+  symbol: ScopeSymbol
+  line: number
+  column: number
+  isStatementBoundary: boolean
+  closeLine?: number
 }
 
-// 获取缩进类型
-function getIndentType(nonBlankIndex: number, text: string) {
-  if (nonBlankIndex === 0) {
-    return ' '
-  }
-
-  const firstChar = text.slice(0, 1) || ' '
-
-  return firstChar
+interface ScopeScanResult {
+  activeScopes: Scope[]
 }
 
-// 根据缩进大小和类型生成缩进字符串
-function getIndentString(count: number, indentType: string) {
-  if (count <= 0) {
-    return ''
+const closeToOpenSymbol: Record<'}' | ']' | ')', ScopeSymbol> = {
+  '}': '{',
+  ']': '[',
+  ')': '(',
+}
+
+const statementParenRegexp = /\b(?:if|for|while|switch|catch|with|function|def|fn)\s*(?:[\w$]+\s*)?$/
+const statementBlockRegexp = /(?:=>|\)|\b(?:else|try|finally|do|class|interface|struct|enum|namespace|union|impl|match|select))\s*$/
+const insertIndentRegexp = /[{[(:]\s*$/
+
+function getLineIndent(document: TextDocument, line: number) {
+  const { text, firstNonWhitespaceCharacterIndex } = document.lineAt(line)
+
+  return text.slice(0, firstNonWhitespaceCharacterIndex)
+}
+
+function getIndentUnit(indent: string) {
+  return indent.includes('\t') ? '\t' : ' '.repeat(tabSizeConfig.value)
+}
+
+function isStatementBoundary(
+  symbol: ScopeSymbol,
+  text: string,
+  line: number,
+  document: TextDocument,
+) {
+  const currentPrefix = text.trimEnd()
+  const previousLine = line > 0 ? document.lineAt(line - 1).text.trimEnd() : ''
+  const prefix = `${previousLine} ${currentPrefix}`.trim()
+
+  if (symbol === '(') {
+    return statementParenRegexp.test(prefix)
   }
 
-  return indentType.repeat(count)
+  return symbol === '{' && statementBlockRegexp.test(prefix)
+}
+
+function scanScopes(document: TextDocument, targetLine: number): ScopeScanResult {
+  const stack: Scope[] = []
+  let activeScopes: Scope[] = []
+  let stringDelimiter: StringDelimiter | undefined
+  let isBlockComment = false
+
+  for (let line = 0; line < document.lineCount; line += 1) {
+    const text = document.lineAt(line).text
+
+    for (let column = 0; column < text.length; column += 1) {
+      const char = text[column]
+      const nextChar = text[column + 1]
+
+      if (isBlockComment) {
+        if (char === '*' && nextChar === '/') {
+          isBlockComment = false
+          column += 1
+        }
+        continue
+      }
+
+      if (stringDelimiter) {
+        if (char === '\\') {
+          column += 1
+        } else if (char === stringDelimiter) {
+          stringDelimiter = undefined
+        }
+        continue
+      }
+
+      if (char === '/' && nextChar === '/') {
+        break
+      }
+
+      if (char === '/' && nextChar === '*') {
+        isBlockComment = true
+        column += 1
+        continue
+      }
+
+      if (char === '"' || char === "'" || char === '`') {
+        stringDelimiter = char
+        continue
+      }
+
+      if (char === '{' || char === '[' || char === '(') {
+        stack.push({
+          symbol: char,
+          line,
+          column,
+          isStatementBoundary: isStatementBoundary(char, text.slice(0, column), line, document),
+        })
+        continue
+      }
+
+      if (char === '}' || char === ']' || char === ')') {
+        const scope = stack.at(-1)
+        if (scope?.symbol === closeToOpenSymbol[char]) {
+          scope.closeLine = line
+          stack.pop()
+        }
+      }
+    }
+
+    if (line === targetLine) {
+      activeScopes = [...stack]
+    }
+  }
+
+  return { activeScopes }
+}
+
+function getExpressionScope(activeScopes: Scope[]) {
+  let expressionScope: Scope | undefined
+
+  for (const scope of activeScopes) {
+    if (scope.isStatementBoundary) {
+      expressionScope = undefined
+    } else if (!expressionScope) {
+      expressionScope = scope
+    }
+  }
+
+  return expressionScope
+}
+
+function getDirectInsertIndent(document: TextDocument, line: number, isCreatingAfter: boolean) {
+  const indent = getLineIndent(document, line)
+  const text = document.lineAt(line).text
+
+  return isCreatingAfter && insertIndentRegexp.test(text) ? `${indent}${getIndentUnit(indent)}` : indent
 }
 
 // 获取作用域结束或开始的边界行和最终创建时的缩进
@@ -75,85 +153,31 @@ export function getBlockBoundaryLineWithIndent(
   line: number,
   offset: number,
 ) {
-  const { text, isEmptyOrWhitespace, firstNonWhitespaceCharacterIndex } = document.lineAt(line)
-
-  // 获取文档最大行数已经缩进类型
-  const documentMaxRows = document.lineCount
-  const indentsType = getIndentType(firstNonWhitespaceCharacterIndex, text)
-  let indentsCount = getIndentCount(
-    documentMaxRows,
-    line + offset,
-    firstNonWhitespaceCharacterIndex,
-  )
+  const currentLine = document.lineAt(line)
+  const isCreatingAfter = offset > 0
 
   // 如果当前行是空行则直接返回当前行
-  if (isEmptyOrWhitespace) {
+  if (currentLine.isEmptyOrWhitespace) {
     return {
       line: line + offset,
       indents: '',
     }
   }
 
-  // 根据 offset 获取作用域符号正则，向上和向下的查找规则不同
-  const insideBlockRegexp = offset ? insideBlockRegexpNext : insideBlockRegexpPrev
+  const { activeScopes } = scanScopes(document, line)
+  const expressionScope = getExpressionScope(activeScopes)
 
-  // 如果不是以作用域符号结尾则表示处于作用域外部，不需要进一步查找
-  const isInsideBlock = insideBlockRegexp.test(text)
+  if (expressionScope?.closeLine !== undefined) {
+    const boundaryLine = isCreatingAfter ? expressionScope.closeLine + 1 : expressionScope.line
 
-  // 如果当前行的最后一个字符是 { ( : 并且是向下创建，则需要增加一次缩进
-  if (offset && insertIndentRegexp.test(text)) {
-    indentsCount += tabSizeConfig.value
-  }
-
-  const indentsString = getIndentString(indentsCount, indentsType)
-
-  if (!isInsideBlock) {
     return {
-      line: line + offset,
-      indents: indentsString,
+      line: boundaryLine,
+      indents: getLineIndent(document, isCreatingAfter ? expressionScope.closeLine : boundaryLine),
     }
-  }
-
-  // 如果 offset === 0 则表示向上创建，否则是向下创建
-  const offsetLineSize = offset ? 1 : -1
-  let targetLine = line + offsetLineSize
-  const boundaryRegexp = offset ? blockEndSymbolRegexp : blockStartSymbolRegexp
-
-  // 逐行向上或向下查找开始/结束符号
-  while (true) {
-    if (targetLine < 0) {
-      targetLine = 0
-      indentsCount = 0
-      break
-    }
-
-    // 走到文档末尾仍未找到边界时，按 “最后一行的下一行” 处理（向下插入时）
-    // 这里把 targetLine clamp 到最后一行，最终返回时会 +1 得到 `lineCount`
-    if (targetLine >= documentMaxRows) {
-      targetLine = Math.max(0, documentMaxRows - 1)
-      indentsCount = document.lineAt(targetLine).firstNonWhitespaceCharacterIndex
-      break
-    }
-
-    // TODO: 支持查找嵌套作用域
-    const {
-      text,
-      isEmptyOrWhitespace,
-      firstNonWhitespaceCharacterIndex: targetLineIndent,
-    } = document.lineAt(targetLine)
-
-    // 如果目标行超出范围，或者目标行不是空行且以开始/结束符号结尾，则表示找到目标行
-    if (!isEmptyOrWhitespace && boundaryRegexp.test(text)) {
-      // 找到目标行以后，将目标行的缩进字符串作为最终的缩进字符串
-      indentsCount = targetLineIndent
-      break
-    }
-
-    targetLine += offsetLineSize
   }
 
   return {
-    line: offset ? targetLine + offsetLineSize : targetLine,
-    indents: getIndentString(indentsCount, indentsType),
+    line: line + offset,
+    indents: getDirectInsertIndent(document, line, isCreatingAfter),
   }
 }

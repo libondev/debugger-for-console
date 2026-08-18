@@ -25,6 +25,7 @@ const closeToOpenSymbol: Record<'}' | ']' | ')', ScopeSymbol> = {
 
 const statementParenRegexp = /\b(?:if|for|while|switch|catch|with|function|def|fn)\s*(?:[\w$]+\s*)?$/
 const statementBlockRegexp = /(?:=>|\)|\b(?:else|try|finally|do|class|interface|struct|enum|namespace|union|impl|match|select))\s*$/
+const functionBlockRegexp = /\b(?:function|def|fn)\b/
 const insertIndentRegexp = /[{[(:]\s*$/
 
 function getLineIndent(document: TextDocument, line: number) {
@@ -51,7 +52,7 @@ function isStatementBoundary(
     return statementParenRegexp.test(prefix)
   }
 
-  return symbol === '{' && statementBlockRegexp.test(prefix)
+  return symbol === '{' && (statementBlockRegexp.test(prefix) || functionBlockRegexp.test(currentPrefix))
 }
 
 function scanScopes(document: TextDocument, targetLine: number): ScopeScanResult {

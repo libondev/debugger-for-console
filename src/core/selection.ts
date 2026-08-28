@@ -1,13 +1,13 @@
 import type { Position, Selection, TextDocument } from 'vscode'
 
-const BREAK_CHARACTER = ' \t\n={}()[]'
+const BREAK_CHARACTER = ' \t\n={}()[],'
 
 // only special characters
 // 如果内容不是英文字符/数字/_/$ 的话则返回空字符串
 const ONLY_HAS_SYMBOL_REGEX = /^[^\w$]+$/
 
 // 是不是已特殊符号作为字符串的开头
-const IS_SYMBOL_STARTS_WITH_REGEX = /^[}\])?.=;]*([\s\S]*?)(?:[{([?.=;]*)$/
+const IS_SYMBOL_STARTS_WITH_REGEX = /^[}\])?.=;,]*([\s\S]*?)(?:[{([?.=;,]*)$/
 
 /**
  * 判断内容末尾是否处于“函数调用参数输入中”（存在未闭合的 '('）
